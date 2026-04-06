@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,6 +80,17 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         // 👆👆 YAHAN TAK NAYA CODE HAI 👆👆
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check if user is already signed in (non-null) and update UI accordingly.
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            // Already logged in, go to Dashboard
+            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+            finish();
+        }
     }
 
     // Dots banane ka function

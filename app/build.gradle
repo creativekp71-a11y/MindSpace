@@ -50,9 +50,14 @@ dependencies {
 
     // 🔥 Firebase Master Setup 🔥
     // BoM (Bill of Materials) सारे वर्ज़न को कंट्रोल करता है
-    implementation platform('com.google.firebase:firebase-bom:32.8.0')
+    implementation platform('com.google.firebase:firebase-bom:33.9.0')
 
-    // अब ये दोनों लाइन्स BoM के साथ मिल कर बिना किसी झगड़े के चलेंगी
+    // अब ये सब BoM के साथ मिल कर बिना किसी झगड़े के चलेंगी
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-storage'
+
+    // Glide for image loading
+    implementation libs.glide
+    annotationProcessor libs.glide.compiler
 }

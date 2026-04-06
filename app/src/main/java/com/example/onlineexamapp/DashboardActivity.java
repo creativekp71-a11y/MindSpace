@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView; // 👈 Ye zaroori hai
+import androidx.cardview.widget.CardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -13,6 +16,23 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        // --- Fetch User Data for Greeting ---
+        TextView tvUserGreeting = findViewById(R.id.tvUserGreeting);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+            String uid = mAuth.getCurrentUser().getUid();
+            fStore.collection("Users").document(uid).get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    String fullName = documentSnapshot.getString("full_name");
+                    if (fullName != null && !fullName.isEmpty()) {
+                        tvUserGreeting.setText("Hi, " + fullName + " 👋");
+                    }
+                }
+            });
+        }
 
         // 1. Niche Discover wale Icon ka connection
         View navDiscover = findViewById(R.id.navDiscover);

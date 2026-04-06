@@ -24,18 +24,33 @@ public class SignUpActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
 
+        EditText etFullName = findViewById(R.id.etFullName);
         EditText etUsername = findViewById(R.id.etUsername);
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etPassword = findViewById(R.id.etPassword);
         Button btnSignUp = findViewById(R.id.btnSignUp);
 
         btnSignUp.setOnClickListener(v -> {
-            String name = etUsername.getText().toString().trim();
+            String fullName = etFullName.getText().toString().trim();
+            String username = etUsername.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String pass = etPassword.getText().toString().trim();
 
-            if (name.isEmpty() || email.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(this, "All fields are required!", Toast.LENGTH_SHORT).show();
+            // --- Validations ---
+            if (fullName.isEmpty()) {
+                etFullName.setError("Full name is required");
+                return;
+            }
+            if (username.length() < 3) {
+                etUsername.setError("Username must be at least 3 characters");
+                return;
+            }
+            if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.setError("Enter a valid email");
+                return;
+            }
+            if (pass.length() < 6) {
+                etPassword.setError("Password must be at least 6 characters");
                 return;
             }
 
@@ -49,7 +64,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                     // 2. नए यूज़र का 'Fresh' डेटा तैयार करो (सब 0 पर सेट)
                     Map<String, Object> user = new HashMap<>();
-                    user.put("username", name);
+                    user.put("full_name", fullName);
+                    user.put("username", username);
                     user.put("email", email);
                     user.put("points", 0);    // 👈 नया यूज़र = 0 पॉइंट्स
                     user.put("coins", 0);     // 👈 नया यूज़र = 0 कॉइन्स
