@@ -1,0 +1,36 @@
+# Built objects
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (contains SDK paths, etc.)
+local.properties
+
+# Log files
+*.log
+
+# Android Studio / IntelliJ files
+.idea/
+*.iml
+*.iws
+
+# Keystore files (NEVER share these)
+*.jks
+*.keystore
+
+# Google Services configuration
+google-services.json
+
+# Capture and diagnostic tools
+captures/
+
+# External native build folder
+.externalNativeBuild/
+
+# OS-specific files
+.DS_Store
+Thumbs.db

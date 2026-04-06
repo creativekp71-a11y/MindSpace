@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.onlineexamapp">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="MindSpace"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".AccountTypeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".DescribeWorkplaceActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".QuizActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".CreateAccountActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".SignInActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".OtpVerificationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false" />
+
+        <activity android:name=".FindFriendsActivity" />
+
+        <activity android:name=".ContactSearchActivity" />
+
+        <activity android:name=".DiscoverActivity" />
+
+        <activity android:name=".TopAuthorsActivity" />
+
+        <activity android:name=".LeaderboardActivity" />
+
+        <activity android:name=".ProfileActivity" />
+
+        <activity android:name=".EditProfileActivity" />
+
+        <activity android:name=".AchievementsActivity" />
+
+        <activity android:name=".SettingsActivity" />
+
+        <activity android:name=".SearchActivity" />
+
+
+    </application>
+
+</manifest>

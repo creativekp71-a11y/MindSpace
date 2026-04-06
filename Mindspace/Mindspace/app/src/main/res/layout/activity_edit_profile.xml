@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F6FA">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#FFFFFF"
+        android:paddingHorizontal="16dp"
+        android:elevation="2dp">
+
+        <ImageView
+            android:id="@+id/ivBackEditProfile"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:padding="4dp"
+            android:src="@drawable/ic_back"
+            app:tint="#000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ivBackEditProfile"
+            android:layout_marginStart="16dp"
+            android:text="Edit Profile"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="10dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvCoverContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp">
+                    <ImageView
+                        android:id="@+id/ivCover"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/cover_photo" /> </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tvChangeCover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📷 Change Cover"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:background="#80000000"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:layout_alignBottom="@id/cvCoverContainer"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="10dp"/>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvProfilePicCard"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="6dp"
+                    android:layout_below="@id/cvCoverContainer"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="-50dp">
+                    <ImageView
+                        android:id="@+id/ivEditProfilePic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_fd" /> </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tvChangePhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Change Photo"
+                    android:textColor="#6C5CE7"
+                    android:textStyle="bold"
+                    android:layout_below="@id/cvProfilePicCard"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"/>
+            </RelativeLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="20dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Full Name" android:textColor="#7F8FA6" android:textSize="14sp" android:layout_marginBottom="8dp"/>
+                <EditText android:id="@+id/etEditName" android:layout_width="match_parent" android:layout_height="50dp" android:background="@drawable/bg_rounded_white" android:paddingHorizontal="16dp" android:text="Khush Parmar" android:textColor="#2F3640" android:inputType="textPersonName"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="20dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Username" android:textColor="#7F8FA6" android:textSize="14sp" android:layout_marginBottom="8dp"/>
+                <EditText android:id="@+id/etEditUsername" android:layout_width="match_parent" android:layout_height="50dp" android:background="@drawable/bg_rounded_white" android:paddingHorizontal="16dp" android:text="@khush_pro" android:textColor="#2F3640" android:inputType="text"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="40dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bio" android:textColor="#7F8FA6" android:textSize="14sp" android:layout_marginBottom="8dp"/>
+                <EditText android:id="@+id/etEditBio" android:layout_width="match_parent" android:layout_height="100dp" android:background="@drawable/bg_rounded_white" android:padding="16dp" android:gravity="top|start" android:hint="Tell us about yourself..." android:textColor="#2F3640" android:inputType="textMultiLine"/>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSaveProfile"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="#6C5CE7"
+                android:text="Save Changes"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

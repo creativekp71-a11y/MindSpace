@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "575953218451",
+    "project_id": "mindspace-b98b4",
+    "storage_bucket": "mindspace-b98b4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575953218451:android:018ed24f23d4732e8a5666",
+        "android_client_info": {
+          "package_name": "com.example.onlineexamapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "575953218451-b9jvn82uhpo0oos6r7kkjad9cnvclc5g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsXRex0iJFVySrM0K01yn9Qi29RWv_slY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "575953218451-b9jvn82uhpo0oos6r7kkjad9cnvclc5g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

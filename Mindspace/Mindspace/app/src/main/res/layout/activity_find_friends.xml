@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:padding="40dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_revert"
+            app:tint="#000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Find Friends"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etSearchFriends"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#F5F5F5"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="12dp"
+        android:hint="Search email, name, or phone number"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textSize="14sp"
+        android:textColorHint="#A0A0A0"
+        android:layout_marginBottom="24dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <RelativeLayout android:id="@+id/btnContactMenu" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                <ImageView android:id="@+id/icContact" android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_con" />
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/icContact" android:layout_marginStart="16dp" android:layout_centerVertical="true">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Search Contact" android:textStyle="bold" android:textColor="#000000"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Find friends by phone num..." android:textSize="12sp" android:textColor="#888888"/>
+                </LinearLayout>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=">" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:textColor="#888888" android:textStyle="bold"/>
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/btnFacebookMenu" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                <ImageView android:id="@+id/icFb" android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_fb" />
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/icFb" android:layout_marginStart="16dp" android:layout_centerVertical="true">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connect to Facebook" android:textStyle="bold" android:textColor="#000000"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Find contacts via Facebook" android:textSize="12sp" android:textColor="#888888"/>
+                </LinearLayout>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=">" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:textColor="#888888" android:textStyle="bold"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/btnInviteMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/icInvite"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_in_fd" />
+
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/icInvite" android:layout_marginStart="16dp" android:layout_centerVertical="true">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Invite Friends" android:textStyle="bold" android:textColor="#000000"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Invite friends to play toge..." android:textSize="12sp" android:textColor="#888888"/>
+                </LinearLayout>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=">" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:textColor="#888888" android:textStyle="bold"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="People you may know"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layoutPYMK"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP1" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="kp" android:layout_toEndOf="@id/imgP1" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow1" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP2" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd2" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="sahil" android:layout_toEndOf="@id/imgP2" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow2" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP3" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd3" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ravi" android:layout_toEndOf="@id/imgP3" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow3" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP4" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd4" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="vikram" android:layout_toEndOf="@id/imgP4" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow4" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP5" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd5" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="jaydeep" android:layout_toEndOf="@id/imgP5" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow5" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP6" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd6" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dhamo" android:layout_toEndOf="@id/imgP6" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow6" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP7" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd7" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dhruvi" android:layout_toEndOf="@id/imgP7" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow7" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP8" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd8" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Billorani" android:layout_toEndOf="@id/imgP8" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow8" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP9" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd9" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="king" android:layout_toEndOf="@id/imgP9" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow9" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP10" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd10" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Arvin" android:layout_toEndOf="@id/imgP10" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow10" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP11" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd11" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Heer" android:layout_toEndOf="@id/imgP11" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow11" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP12" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd12" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="paresh" android:layout_toEndOf="@id/imgP12" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow12" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP13" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd13" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bhavlo" android:layout_toEndOf="@id/imgP13" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow13" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+            </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Suggested Friends"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutSuggested"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP14" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd14" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Jaimin" android:layout_toEndOf="@id/imgP14" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow14" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP15" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd15" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Urvashi" android:layout_toEndOf="@id/imgP15" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow15" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                    <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgP16" android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/ic_fd16" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vishal" android:layout_toEndOf="@id/imgP16" android:layout_marginStart="16dp" android:layout_centerVertical="true" android:textColor="#000000" android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnFollow16" android:layout_width="wrap_content" android:layout_height="35dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:backgroundTint="#6C5CE7" android:text="Follow" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="12sp"/>
+                </RelativeLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
