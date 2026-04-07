@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class QuizActivity extends AppCompatActivity {
 
@@ -43,31 +44,13 @@ public class QuizActivity extends AppCompatActivity {
 
         // केटेगरी के हिसाब से सवाल लोड करना
         String category = getIntent().getStringExtra("QUIZ_CATEGORY");
+        String discoveryId = getIntent().getStringExtra("DISCOVERY_ID");
         if (category == null) category = "Productivity";
 
-        if (category.equals("Productivity")) {
-            loadProductivityQuestions();
-        } else if (category.equals("Brilliant Minds")) {
-            loadBrilliantMindsQuestions();
-        } else if (category.equals("Having Fun")) {
-            loadHavingFunQuestions();
-        } else if (category.equals("General Knowledge")) {
-            loadGKQuestions();
-        } else if (category.equals("Mathematics")) {
-            loadMathQuestions();
-        } else if (category.equals("Science")) {
-            loadScienceQuestions();
-        } else if (category.equals("Geography")) {
-            loadGeographyQuestions();
-        } else if (category.equals("Quick Play")) {
-            // 👉 यहाँ हमने 'Quick Play' का रास्ता जोड़ दिया
-            loadQuickPlayQuestions();
+        if (discoveryId != null && !discoveryId.isEmpty()) {
+            fetchDynamicQuestions(discoveryId);
         } else {
-            Toast.makeText(this, "Loading default questions...", Toast.LENGTH_SHORT).show();
-        }
-
-        if (questionList.size() > 0) {
-            displayQuestion();
+            loadStaticQuestions(category);
         }
 
         // ==========================================
@@ -89,9 +72,11 @@ public class QuizActivity extends AppCompatActivity {
                 // स्कोर बढ़ाना और सही/गलत बताना
                 if (selectedOption.equals(currentQ.getCorrectAnswer())) {
                     correctAnswers++; // सही स्कोर +1
+                    updatePoints(true);
                     Toast.makeText(QuizActivity.this, "Right Answer! 🎉", Toast.LENGTH_SHORT).show();
                 } else {
                     wrongAnswers++;   // गलत स्कोर +1
+                    updatePoints(false);
                     Toast.makeText(QuizActivity.this, "Wrong Answer! ❌", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -124,6 +109,7 @@ public class QuizActivity extends AppCompatActivity {
                 }
             }
         });
+
         // ==========================================
         // 👉 वापस (Back) जाने वाले बटन का लॉजिक (यहाँ लगाओ!) 👈
         // ==========================================
@@ -137,6 +123,69 @@ public class QuizActivity extends AppCompatActivity {
             });
         }
     }
+
+    private void fetchDynamicQuestions(String discoveryId) {
+        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("DiscoveryActivities")
+                .document(discoveryId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        List<Map<String, String>> dynamicQs = (List<Map<String, String>>) documentSnapshot.get("questions");
+                        if (dynamicQs != null && !dynamicQs.isEmpty()) {
+                            questionList.clear();
+                            for (Map<String, String> qMap : dynamicQs) {
+                                questionList.add(new QuizQuestion(
+                                        qMap.get("question"),
+                                        qMap.get("optionA"),
+                                        qMap.get("optionB"),
+                                        qMap.get("optionC"),
+                                        qMap.get("optionD"),
+                                        qMap.get("correctAnswer")
+                                ));
+                            }
+                            displayQuestion();
+                            Toast.makeText(this, "Dynamic questions loaded!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            loadStaticQuestions(getIntent().getStringExtra("QUIZ_CATEGORY"));
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    loadStaticQuestions(getIntent().getStringExtra("QUIZ_CATEGORY"));
+                });
+    }
+
+    private void loadStaticQuestions(String category) {
+        if (category == null) category = "Productivity";
+
+        if (category.equals("Productivity")) {
+            loadProductivityQuestions();
+        } else if (category.equals("Brilliant Minds")) {
+            loadBrilliantMindsQuestions();
+        } else if (category.equals("Having Fun")) {
+            loadHavingFunQuestions();
+        } else if (category.equals("General Knowledge")) {
+            loadGKQuestions();
+        } else if (category.equals("Mathematics")) {
+            loadMathQuestions();
+        } else if (category.equals("Science")) {
+            loadScienceQuestions();
+        } else if (category.equals("Geography")) {
+            loadGeographyQuestions();
+        } else if (category.equals("Quick Play")) {
+            // 👉 यहाँ हमने 'Quick Play' का रास्ता जोड़ दिया
+            loadQuickPlayQuestions();
+        } else {
+            Toast.makeText(this, "Loading default questions...", Toast.LENGTH_SHORT).show();
+            loadProductivityQuestions();
+        }
+
+        if (questionList.size() > 0) {
+            displayQuestion();
+        }
+    }
+
     private void displayQuestion() {
         resetOptions();
         QuizQuestion currentQ = questionList.get(currentQuestionIndex);
@@ -205,29 +254,35 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     // ==========================================
-    // 🏆 Points Update करने का फंक्शन
+    // 🏆 Points Update करने का फंक्शन (Firestore + Local)
     // ==========================================
     private void updatePoints(boolean isCorrect) {
-        // ऐप की 'छोटी मेमोरी' (SharedPreferences) खोलो
+        // 1. लोकल मेमोरी में अपडेट (UI के लिए)
         android.content.SharedPreferences prefs = getSharedPreferences("MindSpacePrefs", MODE_PRIVATE);
-
-        // पुराने पॉइंट्स निकालो (मैंने डिफ़ॉल्ट 950 रखा है क्योंकि तुम्हारी फोटो में 950 था)
         int currentPoints = prefs.getInt("total_points", 950);
 
-        if (isCorrect) {
-            currentPoints += 10; // सही जवाब पर +10 पॉइंट्स
-            android.widget.Toast.makeText(this, "Correct! +10 Points 🎯", android.widget.Toast.LENGTH_SHORT).show();
-        } else {
-            currentPoints -= 5;  // गलत जवाब पर -5 पॉइंट्स
-            // अगर पॉइंट्स 0 से कम हो रहे हैं, तो उसे 0 ही रखो (माइनस में मत जाने दो)
+        if (isCorrect) currentPoints += 10;
+        else {
+            currentPoints -= 5;
             if (currentPoints < 0) currentPoints = 0;
-            android.widget.Toast.makeText(this, "Wrong! -5 Points ❌", android.widget.Toast.LENGTH_SHORT).show();
         }
 
-        // नए पॉइंट्स वापस सेव कर दो
         android.content.SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("total_points", currentPoints);
         editor.apply();
+
+        // 2. फायरबेस डेटाबेस में रिअल-टाइम सिंक 🚀
+        com.google.firebase.auth.FirebaseAuth auth = com.google.firebase.auth.FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) {
+            String uid = auth.getCurrentUser().getUid();
+            com.google.firebase.firestore.FirebaseFirestore fStore = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            
+            long pointDelta = isCorrect ? 10 : -5;
+            
+            fStore.collection("Users").document(uid)
+                    .update("points", com.google.firebase.firestore.FieldValue.increment(pointDelta))
+                    .addOnFailureListener(e -> android.util.Log.e("FirebasePoints", "Update failed: " + e.getMessage()));
+        }
     }
 
        // ==========================================

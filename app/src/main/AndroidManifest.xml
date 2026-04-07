@@ -86,6 +86,7 @@
         <activity android:name=".SettingsActivity" />
 
         <activity android:name=".SearchActivity" />
+        <activity android:name=".AddDiscoveryActivity" />
 
 
     </application>

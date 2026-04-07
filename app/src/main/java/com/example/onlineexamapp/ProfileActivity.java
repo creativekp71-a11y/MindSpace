@@ -1,24 +1,28 @@
 package com.example.onlineexamapp;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.android.gms.tasks.Task;
 import com.bumptech.glide.Glide;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import android.net.Uri;
-import android.view.View;
-import android.widget.ImageView;
 import android.app.ProgressDialog;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +30,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore fStore;
-    private FirebaseStorage fStorage;
-    private TextView tvName, tvUsername, tvEmail, tvPoints, tvCoins, tvRank;
+    private TextView tvName, tvUsername, tvEmail, tvPoints, tvCoins, tvRank, tvMenuAddActivity;
+    private View viewDividerAddActivity;
+    private SwitchCompat switchBecomeAuthor;
     private ImageView ivProfilePic, ivCover;
     private ActivityResultLauncher<String> imagePickerLauncher;
     private String uploadType = ""; // "profile_pic" or "cover_pic"
@@ -41,7 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
 
-        // अपनी XML की ID यहाँ ध्यान से मिला लेना!
+        // Initialize UI components
         tvName = findViewById(R.id.tvProfileName);
         tvUsername = findViewById(R.id.tvProfileUsername);
         tvEmail = findViewById(R.id.tvProfileEmail);
@@ -56,20 +61,18 @@ public class ProfileActivity extends AppCompatActivity {
 
         // --- Menu Navigation ---
         findViewById(R.id.tvMenuAchievements).setOnClickListener(v -> 
-            startActivity(new android.content.Intent(this, AchievementsActivity.class)));
+            startActivity(new Intent(this, AchievementsActivity.class)));
 
         findViewById(R.id.tvMenuSettings).setOnClickListener(v -> 
-            startActivity(new android.content.Intent(this, SettingsActivity.class)));
+            startActivity(new Intent(this, SettingsActivity.class)));
 
         findViewById(R.id.tvMenuShare).setOnClickListener(v -> {
-            android.content.Intent sendIntent = new android.content.Intent();
-            sendIntent.setAction(android.content.Intent.ACTION_SEND);
-            sendIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Hey! Check out MindSpace for awesome quizzes!");
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey! Check out MindSpace for awesome quizzes!");
             sendIntent.setType("text/plain");
-            startActivity(android.content.Intent.createChooser(sendIntent, null));
+            startActivity(Intent.createChooser(sendIntent, null));
         });
-
-        fStorage = FirebaseStorage.getInstance("gs://mindspace-b98b4.appspot.com");
 
         // --- Image Picker Setup ---
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -80,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Click listeners for the new camera icons
+        // Click listeners for the camera icons
         findViewById(R.id.btnEditProfilePic).setOnClickListener(v -> {
             uploadType = "profile_pic";
             imagePickerLauncher.launch("image/*");
@@ -91,14 +94,25 @@ public class ProfileActivity extends AppCompatActivity {
             imagePickerLauncher.launch("image/*");
         });
 
+        // --- Author Menu Items ---
+        switchBecomeAuthor = findViewById(R.id.switchBecomeAuthor);
+        tvMenuAddActivity = findViewById(R.id.tvMenuAddActivity);
+        viewDividerAddActivity = findViewById(R.id.viewDividerAddActivity);
+
+        switchBecomeAuthor.setOnCheckedChangeListener((buttonView, isChecked) -> updateAuthorStatus(isChecked));
+
+        tvMenuAddActivity.setOnClickListener(v -> {
+            startActivity(new Intent(this, AddDiscoveryActivity.class));
+        });
+
         // --- Logout Logic ---
-        View btnLogout = findViewById(R.id.tvMenuLogout); // ID from activity_profile.xml
+        View btnLogout = findViewById(R.id.tvMenuLogout);
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {
                 mAuth.signOut();
                 Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-                android.content.Intent intent = new android.content.Intent(ProfileActivity.this, MainActivity.class);
-                intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
             });
@@ -113,55 +127,101 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Initialize ProgressDialog
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Uploading Image");
-        progressDialog.setMessage("Please wait while we update your profile...");
+        progressDialog.setTitle("Processing Image");
+        progressDialog.setMessage("Optimizing and uploading directly to database...");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        String uid = mAuth.getCurrentUser().getUid();
-        StorageReference ref = fStorage.getReference().child("Users/" + uid + "/" + uploadType + ".jpg");
+        new Thread(() -> {
+            try {
+                // 1. Get Bitmap from Uri
+                InputStream inputStream = getContentResolver().openInputStream(uri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                if (inputStream != null) inputStream.close();
 
-        UploadTask uploadTask = ref.putFile(uri);
+                // 2. Scale it down to ensure it stays well under 1MB
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                float ratio = (float) width / (float) height;
+                int newWidth = 400; 
+                int newHeight = (int) (400 / ratio);
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
 
-        // --- Canonical Way (Best Practice) ---
-        uploadTask.continueWithTask(task -> {
-            if (!task.isSuccessful()) {
-                throw task.getException();
+                // 3. Compress to JPEG
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);
+                byte[] bytes = bos.toByteArray();
+
+                // 4. Encode to Base64
+                String base64String = Base64.encodeToString(bytes, Base64.DEFAULT);
+
+                // 5. Update UI and Firestore on Main Thread
+                runOnUiThread(() -> {
+                    updateFirestore(base64String);
+                });
+
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    if (progressDialog.isShowing()) progressDialog.dismiss();
+                    Log.e("Base64Encoding", "Error processing image: " + e.getMessage());
+                    Toast.makeText(ProfileActivity.this, "Processing failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
             }
-            return ref.getDownloadUrl();
-        }).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Uri downloadUri = task.getResult();
-                updateFirestore(downloadUri.toString());
-            } else {
-                if (progressDialog.isShowing()) progressDialog.dismiss();
-                String error = task.getException() != null ? task.getException().getMessage() : "Unknown Error";
-                Log.e("FirebaseStorage", "Upload Task Failed: " + error);
-                Toast.makeText(this, "Upload failed: " + error, Toast.LENGTH_LONG).show();
-            }
-        });
+        }).start();
     }
 
     private boolean isNetworkAvailable() {
         android.net.ConnectivityManager connectivityManager = (android.net.ConnectivityManager) getSystemService(android.content.Context.CONNECTIVITY_SERVICE);
-        android.net.NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+             android.net.Network network = connectivityManager.getActiveNetwork();
+             if (network == null) return false;
+             android.net.NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
+             return capabilities != null && (capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_CELLULAR));
+        } else {
+             android.net.NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+             return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
     }
 
-    private void updateFirestore(String url) {
+    private void updateAuthorStatus(boolean isAuthor) {
         String uid = mAuth.getCurrentUser().getUid();
         Map<String, Object> map = new HashMap<>();
-        map.put(uploadType, url);
+        map.put("isAuthor", isAuthor);
+
+        fStore.collection("Users").document(uid).update(map).addOnSuccessListener(aVoid -> {
+            String msg = isAuthor ? "You are now an Author!" : "Author status removed.";
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+            updateAuthorUI(isAuthor);
+        }).addOnFailureListener(e -> {
+            switchBecomeAuthor.setChecked(!isAuthor);
+            Toast.makeText(this, "Failed to update author status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void updateAuthorUI(boolean isAuthor) {
+        if (isAuthor) {
+            tvMenuAddActivity.setVisibility(View.VISIBLE);
+            viewDividerAddActivity.setVisibility(View.VISIBLE);
+        } else {
+            tvMenuAddActivity.setVisibility(View.GONE);
+            viewDividerAddActivity.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateFirestore(String base64) {
+        String uid = mAuth.getCurrentUser().getUid();
+        Map<String, Object> map = new HashMap<>();
+        map.put(uploadType, base64);
 
         fStore.collection("Users").document(uid).update(map).addOnSuccessListener(aVoid -> {
             if (progressDialog.isShowing()) progressDialog.dismiss();
             Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
             
-            // Load the new image immediately
+            byte[] imageBytes = Base64.decode(base64, Base64.DEFAULT);
             if (uploadType.equals("profile_pic")) {
-                Glide.with(this).load(url).placeholder(R.drawable.ic_user_placeholder).error(R.drawable.ic_user_placeholder).into(ivProfilePic);
+                Glide.with(this).load(imageBytes).placeholder(R.drawable.ic_user_placeholder).error(R.drawable.ic_user_placeholder).into(ivProfilePic);
             } else {
-                Glide.with(this).load(url).placeholder(R.drawable.cover_photo).error(R.drawable.cover_photo).into(ivCover);
+                Glide.with(this).load(imageBytes).placeholder(R.drawable.cover_photo).error(R.drawable.cover_photo).into(ivCover);
             }
         }).addOnFailureListener(e -> {
             if (progressDialog.isShowing()) progressDialog.dismiss();
@@ -178,7 +238,6 @@ public class ProfileActivity extends AppCompatActivity {
 
             fStore.collection("Users").document(uid).get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
-                    // डेटाबेस से डेटा निकालो (Null checks added)
                     String fullName = documentSnapshot.getString("full_name");
                     String username = documentSnapshot.getString("username");
                     String email = documentSnapshot.getString("email");
@@ -189,7 +248,6 @@ public class ProfileActivity extends AppCompatActivity {
                     String profilePic = documentSnapshot.getString("profile_pic");
                     String coverPic = documentSnapshot.getString("cover_pic");
 
-                    // स्क्रीन पर सेट करो
                     tvName.setText(fullName != null ? fullName : "N/A");
                     tvUsername.setText(username != null ? "@" + username : "@username");
                     tvEmail.setText(email != null ? email : "No Email Found");
@@ -198,12 +256,18 @@ public class ProfileActivity extends AppCompatActivity {
                     tvCoins.setText(String.valueOf(coins != null ? coins : 0));   
                     tvRank.setText(rank != null ? rank : "--");
 
-                    // Load images with Glide
+                    Boolean isAuthor = documentSnapshot.getBoolean("isAuthor");
+                    if (isAuthor == null) isAuthor = false;
+                    switchBecomeAuthor.setChecked(isAuthor);
+                    updateAuthorUI(isAuthor);
+
                     if (profilePic != null && !profilePic.isEmpty()) {
-                        Glide.with(this).load(profilePic).placeholder(R.drawable.ic_user_placeholder).error(R.drawable.ic_user_placeholder).into(ivProfilePic);
+                        byte[] pBytes = Base64.decode(profilePic, Base64.DEFAULT);
+                        Glide.with(this).load(pBytes).placeholder(R.drawable.ic_user_placeholder).error(R.drawable.ic_user_placeholder).into(ivProfilePic);
                     }
                     if (coverPic != null && !coverPic.isEmpty()) {
-                        Glide.with(this).load(coverPic).placeholder(R.drawable.cover_photo).error(R.drawable.cover_photo).into(ivCover);
+                        byte[] cBytes = Base64.decode(coverPic, Base64.DEFAULT);
+                        Glide.with(this).load(cBytes).placeholder(R.drawable.cover_photo).error(R.drawable.cover_photo).into(ivCover);
                     }
                 }
             }).addOnFailureListener(e -> Toast.makeText(this, "Error loading data", Toast.LENGTH_SHORT).show());

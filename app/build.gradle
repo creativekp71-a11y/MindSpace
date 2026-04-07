@@ -5,16 +5,12 @@ plugins {
 
 android {
     namespace 'com.example.onlineexamapp'
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.example.onlineexamapp"
         minSdk 24
-        targetSdk 36
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -53,9 +49,9 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.9.0')
 
     // अब ये सब BoM के साथ मिल कर बिना किसी झगड़े के चलेंगी
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
-    implementation 'com.google.firebase:firebase-storage'
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+    implementation libs.firebase.storage
 
     // Glide for image loading
     implementation libs.glide

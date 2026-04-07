@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Header (Fixed at top) -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="#FFFFFF">
+        
+        <ImageView
+            android:id="@+id/ivBackAddDiscovery"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_back"
+            android:padding="4dp"
+            app:tint="#000000" />
+            
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Discovery Activity"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_toEndOf="@id/ivBackAddDiscovery"
+            android:layout_marginStart="16dp"
+            android:textColor="#000000" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- Content Form -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textColor="#2F3640"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+                
+            <EditText
+                android:id="@+id/etDiscoveryTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter activity title"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_rounded_white"
+                android:elevation="2dp"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textColor="#2F3640"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+                
+            <EditText
+                android:id="@+id/etDiscoveryDescription"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:hint="Enter detailed description"
+                android:padding="16dp"
+                android:gravity="top"
+                android:background="@drawable/bg_rounded_white"
+                android:elevation="2dp"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:textColor="#2F3640"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+                
+            <EditText
+                android:id="@+id/etDiscoveryCategory"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="e.g. Science, Fun, Productivity"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_rounded_white"
+                android:elevation="2dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Questions Section -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Questions"
+                    android:textColor="#2F3640"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+                
+                <TextView
+                    android:id="@+id/tvQuestionCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="0 added"
+                    android:textColor="#6C5CE7"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnAddQuestionDialog"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="➕ Add New Question"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="#6C5CE7"
+                android:background="@drawable/bg_option"
+                android:layout_marginBottom="32dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnAddDiscovery"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:text="Save Activity"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_btn_follow"
+                android:elevation="4dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

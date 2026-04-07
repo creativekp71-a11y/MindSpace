@@ -283,6 +283,42 @@
                     <TextView android:id="@+id/tvMenuShare" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="📤  Share App" android:textSize="16sp" android:textColor="#2F3640" android:padding="16dp" android:background="?android:attr/selectableItemBackground"/>
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EAEAEA" android:layout_marginHorizontal="16dp"/>
 
+                    <!-- Become Author Item -->
+                    <RelativeLayout
+                        android:id="@+id/rlBecomeAuthor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:background="?android:attr/selectableItemBackground">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✍️  Become an Author"
+                            android:textSize="16sp"
+                            android:textColor="#2F3640"
+                            android:layout_centerVertical="true"/>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchBecomeAuthor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"/>
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EAEAEA" android:layout_marginHorizontal="16dp"/>
+
+                    <!-- Add Activity Item (Visible only for authors) -->
+                    <TextView
+                        android:id="@+id/tvMenuAddActivity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="➕  Add Discover Activity"
+                        android:textSize="16sp"
+                        android:textColor="#6C5CE7"
+                        android:padding="16dp"
+                        android:visibility="gone"
+                        android:background="?android:attr/selectableItemBackground"/>
+                    <View android:id="@+id/viewDividerAddActivity" android:layout_width="match_parent" android:layout_height="1dp" android:background="#EAEAEA" android:layout_marginHorizontal="16dp" android:visibility="gone"/>
+
                     <TextView android:id="@+id/tvMenuLogout" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🚪  Logout" android:textSize="16sp" android:textColor="#E84118" android:textStyle="bold" android:padding="16dp" android:background="?android:attr/selectableItemBackground"/>
 
                 </LinearLayout>

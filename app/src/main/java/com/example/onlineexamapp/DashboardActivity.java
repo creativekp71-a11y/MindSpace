@@ -9,8 +9,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
+import android.util.Base64;
+import android.widget.ImageView;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity {
+
+    private RecyclerView rvHomeDiscover, rvHomeAuthors;
+    private DiscoveryAdapter discoveryAdapter;
+    private AuthorHomeAdapter authorAdapter;
+    private List<DiscoveryActivityModel> discoveryList;
+    private List<UserModel> authorList;
+    private FirebaseFirestore fStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,19 +33,50 @@ public class DashboardActivity extends AppCompatActivity {
 
         // --- Fetch User Data for Greeting ---
         TextView tvUserGreeting = findViewById(R.id.tvUserGreeting);
+        fStore = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+
+        rvHomeDiscover = findViewById(R.id.rvHomeDiscover);
+        discoveryList = new ArrayList<>();
+        discoveryAdapter = new DiscoveryAdapter(this, discoveryList, true);
+        rvHomeDiscover.setAdapter(discoveryAdapter);
+
+        rvHomeAuthors = findViewById(R.id.rvHomeAuthors);
+        authorList = new ArrayList<>();
+        authorAdapter = new AuthorHomeAdapter(this, authorList);
+        rvHomeAuthors.setAdapter(authorAdapter);
+
+        fetchDiscoveries();
+        fetchTopAuthors();
 
         if (mAuth.getCurrentUser() != null) {
             String uid = mAuth.getCurrentUser().getUid();
+            ImageView ivHeaderProfile = findViewById(R.id.ivHeaderProfilePic);
+
             fStore.collection("Users").document(uid).get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     String fullName = documentSnapshot.getString("full_name");
+                    String profilePic = documentSnapshot.getString("profile_pic");
+
                     if (fullName != null && !fullName.isEmpty()) {
                         tvUserGreeting.setText("Hi, " + fullName + " 👋");
                     }
+
+                    if (profilePic != null && !profilePic.isEmpty()) {
+                        try {
+                            byte[] imageBytes = Base64.decode(profilePic, Base64.DEFAULT);
+                            Glide.with(this).load(imageBytes).placeholder(R.drawable.ic_user_placeholder).into(ivHeaderProfile);
+                        } catch (Exception e) {
+                            ivHeaderProfile.setImageResource(R.drawable.ic_user_placeholder);
+                        }
+                    }
                 }
             });
+
+            // Click listener for header profile to jump to profile page
+            if (ivHeaderProfile != null) {
+                ivHeaderProfile.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, ProfileActivity.class)));
+            }
         }
 
         // 1. Niche Discover wale Icon ka connection
@@ -66,53 +111,8 @@ public class DashboardActivity extends AppCompatActivity {
             });
         }
 
-        // ==========================================
-        // 👉 DASHBOARD CARD 1: Productivity Quiz 👈
-        // ==========================================
-        androidx.cardview.widget.CardView cardDash1 = findViewById(R.id.cardDashQuiz1); // अपनी XML वाली ID डालें
-        if (cardDash1 != null) {
-            cardDash1.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    android.content.Intent intent = new android.content.Intent(DashboardActivity.this, QuizActivity.class);
-                    // 👉 ये लाइन सबसे ज़रूरी है
-                    intent.putExtra("QUIZ_CATEGORY", "Productivity");
-                    startActivity(intent);
-                }
-            });
-        }
+        // Discovery items are now handled by rvHomeDiscover and DiscoveryAdapter
 
-        // ==========================================
-        // 👉 DASHBOARD CARD 2: Brilliant Minds 👈
-        // ==========================================
-        androidx.cardview.widget.CardView cardDash2 = findViewById(R.id.cardDashQuiz2); // अपनी XML वाली ID डालें
-        if (cardDash2 != null) {
-            cardDash2.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    android.content.Intent intent = new android.content.Intent(DashboardActivity.this, QuizActivity.class);
-                    // 👉 यहाँ Brilliant Minds सेट किया
-                    intent.putExtra("QUIZ_CATEGORY", "Brilliant Minds");
-                    startActivity(intent);
-                }
-            });
-        }
-
-        // ==========================================
-        // 👉 DASHBOARD CARD 3: Having Fun 👈
-        // ==========================================
-        androidx.cardview.widget.CardView cardDash3 = findViewById(R.id.cardDashQuiz3); // अपनी XML वाली ID डालें
-        if (cardDash3 != null) {
-            cardDash3.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    android.content.Intent intent = new android.content.Intent(DashboardActivity.this, QuizActivity.class);
-                    // 👉 यहाँ Having Fun सेट किया
-                    intent.putExtra("QUIZ_CATEGORY", "Having Fun");
-                    startActivity(intent);
-                }
-            });
-        }
 
         // ==========================================
         // 🔍 Top Search Icon का कनेक्शन
@@ -189,5 +189,43 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void fetchDiscoveries() {
+        fStore.collection("DiscoveryActivities")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(10)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    discoveryList.clear();
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        DiscoveryActivityModel model = document.toObject(DiscoveryActivityModel.class);
+                        model.setId(document.getId());
+                        discoveryList.add(model);
+                    }
+                    discoveryAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error fetching discoveries: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void fetchTopAuthors() {
+        fStore.collection("Users")
+                .whereEqualTo("isAuthor", true)
+                .limit(10)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    authorList.clear();
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        UserModel author = document.toObject(UserModel.class);
+                        author.setId(document.getId());
+                        authorList.add(author);
+                    }
+                    authorAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error fetching authors: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }
