@@ -43,8 +43,22 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.View
         holder.title.setText(model.getTitle());
         holder.category.setText(model.getCategory());
 
-        // 🔹 Category Image
-        setCategoryImage(holder.image, model.getCategory());
+        // 🔹 Cover Image (Custom or Category fallback)
+        String coverPic = model.getCover_pic();
+        if (coverPic != null && !coverPic.isEmpty()) {
+            try {
+                byte[] bytes = Base64.decode(coverPic, Base64.DEFAULT);
+                Glide.with(context)
+                        .load(bytes)
+                        .placeholder(R.drawable.quiz_photo_1)
+                        .error(R.drawable.quiz_photo_1)
+                        .into(holder.image);
+            } catch (Exception e) {
+                setCategoryImage(holder.image, model.getCategory());
+            }
+        } else {
+            setCategoryImage(holder.image, model.getCategory());
+        }
 
         // 🔹 Click Open Quiz
         holder.itemView.setOnClickListener(v -> {

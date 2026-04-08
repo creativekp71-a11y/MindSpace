@@ -11,6 +11,7 @@ public class DiscoveryActivityModel {
     private String description;
     private String category;
     private String authorId;
+    private String cover_pic; // 🔹 Base64 Thumbnail for the activity
     private Timestamp timestamp;
     private List<Map<String, String>> questions;
 
@@ -20,7 +21,7 @@ public class DiscoveryActivityModel {
 
     // 🔹 Full Constructor (optional but useful)
     public DiscoveryActivityModel(String id, String title, String description,
-                                  String category, String authorId,
+                                  String category, String authorId, String cover_pic,
                                   Timestamp timestamp,
                                   List<Map<String, String>> questions) {
         this.id = id;
@@ -28,6 +29,7 @@ public class DiscoveryActivityModel {
         this.description = description;
         this.category = category;
         this.authorId = authorId;
+        this.cover_pic = cover_pic;
         this.timestamp = timestamp;
         this.questions = questions;
     }
@@ -82,6 +84,14 @@ public class DiscoveryActivityModel {
         this.timestamp = timestamp;
     }
 
+    public String getCover_pic() {
+        return cover_pic;
+    }
+
+    public void setCover_pic(String cover_pic) {
+        this.cover_pic = cover_pic;
+    }
+
     public List<Map<String, String>> getQuestions() {
         return questions;
     }
@@ -89,4 +99,4 @@ public class DiscoveryActivityModel {
     public void setQuestions(List<Map<String, String>> questions) {
         this.questions = questions;
     }
-}
+}

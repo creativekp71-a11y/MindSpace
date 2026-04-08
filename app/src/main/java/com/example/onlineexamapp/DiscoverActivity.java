@@ -52,6 +52,11 @@ public class DiscoverActivity extends AppCompatActivity {
         rvDiscoverAll.setAdapter(adapter);
 
         // 🔥 Data Fetch
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         fetchDiscoveries();
     }
 

@@ -42,8 +42,9 @@ public class DashboardActivity extends AppCompatActivity {
 
         rvHomeDiscover = findViewById(R.id.rvHomeDiscover);
 
-        // 🌟 बदलाव 2: कार्ड्स को बाएँ-दाएँ (Horizontal) खिसकाने का कोड लगा दिया
+        // 🌟 बदलाव 2: Horizontal Scroll for Discoveries (as requested)
         rvHomeDiscover.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvHomeDiscover.setHasFixedSize(true);
 
         discoveryList = new ArrayList<>();
 
@@ -56,8 +57,7 @@ public class DashboardActivity extends AppCompatActivity {
         authorAdapter = new AuthorHomeAdapter(this, authorList);
         rvHomeAuthors.setAdapter(authorAdapter);
 
-        fetchDiscoveries();
-        fetchTopAuthors();
+
 
         if (mAuth.getCurrentUser() != null) {
             String uid = mAuth.getCurrentUser().getUid();
@@ -189,6 +189,13 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchDiscoveries();
+        fetchTopAuthors();
     }
 
     private void fetchDiscoveries() {
