@@ -1,90 +1,102 @@
 package com.example.onlineexamapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
-public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.DiscoveryViewHolder> {
+public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.ViewHolder> {
 
     private Context context;
-    private List<DiscoveryActivityModel> discoveryList;
-    private boolean isHorizontal;
+    private List<DiscoveryActivityModel> list;
 
-    public DiscoveryAdapter(Context context, List<DiscoveryActivityModel> discoveryList, boolean isHorizontal) {
+    public DiscoveryAdapter(Context context, List<DiscoveryActivityModel> list) {
         this.context = context;
-        this.discoveryList = discoveryList;
-        this.isHorizontal = isHorizontal;
+        this.list = list;
     }
 
     @NonNull
     @Override
-    public DiscoveryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_discovery, parent, false);
-        if (!isHorizontal) {
-            // Adjust width for vertical list
-            ViewGroup.LayoutParams lp = view.getLayoutParams();
-            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            view.setLayoutParams(lp);
-        }
-        return new DiscoveryViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DiscoveryViewHolder holder, int position) {
-        DiscoveryActivityModel model = discoveryList.get(position);
-        holder.tvTitle.setText(model.getTitle());
-        holder.tvCategory.setText(model.getCategory());
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        // Placeholders based on category
-        setCategoryPlaceholder(holder.ivImage, model.getCategory());
+        DiscoveryActivityModel model = list.get(position);
 
-        // Handle Click
+        // 🔹 Set Data
+        holder.title.setText(model.getTitle());
+        holder.category.setText(model.getCategory());
+
+        // 🔹 Category Image
+        setCategoryImage(holder.image, model.getCategory());
+
+        // 🔹 Click Open Quiz
         holder.itemView.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(context, QuizActivity.class);
+            Intent intent = new Intent(context, QuizActivity.class);
             intent.putExtra("QUIZ_CATEGORY", model.getCategory());
-            intent.putExtra("DISCOVERY_ID", model.getId()); // Use document ID for dynamic quiz
+            intent.putExtra("DISCOVERY_ID", model.getId());
             context.startActivity(intent);
         });
 
-        // Fetch author name
-        fetchAuthorName(model.getAuthorId(), holder.tvAuthorName, holder.ivAuthorPic);
+        // 🔹 Author Data (Firebase)
+        fetchAuthor(model.getAuthorId(), holder.authorName, holder.authorImage);
     }
 
-    private void fetchAuthorName(String authorId, TextView tvName, ImageView ivPic) {
+    // 🔥 Fetch Author Name + Image
+    private void fetchAuthor(String authorId, TextView name, ImageView image) {
+
         if (authorId == null || authorId.isEmpty()) return;
-        
-        FirebaseFirestore.getInstance().collection("Users").document(authorId)
+
+        FirebaseFirestore.getInstance()
+                .collection("Users")
+                .document(authorId)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String name = documentSnapshot.getString("full_name");
-                        String pic = documentSnapshot.getString("profile_pic");
-                        tvName.setText(name != null ? name : "Unknown");
-                        if (pic != null && !pic.isEmpty()) {
+                .addOnSuccessListener(doc -> {
+
+                    if (doc.exists()) {
+                        String fullName = doc.getString("full_name");
+                        String profilePic = doc.getString("profile_pic");
+
+                        name.setText(fullName != null ? fullName : "Unknown");
+
+                        if (profilePic != null && !profilePic.isEmpty()) {
                             try {
-                                byte[] imageBytes = android.util.Base64.decode(pic, android.util.Base64.DEFAULT);
-                                Glide.with(context).load(imageBytes).placeholder(R.drawable.ic_user_placeholder).into(ivPic);
+                                byte[] bytes = Base64.decode(profilePic, Base64.DEFAULT);
+                                Glide.with(context)
+                                        .load(bytes)
+                                        .placeholder(R.drawable.ic_user_placeholder)
+                                        .into(image);
                             } catch (Exception e) {
-                                ivPic.setImageResource(R.drawable.ic_user_placeholder);
+                                image.setImageResource(R.drawable.ic_user_placeholder);
                             }
                         } else {
-                            ivPic.setImageResource(R.drawable.ic_user_placeholder);
+                            image.setImageResource(R.drawable.ic_user_placeholder);
                         }
                     }
                 });
     }
 
-    private void setCategoryPlaceholder(ImageView iv, String category) {
+    // 🔥 Category Image Set
+    private void setCategoryImage(ImageView iv, String category) {
+
         if (category == null) category = "fun";
+
         category = category.toLowerCase();
 
         if (category.contains("science")) {
@@ -102,20 +114,25 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.Disc
 
     @Override
     public int getItemCount() {
-        return discoveryList.size();
+        return list.size();
     }
 
-    public static class DiscoveryViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivImage, ivAuthorPic;
-        TextView tvTitle, tvCategory, tvAuthorName;
+    // 🔥 ViewHolder (IMPORTANT - match with XML IDs)
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public DiscoveryViewHolder(@NonNull View itemView) {
+        ImageView image, authorImage;
+        TextView title, category, authorName;
+
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivImage = itemView.findViewById(R.id.ivDiscoveryImage);
-            ivAuthorPic = itemView.findViewById(R.id.ivDiscoveryAuthorPic);
-            tvTitle = itemView.findViewById(R.id.tvDiscoveryTitle);
-            tvCategory = itemView.findViewById(R.id.tvDiscoveryCategory);
-            tvAuthorName = itemView.findViewById(R.id.tvDiscoveryAuthorName);
+
+            // 🌟 पुरानी IDs को नई IDs से बदल दिया है 🌟
+            image = itemView.findViewById(R.id.ivDiscoverThumb);
+            authorImage = itemView.findViewById(R.id.ivAuthorThumb);
+
+            title = itemView.findViewById(R.id.tvDiscoverTitle);
+            category = itemView.findViewById(R.id.tvDiscoverStats);
+            authorName = itemView.findViewById(R.id.tvAuthorName);
         }
     }
 }

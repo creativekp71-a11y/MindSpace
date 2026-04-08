@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DiscoveryActivityModel {
+
     private String id;
     private String title;
     private String description;
@@ -13,11 +14,15 @@ public class DiscoveryActivityModel {
     private Timestamp timestamp;
     private List<Map<String, String>> questions;
 
+    // 🔹 Empty constructor (Firestore ke liye required)
     public DiscoveryActivityModel() {
-        // Required for Firestore
     }
 
-    public DiscoveryActivityModel(String id, String title, String description, String category, String authorId, Timestamp timestamp, List<Map<String, String>> questions) {
+    // 🔹 Full Constructor (optional but useful)
+    public DiscoveryActivityModel(String id, String title, String description,
+                                  String category, String authorId,
+                                  Timestamp timestamp,
+                                  List<Map<String, String>> questions) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -27,24 +32,61 @@ public class DiscoveryActivityModel {
         this.questions = questions;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    // 🔹 Getters & Setters
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getId() {
+        return id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getAuthorId() { return authorId; }
-    public void setAuthorId(String authorId) { this.authorId = authorId; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public Timestamp getTimestamp() { return timestamp; }
-    public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }
+    public String getDescription() {
+        return description;
+    }
 
-    public List<Map<String, String>> getQuestions() { return questions; }
-    public void setQuestions(List<Map<String, String>> questions) { this.questions = questions; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public List<Map<String, String>> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Map<String, String>> questions) {
+        this.questions = questions;
+    }
 }

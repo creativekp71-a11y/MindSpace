@@ -1,21 +1,24 @@
 package com.example.onlineexamapp;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DiscoverActivity extends AppCompatActivity {
 
     private RecyclerView rvDiscoverAll;
-    private DiscoveryAdapter discoveryAdapter;
-    private List<DiscoveryActivityModel> discoveryList;
+    private DiscoveryAdapter adapter;
+    private List<DiscoveryActivityModel> list;
     private FirebaseFirestore fStore;
 
     @Override
@@ -23,44 +26,56 @@ public class DiscoverActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover);
 
+        // 🔥 Firebase init
         fStore = FirebaseFirestore.getInstance();
 
-        // 1. Back button logic
-        ImageView ivBack = findViewById(R.id.ivBackDiscover);
+        // 🔙 Back Button
+        ImageView ivBack = findViewById(R.id.ivBack);
         if (ivBack != null) {
             ivBack.setOnClickListener(v -> finish());
         }
 
-        // 2. Search icon logic
-        ImageView ivSearch = findViewById(R.id.ivSearchDiscover);
+        // 🔍 Search Button
+        ImageView ivSearch = findViewById(R.id.ivSearch);
         if (ivSearch != null) {
-            ivSearch.setOnClickListener(v -> Toast.makeText(DiscoverActivity.this, "Opening Search...", Toast.LENGTH_SHORT).show());
+            ivSearch.setOnClickListener(v ->
+                    Toast.makeText(this, "Search clicked", Toast.LENGTH_SHORT).show());
         }
 
-        // 3. RecyclerView Setup
-        rvDiscoverAll = findViewById(R.id.rvDiscoverAll);
-        discoveryList = new ArrayList<>();
-        discoveryAdapter = new DiscoveryAdapter(this, discoveryList, false); // Vertical layout
-        rvDiscoverAll.setAdapter(discoveryAdapter);
+        // 🔥 RecyclerView Setup
+        rvDiscoverAll = findViewById(R.id.recyclerView);
 
+        list = new ArrayList<>();
+        adapter = new DiscoveryAdapter(this, list);
+
+        rvDiscoverAll.setLayoutManager(new LinearLayoutManager(this));
+        rvDiscoverAll.setAdapter(adapter);
+
+        // 🔥 Data Fetch
         fetchDiscoveries();
     }
 
     private void fetchDiscoveries() {
+
         fStore.collection("DiscoveryActivities")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    discoveryList.clear();
-                    for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        DiscoveryActivityModel model = document.toObject(DiscoveryActivityModel.class);
-                        model.setId(document.getId());
-                        discoveryList.add(model);
+
+                    list.clear();
+
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+
+                        DiscoveryActivityModel model = doc.toObject(DiscoveryActivityModel.class);
+                        model.setId(doc.getId());
+
+                        list.add(model);
                     }
-                    discoveryAdapter.notifyDataSetChanged();
+
+                    adapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error fetching discoveries: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 }

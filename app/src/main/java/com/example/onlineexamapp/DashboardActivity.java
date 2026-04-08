@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager; // 🌟 Horizontal Scroll के लिए नया Import
 import com.bumptech.glide.Glide;
 import android.util.Base64;
 import android.widget.ImageView;
@@ -20,7 +21,10 @@ import java.util.List;
 public class DashboardActivity extends AppCompatActivity {
 
     private RecyclerView rvHomeDiscover, rvHomeAuthors;
-    private DiscoveryAdapter discoveryAdapter;
+
+    // 🌟 बदलाव 1: यहाँ DiscoveryAdapter की जगह DashboardAdapter कर दिया
+    private DashboardAdapter dashboardAdapter;
+
     private AuthorHomeAdapter authorAdapter;
     private List<DiscoveryActivityModel> discoveryList;
     private List<UserModel> authorList;
@@ -37,9 +41,15 @@ public class DashboardActivity extends AppCompatActivity {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         rvHomeDiscover = findViewById(R.id.rvHomeDiscover);
+
+        // 🌟 बदलाव 2: कार्ड्स को बाएँ-दाएँ (Horizontal) खिसकाने का कोड लगा दिया
+        rvHomeDiscover.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
         discoveryList = new ArrayList<>();
-        discoveryAdapter = new DiscoveryAdapter(this, discoveryList, true);
-        rvHomeDiscover.setAdapter(discoveryAdapter);
+
+        // 🌟 बदलाव 3: यहाँ नया वाला DashboardAdapter सेट कर दिया है
+        dashboardAdapter = new DashboardAdapter(this, discoveryList);
+        rvHomeDiscover.setAdapter(dashboardAdapter);
 
         rvHomeAuthors = findViewById(R.id.rvHomeAuthors);
         authorList = new ArrayList<>();
@@ -111,26 +121,17 @@ public class DashboardActivity extends AppCompatActivity {
             });
         }
 
-        // Discovery items are now handled by rvHomeDiscover and DiscoveryAdapter
-
-
         // ==========================================
         // 🔍 Top Search Icon का कनेक्शन
         // ==========================================
-
-        // 🚨 ध्यान दें: R.id.ivSearch की जगह अपने डिज़ाइन (XML) वाले सर्च आइकॉन की सही ID डालना
         android.widget.ImageView iconSearch = findViewById(R.id.ivSearch);
 
         if (iconSearch != null) {
             iconSearch.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
-
-                    // पुराना Toast मैसेज हटा दिया!
-                    // अब सीधा नया Search Page खुलेगा 🚀
                     android.content.Intent intent = new android.content.Intent(DashboardActivity.this, SearchActivity.class);
                     startActivity(intent);
-
                 }
             });
         }
@@ -138,7 +139,7 @@ public class DashboardActivity extends AppCompatActivity {
         // ==========================================
         // 👉 Notification आइकन का कनेक्शन 🔔 👈
         // ==========================================
-        android.widget.ImageView ivNotification = findViewById(R.id.ivBell); // 👈 यहाँ ivBell कर दिया
+        android.widget.ImageView ivNotification = findViewById(R.id.ivBell);
         if (ivNotification != null) {
             ivNotification.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
@@ -151,13 +152,12 @@ public class DashboardActivity extends AppCompatActivity {
         // ==========================================
         // 👉 Center Logo (Quick Play) का कनेक्शन 💡 👈
         // ==========================================
-        android.widget.ImageView ivCenterLogo = findViewById(R.id.ivCenterLogo); // अपनी XML वाली ID यहाँ डालना
+        android.widget.ImageView ivCenterLogo = findViewById(R.id.ivCenterLogo);
         if (ivCenterLogo != null) {
             ivCenterLogo.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
                     android.content.Intent intent = new android.content.Intent(DashboardActivity.this, QuizActivity.class);
-                    // 👉 पार्सल में "Quick Play" नाम भेजा
                     intent.putExtra("QUIZ_CATEGORY", "Quick Play");
                     startActivity(intent);
                 }
@@ -167,7 +167,7 @@ public class DashboardActivity extends AppCompatActivity {
         // ==========================================
         // 👉 Leaderboard (Rank) वाले बटन का कनेक्शन 👈
         // ==========================================
-        android.view.View navLeaderboard = findViewById(R.id.navLeaderboard); // XML वाली ID
+        android.view.View navLeaderboard = findViewById(R.id.navLeaderboard);
         if (navLeaderboard != null) {
             navLeaderboard.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
@@ -180,7 +180,7 @@ public class DashboardActivity extends AppCompatActivity {
         // ==========================================
         // 👉 Profile वाले बटन का कनेक्शन 👈
         // ==========================================
-        android.view.View navProfile = findViewById(R.id.navProfile); // XML वाली ID चेक कर लेना
+        android.view.View navProfile = findViewById(R.id.navProfile);
         if (navProfile != null) {
             navProfile.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
@@ -203,7 +203,8 @@ public class DashboardActivity extends AppCompatActivity {
                         model.setId(document.getId());
                         discoveryList.add(model);
                     }
-                    discoveryAdapter.notifyDataSetChanged();
+                    // 🌟 बदलाव 4: यहाँ भी dashboardAdapter कर दिया है
+                    dashboardAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error fetching discoveries: " + e.getMessage(), Toast.LENGTH_SHORT).show();

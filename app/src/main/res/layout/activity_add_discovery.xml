@@ -45,13 +45,13 @@
             android:paddingHorizontal="16dp"
             android:paddingBottom="24dp">
 
-            <!-- Content Form -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Title"
+                android:text="Auther Name"
                 android:textColor="#2F3640"
                 android:textStyle="bold"
+                android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
                 
             <EditText
@@ -64,14 +64,14 @@
                 android:elevation="2dp"
                 android:layout_marginBottom="20dp" />
 
-            <TextView
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Description"
                 android:textColor="#2F3640"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
-                
+
             <EditText
                 android:id="@+id/etDiscoveryDescription"
                 android:layout_width="match_parent"
@@ -81,21 +81,22 @@
                 android:gravity="top"
                 android:background="@drawable/bg_rounded_white"
                 android:elevation="2dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp" />-->
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category"
+                android:text="Quiz Category"
                 android:textColor="#2F3640"
                 android:textStyle="bold"
+                android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
                 
             <EditText
                 android:id="@+id/etDiscoveryCategory"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="e.g. Science, Fun, Productivity"
+                android:hint="e.g. Science, Fun, Productivity, etc..."
                 android:paddingHorizontal="16dp"
                 android:background="@drawable/bg_rounded_white"
                 android:elevation="2dp"
@@ -112,7 +113,7 @@
                     android:text="Questions"
                     android:textColor="#2F3640"
                     android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="18sp" />
                 
                 <TextView
                     android:id="@+id/tvQuestionCount"

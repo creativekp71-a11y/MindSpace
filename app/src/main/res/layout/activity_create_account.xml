@@ -59,17 +59,17 @@
             android:layout_height="wrap_content"
             android:text="Full Name"
             android:textColor="#757575"
-            android:textSize="12sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
         <EditText
             android:id="@+id/etFullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="khushal parmar"
+            android:hint="Enter Your Name"
             android:inputType="textPersonName"
             android:textColor="#000000"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:backgroundTint="#D3D3D3" />
 
         <TextView
@@ -77,7 +77,7 @@
         android:layout_height="wrap_content"
         android:text="Date of Birth"
         android:textColor="#757575"
-        android:textSize="12sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
         <RelativeLayout
             android:layout_width="match_parent"
@@ -107,17 +107,17 @@
             android:layout_height="wrap_content"
             android:text="Phone Number"
             android:textColor="#757575"
-            android:textSize="12sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
         <EditText
             android:id="@+id/etPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="+91 95376 24112"
+            android:hint="Enter Your Phone Number"
             android:inputType="phone"
             android:textColor="#000000"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:backgroundTint="#D3D3D3" />
 
         <RelativeLayout
@@ -130,7 +130,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="India"
-                android:focusable="false" android:clickable="true"
+                android:focusable="false"
+                android:clickable="true"
                 android:paddingEnd="45dp" />
 
             <ImageView
@@ -148,17 +149,17 @@
             android:layout_height="wrap_content"
             android:text="Age"
             android:textColor="#757575"
-            android:textSize="12sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
         <EditText
             android:id="@+id/etAge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:hint="21"
+            android:hint="Enter Your Age"
             android:inputType="number"
             android:textColor="#000000"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:backgroundTint="#D3D3D3"
             android:drawableEnd="@android:drawable/arrow_down_float"
             android:drawableTint="#757575" />
