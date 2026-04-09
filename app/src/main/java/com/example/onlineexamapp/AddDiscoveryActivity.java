@@ -24,6 +24,11 @@ import android.util.Base64;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import android.view.View;
+import android.view.WindowManager;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -40,6 +45,10 @@ public class AddDiscoveryActivity extends AppCompatActivity {
     private ActivityResultLauncher<String> imagePickerLauncher;
     
     private List<Map<String, String>> questionList;
+    private RecyclerView rvQuestions;
+    private QuestionPreviewAdapter questionAdapter;
+    private boolean isEditMode = false;
+    private String discoveryId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +67,38 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         btnAddQuestionDialog = findViewById(R.id.btnAddQuestionDialog);
         ivBack = findViewById(R.id.ivBackAddDiscovery);
         ivCoverPreview = findViewById(R.id.ivDiscoveryCoverPreview);
+        rvQuestions = findViewById(R.id.rvAddedQuestions);
 
         ivBack.setOnClickListener(v -> finish());
+
+        // --- RecyclerView Setup ---
+        questionAdapter = new QuestionPreviewAdapter(questionList, new QuestionPreviewAdapter.OnQuestionActionListener() {
+            @Override
+            public void onEdit(int position, Map<String, String> question) {
+                showQuestionBottomSheet(position, question);
+            }
+
+            @Override
+            public void onDelete(int position) {
+                questionList.remove(position);
+                questionAdapter.notifyItemRemoved(position);
+                tvQuestionCount.setText(questionList.size() + " added");
+            }
+        });
+        rvQuestions.setLayoutManager(new LinearLayoutManager(this));
+        rvQuestions.setAdapter(questionAdapter);
+
+        // --- Edit Mode Check ---
+        isEditMode = getIntent().getBooleanExtra("IS_EDIT_MODE", false);
+        if (isEditMode) {
+            discoveryId = getIntent().getStringExtra("DISCOVERY_ID");
+            TextView headerTitle = findViewById(R.id.tvAddDiscoveryHeaderTitle);
+            if (headerTitle != null) {
+                headerTitle.setText("Edit Discovery Activity");
+            }
+            btnAdd.setText("Update Activity");
+            fetchDiscoveryData();
+        }
 
         // --- Image Picker Setup ---
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -72,7 +111,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
             imagePickerLauncher.launch("image/*");
         });
 
-        btnAddQuestionDialog.setOnClickListener(v -> showAddQuestionDialog());
+        btnAddQuestionDialog.setOnClickListener(v -> showQuestionBottomSheet(-1, null));
 
         btnAdd.setOnClickListener(v -> {
             String title = etTitle.getText().toString().trim();
@@ -93,57 +132,110 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         });
     }
 
-    private void showAddQuestionDialog() {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_add_question);
+    private void fetchDiscoveryData() {
+        if (discoveryId == null) return;
+        fStore.collection("DiscoveryActivities").document(discoveryId).get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        DiscoveryActivityModel model = doc.toObject(DiscoveryActivityModel.class);
+                        if (model == null) return;
 
+                        etTitle.setText(model.getTitle());
+                        etDescription.setText(model.getDescription());
+                        etCategory.setText(model.getCategory());
+                        coverBase64 = model.getCover_pic();
+                        
+                        if (coverBase64 != null && !coverBase64.isEmpty()) {
+                            try {
+                                byte[] bytes = Base64.decode(coverBase64, Base64.DEFAULT);
+                                Glide.with(this).load(bytes).into(ivCoverPreview);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        List<Map<String, String>> questions = model.getQuestions();
+                        if (questions != null) {
+                            questionList.clear();
+                            questionList.addAll(questions);
+                            questionAdapter.notifyDataSetChanged();
+                            tvQuestionCount.setText(questionList.size() + " added");
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void showQuestionBottomSheet(int position, Map<String, String> existingQuestion) {
+        View view = getLayoutInflater().inflate(R.layout.layout_bottom_sheet_add_question, null);
+        if (view == null) return;
+
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(view);
+
+        // 🔥 Keyboard Issue Fix: Ensure BottomSheet adjusts when keyboard opens
         if (dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        // 👇 YE LINE ADD KAR (IMPORTANT FIX)
-        dialog.getWindow().setLayout(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+        EditText etQ = view.findViewById(R.id.etQuestionText);
+        EditText etA = view.findViewById(R.id.etOptionA);
+        EditText etB = view.findViewById(R.id.etOptionB);
+        EditText etC = view.findViewById(R.id.etOptionC);
+        EditText etD = view.findViewById(R.id.etOptionD);
+        EditText etCorrect = view.findViewById(R.id.etCorrectAnswer);
+        TextView tvTitle = view.findViewById(R.id.tvBottomSheetTitle);
+        AppCompatButton btnConfirm = view.findViewById(R.id.btnConfirmAddQuestion);
 
-        EditText etQ = dialog.findViewById(R.id.etQuestionText);
-        EditText etA = dialog.findViewById(R.id.etOptionA);
-        EditText etB = dialog.findViewById(R.id.etOptionB);
-        EditText etC = dialog.findViewById(R.id.etOptionC);
-        EditText etD = dialog.findViewById(R.id.etOptionD);
-        EditText etCorrect = dialog.findViewById(R.id.etCorrectAnswer);
-        AppCompatButton btnConfirm = dialog.findViewById(R.id.btnConfirmAddQuestion);
+        if (existingQuestion != null) {
+            if (tvTitle != null) tvTitle.setText("Edit Question");
+            if (etQ != null) etQ.setText(existingQuestion.get("question"));
+            if (etA != null) etA.setText(existingQuestion.get("optionA"));
+            if (etB != null) etB.setText(existingQuestion.get("optionB"));
+            if (etC != null) etC.setText(existingQuestion.get("optionC"));
+            if (etD != null) etD.setText(existingQuestion.get("optionD"));
+            if (etCorrect != null) etCorrect.setText(existingQuestion.get("correctAnswer"));
+        }
 
-        btnConfirm.setOnClickListener(v -> {
-            String q = etQ.getText().toString().trim();
-            String a = etA.getText().toString().trim();
-            String b = etB.getText().toString().trim();
-            String c = etC.getText().toString().trim();
-            String d = etD.getText().toString().trim();
-            String correct = etCorrect.getText().toString().trim();
+        if (btnConfirm != null) {
+            btnConfirm.setOnClickListener(v -> {
+                if (etQ == null || etA == null || etB == null || etC == null || etD == null || etCorrect == null) return;
 
-            if (TextUtils.isEmpty(q) || TextUtils.isEmpty(a) || TextUtils.isEmpty(b) ||
-                    TextUtils.isEmpty(c) || TextUtils.isEmpty(d) || TextUtils.isEmpty(correct)) {
+                String q = etQ.getText().toString().trim();
+                String a = etA.getText().toString().trim();
+                String b = etB.getText().toString().trim();
+                String c = etC.getText().toString().trim();
+                String d = etD.getText().toString().trim();
+                String correct = etCorrect.getText().toString().trim();
 
-                Toast.makeText(this, "Fill all question details", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (TextUtils.isEmpty(q) || TextUtils.isEmpty(a) || TextUtils.isEmpty(b) ||
+                        TextUtils.isEmpty(c) || TextUtils.isEmpty(d) || TextUtils.isEmpty(correct)) {
 
-            Map<String, String> questionData = new HashMap<>();
-            questionData.put("question", q);
-            questionData.put("optionA", a);
-            questionData.put("optionB", b);
-            questionData.put("optionC", c);
-            questionData.put("optionD", d);
-            questionData.put("correctAnswer", correct);
+                    Toast.makeText(this, "Fill all question details", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            questionList.add(questionData);
-            tvQuestionCount.setText(questionList.size() + " added");
+                Map<String, String> questionData = new HashMap<>();
+                questionData.put("question", q);
+                questionData.put("optionA", a);
+                questionData.put("optionB", b);
+                questionData.put("optionC", c);
+                questionData.put("optionD", d);
+                questionData.put("correctAnswer", correct);
 
-            dialog.dismiss();
-            Toast.makeText(this, "Question added to list", Toast.LENGTH_SHORT).show();
-        });
+                if (position == -1) {
+                    questionList.add(questionData);
+                    questionAdapter.notifyItemInserted(questionList.size() - 1);
+                } else {
+                    questionList.set(position, questionData);
+                    questionAdapter.notifyItemChanged(position);
+                }
+                
+                tvQuestionCount.setText(questionList.size() + " added");
+                dialog.dismiss();
+            });
+        }
 
         dialog.show();
     }
@@ -225,13 +317,22 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         activityData.put("timestamp", com.google.firebase.Timestamp.now());
         activityData.put("questions", questionList);
 
-        fStore.collection("DiscoveryActivities").add(activityData)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Activity added successfully!", Toast.LENGTH_LONG).show();
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+        if (isEditMode) {
+            fStore.collection("DiscoveryActivities").document(discoveryId).set(activityData, com.google.firebase.firestore.SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Activity updated successfully!", Toast.LENGTH_LONG).show();
+                        finish();
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        } else {
+            fStore.collection("DiscoveryActivities").add(activityData)
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(this, "Activity added successfully!", Toast.LENGTH_LONG).show();
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
     }
 }

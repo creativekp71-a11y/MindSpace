@@ -13,7 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import android.widget.PopupMenu;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.List;
 
@@ -62,6 +66,7 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.View
 
         // 🔹 Click Open Quiz
         holder.itemView.setOnClickListener(v -> {
+            Toast.makeText(context, "Opening: " + model.getTitle(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context, QuizActivity.class);
             intent.putExtra("QUIZ_CATEGORY", model.getCategory());
             intent.putExtra("DISCOVERY_ID", model.getId());
@@ -70,6 +75,54 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.View
 
         // 🔹 Author Data (Firebase)
         fetchAuthor(model.getAuthorId(), holder.authorName, holder.authorImage);
+
+        // 🔹 More Options (Edit/Delete) - Only for Author
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+        if (currentUserId != null && currentUserId.equals(model.getAuthorId())) {
+            holder.ivMoreOptions.setVisibility(View.VISIBLE);
+            holder.ivMoreOptions.setOnClickListener(v -> showPopupMenu(holder.ivMoreOptions, model, position));
+        } else {
+            holder.ivMoreOptions.setVisibility(View.GONE);
+        }
+    }
+
+    private void showPopupMenu(View view, DiscoveryActivityModel model, int position) {
+        PopupMenu popup = new PopupMenu(context, view);
+        popup.getMenu().add("Edit");
+        popup.getMenu().add("Delete");
+
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getTitle().equals("Edit")) {
+                Intent intent = new Intent(context, AddDiscoveryActivity.class);
+                intent.putExtra("IS_EDIT_MODE", true);
+                intent.putExtra("DISCOVERY_ID", model.getId());
+                context.startActivity(intent);
+            } else if (item.getTitle().equals("Delete")) {
+                showDeleteConfirmation(model, position);
+            }
+            return true;
+        });
+        popup.show();
+    }
+
+    private void showDeleteConfirmation(DiscoveryActivityModel model, int position) {
+        new AlertDialog.Builder(context)
+                .setTitle("Delete Discovery")
+                .setMessage("Are you sure you want to delete this discovery activity?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    FirebaseFirestore.getInstance().collection("DiscoveryActivities")
+                            .document(model.getId())
+                            .delete()
+                            .addOnSuccessListener(aVoid -> {
+                                list.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeChanged(position, list.size());
+                                Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(context, "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     // 🔥 Fetch Author Name + Image
@@ -131,10 +184,15 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.View
         return list.size();
     }
 
+    public void updateList(List<DiscoveryActivityModel> newList) {
+        this.list = newList;
+        notifyDataSetChanged();
+    }
+
     // 🔥 ViewHolder (IMPORTANT - match with XML IDs)
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView image, authorImage;
+        ImageView image, authorImage, ivMoreOptions;
         TextView title, category, authorName;
 
         public ViewHolder(@NonNull View itemView) {
@@ -143,6 +201,7 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.View
             // 🌟 पुरानी IDs को नई IDs से बदल दिया है 🌟
             image = itemView.findViewById(R.id.ivDiscoverThumb);
             authorImage = itemView.findViewById(R.id.ivAuthorThumb);
+            ivMoreOptions = itemView.findViewById(R.id.ivMoreOptions);
 
             title = itemView.findViewById(R.id.tvDiscoverTitle);
             category = itemView.findViewById(R.id.tvDiscoverStats);

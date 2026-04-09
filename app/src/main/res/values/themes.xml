@@ -1,8 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.OnlineExamApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">#6C5CE7</item>
+        <item name="colorPrimaryVariant">#5B4BCB</item>
         <item name="colorOnPrimary">@color/white</item>
+        
+        <!-- Standard Text Colors restored to pure black -->
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#757575</item>
+        <item name="android:editTextColor">#000000</item>
+        <item name="android:textColorHint">#888888</item>
+
+        <!-- Secondary / Accent color -->
+        <item name="colorSecondary">#6C5CE7</item>
+        <item name="colorSecondaryVariant">#5B4BCB</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorAccent">#6C5CE7</item>
+        <item name="android:windowBackground">#F5F6FA</item>
+        <item name="android:statusBarColor">#6C5CE7</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
     <!-- Circle Style for ShapeableImageView -->

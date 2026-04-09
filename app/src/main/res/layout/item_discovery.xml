@@ -7,12 +7,17 @@
     android:layout_marginVertical="8dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardBackgroundColor="#FFFFFF"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:clickable="false"
+        android:focusable="false">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -46,16 +51,32 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/tvDiscoverTitle"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Quiz Title"
-                android:textColor="#1F1F1F"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:maxLines="2"
-                android:ellipsize="end" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvDiscoverTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/ivMoreOptions"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Quiz Title"
+                    android:textColor="#1F1F1F"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ivMoreOptions"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_more_vert"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tvDiscoverStats"

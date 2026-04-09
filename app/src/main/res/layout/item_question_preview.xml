@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvQuestionPreviewNumber"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/circle_purple_bg"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvQuestionPreviewText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="Sample Question text goes here..."
+            android:textColor="#2F3640"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/ivEditQuestion"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_edit"
+            app:tint="#6C5CE7" />
+
+        <ImageView
+            android:id="@+id/ivDeleteQuestion"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_delete"
+            app:tint="#FF7675" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -16,7 +16,7 @@
         android:label="MindSpace"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:theme="@style/Theme.OnlineExamApp">
 
         <activity
             android:name=".MainActivity"
@@ -86,7 +86,8 @@
         <activity android:name=".SettingsActivity" />
 
         <activity android:name=".SearchActivity" />
-        <activity android:name=".AddDiscoveryActivity" />
+        <activity android:name=".AddDiscoveryActivity"
+            android:windowSoftInputMode="adjustResize" />
 
 
     </application>

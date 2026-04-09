@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="#F5F6FA">
 
     <!-- Header (Fixed at top) -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+        android:elevation="2dp">
         
         <ImageView
             android:id="@+id/ivBackAddDiscovery"
@@ -22,6 +23,7 @@
             app:tint="#000000" />
             
         <TextView
+            android:id="@+id/tvAddDiscoveryHeaderTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add Discovery Activity"
@@ -32,7 +34,7 @@
             android:textColor="#000000" />
     </RelativeLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -49,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Activity Cover Photo"
-                android:textColor="#2F3640"
+                android:textColor="#000000"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
@@ -110,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Activity Title"
-                android:textColor="#2F3640"
+                android:textColor="#000000"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
@@ -120,6 +122,8 @@
                 android:layout_height="50dp"
                 android:hint="Enter activity title"
                 android:paddingHorizontal="16dp"
+                android:textColor="#000000"
+                android:textColorHint="#888888"
                 android:background="@drawable/bg_rounded_white"
                 android:elevation="2dp"
                 android:layout_marginBottom="20dp" />
@@ -128,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Description"
-                android:textColor="#2F3640"
+                android:textColor="#000000"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
@@ -140,6 +144,8 @@
                 android:hint="Enter detailed description"
                 android:padding="16dp"
                 android:gravity="top"
+                android:textColor="#000000"
+                android:textColorHint="#888888"
                 android:background="@drawable/bg_rounded_white"
                 android:elevation="2dp"
                 android:layout_marginBottom="20dp" />
@@ -148,7 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Quiz Category"
-                android:textColor="#2F3640"
+                android:textColor="#000000"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
@@ -159,6 +165,8 @@
                 android:layout_height="50dp"
                 android:hint="e.g. Science, Fun, Productivity, etc..."
                 android:paddingHorizontal="16dp"
+                android:textColor="#000000"
+                android:textColorHint="#888888"
                 android:background="@drawable/bg_rounded_white"
                 android:elevation="2dp"
                 android:layout_marginBottom="24dp" />
@@ -172,7 +180,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Questions"
-                    android:textColor="#2F3640"
+                    android:textColor="#000000"
                     android:textStyle="bold"
                     android:textSize="18sp" />
                 
@@ -185,6 +193,13 @@
                     android:textColor="#6C5CE7"
                     android:textStyle="bold" />
             </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAddedQuestions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnAddQuestionDialog"
@@ -210,6 +225,6 @@
                 android:elevation="4dp" />
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
