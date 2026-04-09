@@ -96,9 +96,16 @@ public class AddDiscoveryActivity extends AppCompatActivity {
     private void showAddQuestionDialog() {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_add_question);
+
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
+
+        // 👇 YE LINE ADD KAR (IMPORTANT FIX)
+        dialog.getWindow().setLayout(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        );
 
         EditText etQ = dialog.findViewById(R.id.etQuestionText);
         EditText etA = dialog.findViewById(R.id.etOptionA);
@@ -116,7 +123,9 @@ public class AddDiscoveryActivity extends AppCompatActivity {
             String d = etD.getText().toString().trim();
             String correct = etCorrect.getText().toString().trim();
 
-            if (TextUtils.isEmpty(q) || TextUtils.isEmpty(a) || TextUtils.isEmpty(b) || TextUtils.isEmpty(c) || TextUtils.isEmpty(d) || TextUtils.isEmpty(correct)) {
+            if (TextUtils.isEmpty(q) || TextUtils.isEmpty(a) || TextUtils.isEmpty(b) ||
+                    TextUtils.isEmpty(c) || TextUtils.isEmpty(d) || TextUtils.isEmpty(correct)) {
+
                 Toast.makeText(this, "Fill all question details", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -131,6 +140,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
 
             questionList.add(questionData);
             tvQuestionCount.setText(questionList.size() + " added");
+
             dialog.dismiss();
             Toast.makeText(this, "Question added to list", Toast.LENGTH_SHORT).show();
         });
