@@ -10,13 +10,16 @@ public class UserModel {
     private String rank;
     private String profile_pic;
     private String cover_pic;
+    private String bio;
     private Boolean isAuthor;
+    private Long followersCount;
+    private Long followingCount;
 
     public UserModel() {
         // Required for Firestore
     }
 
-    public UserModel(String id, String full_name, String username, String email, Long points, Long coins, String rank, String profile_pic, String cover_pic, Boolean isAuthor) {
+    public UserModel(String id, String full_name, String username, String email, Long points, Long coins, String rank, String profile_pic, String cover_pic, String bio, Boolean isAuthor, Long followersCount, Long followingCount) {
         this.id = id;
         this.full_name = full_name;
         this.username = username;
@@ -26,7 +29,10 @@ public class UserModel {
         this.rank = rank;
         this.profile_pic = profile_pic;
         this.cover_pic = cover_pic;
+        this.bio = bio;
         this.isAuthor = isAuthor;
+        this.followersCount = followersCount;
+        this.followingCount = followingCount;
     }
 
     public String getId() { return id; }
@@ -56,6 +62,15 @@ public class UserModel {
     public String getCover_pic() { return cover_pic; }
     public void setCover_pic(String cover_pic) { this.cover_pic = cover_pic; }
 
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
     public Boolean getIsAuthor() { return isAuthor; }
     public void setIsAuthor(Boolean author) { isAuthor = author; }
+
+    public Long getFollowersCount() { return followersCount; }
+    public void setFollowersCount(Long followersCount) { this.followersCount = followersCount; }
+
+    public Long getFollowingCount() { return followingCount; }
+    public void setFollowingCount(Long followingCount) { this.followingCount = followingCount; }
 }

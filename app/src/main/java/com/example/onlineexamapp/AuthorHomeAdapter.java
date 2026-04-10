@@ -49,9 +49,11 @@ public class AuthorHomeAdapter extends RecyclerView.Adapter<AuthorHomeAdapter.Vi
             holder.ivPic.setImageResource(R.drawable.ic_user_placeholder);
         }
 
-        // Click to view author profile (optional future feature)
+        // Click to view author profile
         holder.itemView.setOnClickListener(v -> {
-            // Toast.makeText(context, "Clicked: " + author.getFull_name(), Toast.LENGTH_SHORT).show();
+            android.content.Intent intent = new android.content.Intent(context, AuthorProfileActivity.class);
+            intent.putExtra("authorUid", author.getId());
+            context.startActivity(intent);
         });
     }
 

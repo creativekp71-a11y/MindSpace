@@ -89,7 +89,7 @@ public class DashboardActivity extends AppCompatActivity {
             }
         }
 
-        // 1. Niche Discover wale Icon ka connection
+        // 1. Niche Discover wale Icon ka connection (Old direct reference)
         View navDiscover = findViewById(R.id.navDiscover);
         if (navDiscover != null) {
             navDiscover.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, DiscoverActivity.class)));
@@ -149,46 +149,34 @@ public class DashboardActivity extends AppCompatActivity {
             });
         }
 
-        // ==========================================
-        // 👉 Center Logo (Quick Play) का कनेक्शन 💡 👈
-        // ==========================================
-        android.widget.ImageView ivCenterLogo = findViewById(R.id.ivCenterLogo);
-        if (ivCenterLogo != null) {
-            ivCenterLogo.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    android.content.Intent intent = new android.content.Intent(DashboardActivity.this, QuizActivity.class);
-                    intent.putExtra("QUIZ_CATEGORY", "Quick Play");
-                    startActivity(intent);
-                }
-            });
-        }
+        // Quick Play logic moved to setupBottomNavigation()
 
-        // ==========================================
-        // 👉 Leaderboard (Rank) वाले बटन का कनेक्शन 👈
-        // ==========================================
-        android.view.View navLeaderboard = findViewById(R.id.navLeaderboard);
-        if (navLeaderboard != null) {
-            navLeaderboard.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    startActivity(new android.content.Intent(DashboardActivity.this, LeaderboardActivity.class));
-                }
-            });
-        }
+        // --- Bottom Navigation Setup ---
+        setupBottomNavigation();
+    }
 
-        // ==========================================
-        // 👉 Profile वाले बटन का कनेक्शन 👈
-        // ==========================================
-        android.view.View navProfile = findViewById(R.id.navProfile);
-        if (navProfile != null) {
-            navProfile.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    startActivity(new android.content.Intent(DashboardActivity.this, ProfileActivity.class));
-                }
-            });
-        }
+    private void setupBottomNavigation() {
+        findViewById(R.id.navHome).setOnClickListener(v -> {
+            // Already on Home
+        });
+
+        findViewById(R.id.navDiscover).setOnClickListener(v -> {
+            startActivity(new Intent(DashboardActivity.this, DiscoverActivity.class));
+        });
+
+        findViewById(R.id.navLeaderboard).setOnClickListener(v -> {
+            startActivity(new Intent(DashboardActivity.this, LeaderboardActivity.class));
+        });
+
+        findViewById(R.id.navProfile).setOnClickListener(v -> {
+            startActivity(new Intent(DashboardActivity.this, ProfileActivity.class));
+        });
+
+        findViewById(R.id.ivCenterLogo).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, QuizActivity.class);
+            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
+            startActivity(intent);
+        });
     }
 
     @Override

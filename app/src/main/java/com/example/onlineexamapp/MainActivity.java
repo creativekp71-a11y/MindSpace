@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is already signed in (non-null) and update UI accordingly.
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            // Already logged in, go to Dashboard
-            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+            // Already logged in, go to Main Home
+            startActivity(new Intent(MainActivity.this, MainHomeActivity.class));
             finish();
         }
     }

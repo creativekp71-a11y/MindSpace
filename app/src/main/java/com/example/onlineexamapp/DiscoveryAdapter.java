@@ -73,6 +73,15 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.View
             context.startActivity(intent);
         });
 
+        // Click author to view profile
+        View.OnClickListener authorClickListener = v -> {
+            Intent intent = new Intent(context, AuthorProfileActivity.class);
+            intent.putExtra("authorUid", model.getAuthorId());
+            context.startActivity(intent);
+        };
+        holder.authorName.setOnClickListener(authorClickListener);
+        holder.authorImage.setOnClickListener(authorClickListener);
+
         // 🔹 Author Data (Firebase)
         fetchAuthor(model.getAuthorId(), holder.authorName, holder.authorImage);
 

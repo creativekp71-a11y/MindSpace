@@ -30,7 +30,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore fStore;
-    private TextView tvName, tvUsername, tvEmail, tvPoints, tvCoins, tvRank, tvMenuAddActivity;
+    private TextView tvName, tvUsername, tvEmail, tvPoints, tvCoins, tvRank, tvMenuAddActivity, tvMenuFollowing;
+    private TextView tvFollowersCount, tvFollowingCount;
     private View viewDividerAddActivity;
     private SwitchCompat switchBecomeAuthor;
     private ImageView ivProfilePic, ivCover;
@@ -55,6 +56,12 @@ public class ProfileActivity extends AppCompatActivity {
         tvRank = findViewById(R.id.tvProfileRank);
         ivProfilePic = findViewById(R.id.ivProfilePic);
         ivCover = findViewById(R.id.ivCover);
+        tvFollowersCount = findViewById(R.id.tvProfileFollowersCount);
+        tvFollowingCount = findViewById(R.id.tvProfileFollowingCount);
+        tvMenuFollowing = findViewById(R.id.tvMenuFollowing);
+
+        // --- Bottom Navigation ---
+        setupBottomNavigation();
 
         // --- Back Button ---
         findViewById(R.id.ivBackProfile).setOnClickListener(v -> finish());
@@ -73,6 +80,9 @@ public class ProfileActivity extends AppCompatActivity {
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, null));
         });
+
+        tvMenuFollowing.setOnClickListener(v -> 
+            startActivity(new Intent(this, FollowingListActivity.class)));
 
         // --- Image Picker Setup ---
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -256,6 +266,11 @@ public class ProfileActivity extends AppCompatActivity {
                     tvCoins.setText(String.valueOf(coins != null ? coins : 0));   
                     tvRank.setText(rank != null ? rank : "--");
 
+                    Long followers = documentSnapshot.getLong("followersCount");
+                    Long following = documentSnapshot.getLong("followingCount");
+                    tvFollowersCount.setText(String.valueOf(followers != null ? followers : 0));
+                    tvFollowingCount.setText(String.valueOf(following != null ? following : 0));
+
                     Boolean isAuthor = documentSnapshot.getBoolean("isAuthor");
                     if (isAuthor == null) isAuthor = false;
                     switchBecomeAuthor.setChecked(isAuthor);
@@ -272,5 +287,32 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }).addOnFailureListener(e -> Toast.makeText(this, "Error loading data", Toast.LENGTH_SHORT).show());
         }
+    }
+
+    private void setupBottomNavigation() {
+        findViewById(R.id.navHome).setOnClickListener(v -> {
+            startActivity(new Intent(ProfileActivity.this, DashboardActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.navDiscover).setOnClickListener(v -> {
+            startActivity(new Intent(ProfileActivity.this, DiscoverActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.navLeaderboard).setOnClickListener(v -> {
+            startActivity(new Intent(ProfileActivity.this, LeaderboardActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.navProfile).setOnClickListener(v -> {
+            // Already here
+        });
+
+        findViewById(R.id.ivCenterLogo).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, QuizActivity.class);
+            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
+            startActivity(intent);
+        });
     }
 }

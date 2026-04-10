@@ -68,6 +68,15 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
             intent.putExtra("DISCOVERY_ID", model.getId());
             context.startActivity(intent);
         });
+
+        // Click author to view profile
+        View.OnClickListener authorClickListener = v -> {
+            Intent intent = new Intent(context, AuthorProfileActivity.class);
+            intent.putExtra("authorUid", model.getAuthorId());
+            context.startActivity(intent);
+        };
+        holder.authorName.setOnClickListener(authorClickListener);
+        holder.authorImage.setOnClickListener(authorClickListener);
     }
 
     private void fetchAuthor(String authorId, TextView name, ImageView image) {

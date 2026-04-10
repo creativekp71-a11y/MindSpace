@@ -41,7 +41,7 @@ public class SignInActivity extends AppCompatActivity {
 
             mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    startActivity(new Intent(SignInActivity.this, DashboardActivity.class));
+                    startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
                     finish();
                 } else {
                     btnSignIn.setText("Sign In");

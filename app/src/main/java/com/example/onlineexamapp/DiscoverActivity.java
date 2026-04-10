@@ -125,7 +125,35 @@ public class DiscoverActivity extends AppCompatActivity {
         rvDiscoverAll.setLayoutManager(new LinearLayoutManager(this));
         rvDiscoverAll.setAdapter(adapter);
 
-        // 🔥 Data Fetch
+        // --- Bottom Navigation ---
+        setupBottomNavigation();
+    }
+
+    private void setupBottomNavigation() {
+        findViewById(R.id.navHome).setOnClickListener(v -> {
+            startActivity(new android.content.Intent(DiscoverActivity.this, DashboardActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.navDiscover).setOnClickListener(v -> {
+            // Already here
+        });
+
+        findViewById(R.id.navLeaderboard).setOnClickListener(v -> {
+            startActivity(new android.content.Intent(DiscoverActivity.this, LeaderboardActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.navProfile).setOnClickListener(v -> {
+            startActivity(new android.content.Intent(DiscoverActivity.this, ProfileActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.ivCenterLogo).setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(DiscoverActivity.this, QuizActivity.class);
+            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
+            startActivity(intent);
+        });
     }
 
     @Override

@@ -11,15 +11,26 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import java.util.List;
+import android.content.Intent;
+import android.widget.Toast;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 public class AuthorAdapter extends RecyclerView.Adapter<AuthorAdapter.AuthorViewHolder> {
 
     private final Context context;
     private final List<Author> authorList;
+    private final FirebaseFirestore fStore;
+    private final String currentUserId;
 
     public AuthorAdapter(Context context, List<Author> authorList) {
         this.context = context;
         this.authorList = authorList;
+        this.fStore = FirebaseFirestore.getInstance();
+        this.currentUserId = FirebaseAuth.getInstance().getUid();
     }
 
     @NonNull
@@ -51,15 +62,81 @@ public class AuthorAdapter extends RecyclerView.Adapter<AuthorAdapter.AuthorView
         }
 
         // --- Follow / Unfollow logic ---
+        if (currentUserId != null) {
+            checkFollowStatus(author.getUid(), holder.btnFollow);
+        }
+
         holder.btnFollow.setOnClickListener(v -> {
-            if (holder.btnFollow.getText().toString().equals("Follow")) {
-                holder.btnFollow.setText("Unfollow");
-                holder.btnFollow.setBackgroundResource(R.drawable.bg_btn_unfollow);
-            } else {
-                holder.btnFollow.setText("Follow");
-                holder.btnFollow.setBackgroundResource(R.drawable.bg_btn_follow);
-            }
+            toggleFollow(author, holder.btnFollow);
         });
+
+        // Click on item to open Author Profile
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, AuthorProfileActivity.class);
+            intent.putExtra("authorUid", author.getUid());
+            context.startActivity(intent);
+        });
+    }
+
+    private void checkFollowStatus(String authorUid, AppCompatButton btnFollow) {
+        fStore.collection("Following").document(currentUserId)
+                .collection("UserFollowing").document(authorUid)
+                .get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        btnFollow.setText("Unfollow");
+                        btnFollow.setBackgroundResource(R.drawable.bg_btn_unfollow);
+                    } else {
+                        btnFollow.setText("Follow");
+                        btnFollow.setBackgroundResource(R.drawable.bg_btn_follow);
+                    }
+                });
+    }
+
+    private void toggleFollow(Author author, AppCompatButton btnFollow) {
+        if (currentUserId == null) {
+            Toast.makeText(context, "Please sign in to follow authors", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String authorUid = author.getUid();
+        boolean isCurrentlyFollowing = btnFollow.getText().toString().equals("Unfollow");
+
+        WriteBatch batch = fStore.batch();
+
+        DocumentReference followingRef = fStore.collection("Following").document(currentUserId)
+                .collection("UserFollowing").document(authorUid);
+        DocumentReference followersRef = fStore.collection("Followers").document(authorUid)
+                .collection("UserFollowers").document(currentUserId);
+        
+        DocumentReference currentUserRef = fStore.collection("Users").document(currentUserId);
+        DocumentReference targetAuthorRef = fStore.collection("Users").document(authorUid);
+
+        if (isCurrentlyFollowing) {
+            // Unfollow
+            batch.delete(followingRef);
+            batch.delete(followersRef);
+            batch.update(currentUserRef, "followingCount", FieldValue.increment(-1));
+            batch.update(targetAuthorRef, "followersCount", FieldValue.increment(-1));
+
+            batch.commit().addOnSuccessListener(aVoid -> {
+                btnFollow.setText("Follow");
+                btnFollow.setBackgroundResource(R.drawable.bg_btn_follow);
+            });
+        } else {
+            // Follow
+            java.util.Map<String, Object> data = new java.util.HashMap<>();
+            data.put("timestamp", FieldValue.serverTimestamp());
+
+            batch.set(followingRef, data);
+            batch.set(followersRef, data);
+            batch.update(currentUserRef, "followingCount", FieldValue.increment(1));
+            batch.update(targetAuthorRef, "followersCount", FieldValue.increment(1));
+
+            batch.commit().addOnSuccessListener(aVoid -> {
+                btnFollow.setText("Unfollow");
+                btnFollow.setBackgroundResource(R.drawable.bg_btn_unfollow);
+            });
+        }
     }
 
     @Override

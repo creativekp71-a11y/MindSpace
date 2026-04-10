@@ -1,24 +1,42 @@
 package com.example.onlineexamapp;
 
+import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 public class EditProfileActivity extends AppCompatActivity {
 
-    // ==========================================
-    // 1. क्लास लेवल वेरिएबल्स (Image Views और Launchers)
-    // ==========================================
-    private ImageView ivEditProfilePic;
-    private ImageView ivEditCover;
+    private ImageView ivEditProfilePic, ivEditCover;
+    private EditText etName, etUsername, etBio;
+    private FirebaseFirestore fStore;
+    private FirebaseAuth mAuth;
+    private String uid;
+    
+    private String base64Profile = null;
+    private String base64Cover = null;
+    private ProgressDialog progressDialog;
 
     private ActivityResultLauncher<String> pickDpLauncher;
     private ActivityResultLauncher<String> pickCoverLauncher;
@@ -28,91 +46,118 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        // ==========================================
-        // 2. Views को XML से लिंक करना
-        // ==========================================
+        mAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        uid = mAuth.getUid();
 
-        // Back Button
-        ImageView ivBackEditProfile = findViewById(R.id.ivBackEditProfile);
-        if (ivBackEditProfile != null) {
-            ivBackEditProfile.setOnClickListener(v -> finish());
-        }
+        etName = findViewById(R.id.etEditName);
+        etUsername = findViewById(R.id.etEditUsername);
+        etBio = findViewById(R.id.etEditBio);
+        ivEditProfilePic = findViewById(R.id.ivEditProfilePic);
+        ivEditCover = findViewById(R.id.ivCover);
 
-        // Save Button
-        androidx.appcompat.widget.AppCompatButton btnSaveProfile = findViewById(R.id.btnSaveProfile);
-        if (btnSaveProfile != null) {
-            btnSaveProfile.setOnClickListener(v -> {
-                Toast.makeText(EditProfileActivity.this, "Profile Updated Successfully! ✅", Toast.LENGTH_SHORT).show();
-                finish(); // सेव होने के बाद वापस मेन प्रोफाइल पर
-            });
-        }
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Saving changes...");
+        progressDialog.setCancelable(false);
 
-        // Image Views (DP और Cover)
-        // ध्यान दें: हमने कार्डव्यू के अंदर के ImageView को ढूँढा है
-        androidx.cardview.widget.CardView cvProfile = findViewById(R.id.cvProfilePicCard);
-        if(cvProfile != null) {
-            // CardView के अंदर जो पहला (और इकलौता) ImageView है, उसे ले लो
-            ivEditProfilePic = (ImageView) cvProfile.getChildAt(0);
-        }
+        loadCurrentData();
+        setupLaunchers();
+        setupClickListeners();
+    }
 
-        androidx.cardview.widget.CardView cvCover = findViewById(R.id.cvCoverContainer);
-        if(cvCover != null) {
-            // CardView के अंदर जो पहला ImageView है, उसे ले लो
-            ivEditCover = (ImageView) cvCover.getChildAt(0);
-        }
+    private void loadCurrentData() {
+        if (uid == null) return;
+        fStore.collection("Users").document(uid).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                etName.setText(doc.getString("full_name"));
+                etUsername.setText(doc.getString("username"));
+                etBio.setText(doc.getString("bio"));
 
-        // ==========================================
-        // 3. 'जादूई मशीनें' (Launchers) सेट करना
-        // ==========================================
+                String pPic = doc.getString("profile_pic");
+                String cPic = doc.getString("cover_pic");
 
-        // A. DP चुनने वाली मशीन
-        pickDpLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
-                new ActivityResultCallback<Uri>() {
-                    @Override
-                    public void onActivityResult(Uri resultUri) {
-                        if (resultUri != null && ivEditProfilePic != null) {
-                            ivEditProfilePic.setImageURI(resultUri); // नई फोटो लगाओ
-                            Toast.makeText(EditProfileActivity.this, "Profile Photo Selected! 🧑‍💼", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-        // B. Cover Photo चुनने वाली मशीन
-        pickCoverLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
-                new ActivityResultCallback<Uri>() {
-                    @Override
-                    public void onActivityResult(Uri resultUri) {
-                        if (resultUri != null && ivEditCover != null) {
-                            ivEditCover.setImageURI(resultUri); // नया कवर लगाओ
-                            Toast.makeText(EditProfileActivity.this, "Cover Photo Selected! 🏖️", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-        // ==========================================
-        // 4. क्लिक लिसनर्स (बटन दबाने पर मशीन चलाना)
-        // ==========================================
-
-        // "Change Photo" (DP) बटन
-        TextView tvChangePhoto = findViewById(R.id.tvChangePhoto);
-        if (tvChangePhoto != null) {
-            tvChangePhoto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    pickDpLauncher.launch("image/*"); // गैलरी खोलो (सिर्फ इमेजेस के लिए)
+                if (pPic != null && !pPic.isEmpty()) {
+                    byte[] bytes = Base64.decode(pPic, Base64.DEFAULT);
+                    Glide.with(this).load(bytes).placeholder(R.drawable.ic_user_placeholder).into(ivEditProfilePic);
                 }
-            });
+                if (cPic != null && !cPic.isEmpty()) {
+                    byte[] bytes = Base64.decode(cPic, Base64.DEFAULT);
+                    Glide.with(this).load(bytes).placeholder(R.drawable.cover_photo).into(ivEditCover);
+                }
+            }
+        });
+    }
+
+    private void setupLaunchers() {
+        pickDpLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (uri != null) {
+                base64Profile = uriToBase64(uri);
+                if (base64Profile != null) {
+                    ivEditProfilePic.setImageURI(uri);
+                }
+            }
+        });
+
+        pickCoverLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (uri != null) {
+                base64Cover = uriToBase64(uri);
+                if (base64Cover != null) {
+                    ivEditCover.setImageURI(uri);
+                }
+            }
+        });
+    }
+
+    private String uriToBase64(Uri uri) {
+        try {
+            InputStream is = getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            Bitmap resized = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            resized.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+            return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        } catch (Exception e) {
+            Toast.makeText(this, "Image processing failed", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
+    private void setupClickListeners() {
+        findViewById(R.id.ivBackEditProfile).setOnClickListener(v -> finish());
+        findViewById(R.id.tvChangePhoto).setOnClickListener(v -> pickDpLauncher.launch("image/*"));
+        findViewById(R.id.tvChangeCover).setOnClickListener(v -> pickCoverLauncher.launch("image/*"));
+
+        findViewById(R.id.btnSaveProfile).setOnClickListener(v -> saveProfileChanges());
+    }
+
+    private void saveProfileChanges() {
+        String name = etName.getText().toString().trim();
+        String username = etUsername.getText().toString().trim();
+        String bio = etBio.getText().toString().trim();
+
+        if (name.isEmpty() || username.isEmpty()) {
+            Toast.makeText(this, "Name and Username cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // "Change Cover Photo" बटन
-        TextView tvChangeCover = findViewById(R.id.tvChangeCover);
-        if (tvChangeCover != null) {
-            tvChangeCover.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    pickCoverLauncher.launch("image/*"); // गैलरी खोलो
-                }
-            });
-        }
+        progressDialog.show();
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("full_name", name);
+        updates.put("username", username);
+        updates.put("bio", bio);
+
+        if (base64Profile != null) updates.put("profile_pic", base64Profile);
+        if (base64Cover != null) updates.put("cover_pic", base64Cover);
+
+        fStore.collection("Users").document(uid).update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(this, "Profile Updated Successfully! ✅", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(this, "Update Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

@@ -12,6 +12,7 @@
         android:padding="24dp"
         android:background="@drawable/bg_rounded_white">
 
+        <!-- Drag Handle -->
         <View
             android:layout_width="40dp"
             android:layout_height="4dp"
@@ -19,6 +20,7 @@
             android:layout_marginBottom="24dp"
             android:background="#D1D8E0" />
 
+        <!-- Title -->
         <TextView
             android:id="@+id/tvBottomSheetTitle"
             android:layout_width="wrap_content"
@@ -29,18 +31,20 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
+        <!-- Question -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:hint="Question Text"
+            app:placeholderText="Enter your question here"
             app:startIconDrawable="@drawable/ic_edit"
             app:startIconTint="#6C5CE7"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp">
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etQuestionText"
@@ -52,12 +56,14 @@
                 android:maxLines="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Row A & B -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:baselineAligned="false">
 
+            <!-- Option A -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
@@ -66,20 +72,22 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="12dp"
                 android:hint="Option A"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
+                app:placeholderText="Enter option A"
+                app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp">
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etOptionA"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="text"
                     android:textColor="#000000"
-                    android:textColorHint="#888888"
-                    android:inputType="text" />
+                    android:textColorHint="#888888" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Option B -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
@@ -88,27 +96,31 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="12dp"
                 android:hint="Option B"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
+                app:placeholderText="Enter option B"
+                app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp">
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etOptionB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="text"
                     android:textColor="#000000"
-                    android:textColorHint="#888888"
-                    android:inputType="text" />
+                    android:textColorHint="#888888" />
             </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
 
+        <!-- Row C & D -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:baselineAligned="false">
 
+            <!-- Option C -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
@@ -117,76 +129,84 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="12dp"
                 android:hint="Option C"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
+                app:placeholderText="Enter option C"
+                app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp">
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etOptionC"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="text"
                     android:textColor="#000000"
-                    android:textColorHint="#888888"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="12dp"
-                android:hint="Option D"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etOptionD"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000000"
-                    android:textColorHint="#888888"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
-            android:hint="Correct Answer (e.g. Option A)"
-            app:startIconDrawable="@drawable/ic_check_green"
-            app:startIconTint="#20BF6B"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etCorrectAnswer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#000000"
-                android:textColorHint="#888888"
-                android:inputType="text" />
+                    android:textColorHint="#888888" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnConfirmAddQuestion"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:text="Confirm Question"
-            android:textAllCaps="false"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/bg_btn_follow"
-            android:elevation="6dp" />
+        <!-- Option D -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="12dp"
+            android:hint="Option D"
+            app:placeholderText="Enter option D"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOptionD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="#000000"
+                android:textColorHint="#888888" />
+        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+
+    <!-- Correct Answer -->
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:hint="Correct Answer"
+        app:placeholderText="Example: Option A"
+        app:startIconDrawable="@drawable/ic_check_green"
+        app:startIconTint="#20BF6B"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etCorrectAnswer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textColor="#000000"
+            android:textColorHint="#888888" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnConfirmAddQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="Confirm Question"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/bg_btn_follow"
+        android:elevation="6dp" />
+
+</LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>

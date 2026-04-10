@@ -33,12 +33,39 @@ public class LeaderboardActivity extends AppCompatActivity {
         adapter = new LeaderboardAdapter(this, userList);
         rvLeaderboard.setAdapter(adapter);
 
-        ImageView ivBackLeaderboard = findViewById(R.id.ivBackLeaderboard);
-        if (ivBackLeaderboard != null) {
-            ivBackLeaderboard.setOnClickListener(v -> finish());
-        }
-
         fetchLeaderboardData();
+
+        findViewById(R.id.ivBackLeaderboard).setOnClickListener(v -> finish());
+
+        // --- Bottom Navigation ---
+        setupBottomNavigation();
+    }
+
+    private void setupBottomNavigation() {
+        findViewById(R.id.navHome).setOnClickListener(v -> {
+            startActivity(new android.content.Intent(LeaderboardActivity.this, DashboardActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.navDiscover).setOnClickListener(v -> {
+            startActivity(new android.content.Intent(LeaderboardActivity.this, DiscoverActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.navLeaderboard).setOnClickListener(v -> {
+            // Already here
+        });
+
+        findViewById(R.id.navProfile).setOnClickListener(v -> {
+            startActivity(new android.content.Intent(LeaderboardActivity.this, ProfileActivity.class));
+            finish();
+        });
+
+        findViewById(R.id.ivCenterLogo).setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(LeaderboardActivity.this, QuizActivity.class);
+            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
+            startActivity(intent);
+        });
     }
 
     private void fetchLeaderboardData() {
