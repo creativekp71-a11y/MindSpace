@@ -1,9 +1,12 @@
 package com.example.onlineexamapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.text.TextUtils;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,17 +51,24 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
         FriendModel model = friendList.get(position);
 
-        holder.tvName.setText(model.getName().isEmpty() ? "User" : model.getName());
-        holder.tvEmail.setText(model.getEmail().isEmpty() ? "No email" : model.getEmail());
+        holder.tvName.setText(TextUtils.isEmpty(model.getName()) ? "User" : model.getName());
+        holder.tvEmail.setText(TextUtils.isEmpty(model.getEmail()) ? "No email" : model.getEmail());
 
         String profileImage = model.getProfileImage();
 
         if (!TextUtils.isEmpty(profileImage)) {
-            Glide.with(context)
-                    .load(profileImage)
-                    .placeholder(R.drawable.ic_user_placeholder)
-                    .error(R.drawable.ic_user_placeholder)
-                    .into(holder.imgProfile);
+            try {
+                byte[] imageBytes = Base64.decode(profileImage, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+                if (bitmap != null) {
+                    holder.imgProfile.setImageBitmap(bitmap);
+                } else {
+                    holder.imgProfile.setImageResource(R.drawable.ic_user_placeholder);
+                }
+            } catch (Exception e) {
+                holder.imgProfile.setImageResource(R.drawable.ic_user_placeholder);
+            }
         } else {
             holder.imgProfile.setImageResource(R.drawable.ic_user_placeholder);
         }

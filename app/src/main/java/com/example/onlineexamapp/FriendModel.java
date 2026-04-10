@@ -5,18 +5,18 @@ public class FriendModel {
     private String name;
     private String email;
     private String phone;
-    private String profileImage;
+    private String profile_pic; // 👈 CHANGE HERE
     private boolean isFollowed;
 
     public FriendModel() {
     }
 
-    public FriendModel(String userId, String name, String email, String phone, String profileImage, boolean isFollowed) {
+    public FriendModel(String userId, String name, String email, String phone, String profile_pic, boolean isFollowed) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.profileImage = profileImage;
+        this.profile_pic = profile_pic; // 👈 CHANGE
         this.isFollowed = isFollowed;
     }
 
@@ -52,12 +52,13 @@ public class FriendModel {
         this.phone = phone;
     }
 
+    // 👇 IMPORTANT
     public String getProfileImage() {
-        return profileImage == null ? "" : profileImage;
+        return profile_pic == null ? "" : profile_pic;
     }
 
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
+    public void setProfileImage(String profile_pic) {
+        this.profile_pic = profile_pic;
     }
 
     public boolean isFollowed() {
