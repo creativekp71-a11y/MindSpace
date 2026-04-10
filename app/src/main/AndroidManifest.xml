@@ -51,9 +51,9 @@
             android:name=".SignInActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".ForgotPasswordActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".ForgotPasswordActivity"-->
+<!--            android:exported="false" />-->
 
         <activity
             android:name=".OtpVerificationActivity"
@@ -84,6 +84,10 @@
         <activity android:name=".AchievementsActivity" />
 
         <activity android:name=".SettingsActivity" />
+
+        <activity android:name=".ForgotPasswordActivity" />
+
+        <activity android:name=".MailSentActivity" />
 
         <activity android:name=".SearchActivity" />
         <activity android:name=".AddDiscoveryActivity"
