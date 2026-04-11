@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -60,7 +59,7 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.tvViewAllAuthors).setOnClickListener(v -> startActivity(new Intent(getActivity(), TopAuthorsActivity.class)));
         view.findViewById(R.id.btnFindFriendsBanner).setOnClickListener(v -> startActivity(new Intent(getActivity(), FindFriendsActivity.class)));
         view.findViewById(R.id.ivSearch).setOnClickListener(v -> startActivity(new Intent(getActivity(), SearchActivity.class)));
-        view.findViewById(R.id.ivBell).setOnClickListener(v -> Toast.makeText(getContext(), "You have 0 new notifications 🔔", Toast.LENGTH_SHORT).show());
+        view.findViewById(R.id.ivBell).setOnClickListener(v -> ((MainHomeActivity) requireActivity()).openNotifications());
         ivHeaderProfile.setOnClickListener(v -> ((MainHomeActivity)requireActivity()).findViewById(R.id.navProfile).performClick());
 
         loadUserData();
@@ -121,3 +120,4 @@ public class HomeFragment extends Fragment {
                 });
     }
 }
+

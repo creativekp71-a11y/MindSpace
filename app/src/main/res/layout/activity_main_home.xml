@@ -5,6 +5,8 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
+    <!-- Main Header -->
+
     <!-- Fragment Container -->
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -148,3 +150,4 @@
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
+

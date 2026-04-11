@@ -139,12 +139,14 @@ public class DashboardActivity extends AppCompatActivity {
         // ==========================================
         // 👉 Notification आइकन का कनेक्शन 🔔 👈
         // ==========================================
-        android.widget.ImageView ivNotification = findViewById(R.id.ivBell);
+                android.widget.ImageView ivNotification = findViewById(R.id.ivBell);
         if (ivNotification != null) {
             ivNotification.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
-                    android.widget.Toast.makeText(DashboardActivity.this, "You have 0 new notifications 🔔", android.widget.Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(DashboardActivity.this, MainHomeActivity.class);
+                    intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, MainHomeActivity.TAB_NOTIFICATIONS);
+                    startActivity(intent);
                 }
             });
         }

@@ -1,25 +1,63 @@
 package com.example.onlineexamapp;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainHomeActivity extends AppCompatActivity {
+
+    public static final String EXTRA_OPEN_TAB = "extra_open_tab";
+    public static final String TAB_NOTIFICATIONS = "NOTIFICATIONS";
+    private static final String PREFS_NOTIFICATIONS = "notification_prefs";
+    private static final String KEY_PERMISSION_REQUESTED = "permission_requested";
 
     private ImageView ivHome, ivDiscover, ivRank, ivProfile;
     private TextView tvHome, tvDiscover, tvRank, tvProfile;
     private final int ACTIVE_COLOR = 0xFF6C5CE7; // Brand Purple
     private final int INACTIVE_COLOR = 0xFF888888; // Gray
+    private final Set<String> deliveredNotificationIds = new HashSet<>();
+    private ActivityResultLauncher<String> notificationPermissionLauncher;
+    private ListenerRegistration notificationsListener;
+    private boolean hasLoadedInitialNotifications;
+    private FirebaseFirestore fStore;
+    private String currentUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_home);
+        configureStatusBar();
+        AppNotificationHelper.ensureChannel(this);
+
+        fStore = FirebaseFirestore.getInstance();
+        currentUid = FirebaseAuth.getInstance().getUid();
+        notificationPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                }
+        );
 
         // Initialize UI components for bottom nav
         ivHome = findViewById(R.id.ivNavHome);
@@ -45,9 +83,43 @@ public class MainHomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Load Default Fragment (Home)
+        String initialTab = getIntent().getStringExtra(EXTRA_OPEN_TAB);
+
+        // Load Default Fragment
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment(), "HOME");
+            if (TAB_NOTIFICATIONS.equals(initialTab)) {
+                openNotifications();
+            } else {
+                loadFragment(new HomeFragment(), "HOME");
+            }
+        }
+
+        askNotificationPermissionIfNeeded();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startNotificationsListener();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopNotificationsListener();
+    }
+
+    private void configureStatusBar() {
+        getWindow().setStatusBarColor(Color.WHITE);
+        WindowInsetsControllerCompat insetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        if (insetsController != null) {
+            insetsController.setAppearanceLightStatusBars(true);
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            );
         }
     }
 
@@ -60,6 +132,86 @@ public class MainHomeActivity extends AppCompatActivity {
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.fragment_container, fragment, tag);
         ft.commit();
+    }
+
+    public void openNotifications() {
+        loadFragment(new NotificationsFragment(), TAB_NOTIFICATIONS);
+    }
+
+    private void askNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+
+        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        SharedPreferences preferences = getSharedPreferences(PREFS_NOTIFICATIONS, MODE_PRIVATE);
+        boolean alreadyRequested = preferences.getBoolean(KEY_PERMISSION_REQUESTED, false);
+
+        if (!alreadyRequested) {
+            preferences.edit().putBoolean(KEY_PERMISSION_REQUESTED, true).apply();
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
+    }
+
+    private void startNotificationsListener() {
+        if (currentUid == null || notificationsListener != null) {
+            return;
+        }
+
+        hasLoadedInitialNotifications = false;
+        deliveredNotificationIds.clear();
+
+        notificationsListener = fStore.collection("Notifications")
+                .document(currentUid)
+                .collection("UserNotifications")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(25)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null || value == null) {
+                        return;
+                    }
+
+                    if (!hasLoadedInitialNotifications) {
+                        for (com.google.firebase.firestore.QueryDocumentSnapshot document : value) {
+                            deliveredNotificationIds.add(document.getId());
+                        }
+                        hasLoadedInitialNotifications = true;
+                        return;
+                    }
+
+                    for (DocumentChange change : value.getDocumentChanges()) {
+                        if (change.getType() != DocumentChange.Type.ADDED) {
+                            continue;
+                        }
+
+                        String notificationId = change.getDocument().getId();
+                        if (!deliveredNotificationIds.add(notificationId)) {
+                            continue;
+                        }
+
+                        String title = change.getDocument().getString("title");
+                        String message = change.getDocument().getString("message");
+
+                        AppNotificationHelper.showNotification(
+                                this,
+                                notificationId.hashCode(),
+                                title == null || title.trim().isEmpty() ? "MindSpace" : title,
+                                message == null || message.trim().isEmpty()
+                                        ? "You have a new notification."
+                                        : message
+                        );
+                    }
+                });
+    }
+
+    private void stopNotificationsListener() {
+        if (notificationsListener != null) {
+            notificationsListener.remove();
+            notificationsListener = null;
+        }
     }
 
     private void updateNavUI(String tag) {

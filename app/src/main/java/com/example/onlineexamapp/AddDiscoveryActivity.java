@@ -307,32 +307,92 @@ public class AddDiscoveryActivity extends AppCompatActivity {
     }
 
     private void saveToFirestore(String title, String desc, String category) {
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(this, "You must be signed in to publish.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String uid = mAuth.getCurrentUser().getUid();
+        com.google.firebase.Timestamp createdAt = com.google.firebase.Timestamp.now();
+
         Map<String, Object> activityData = new HashMap<>();
         activityData.put("title", title);
         activityData.put("description", desc);
         activityData.put("category", category);
         activityData.put("authorId", uid);
-        activityData.put("cover_pic", coverBase64); // 🔹 Adding the cover photo
-        activityData.put("timestamp", com.google.firebase.Timestamp.now());
+        activityData.put("cover_pic", coverBase64);
+        activityData.put("timestamp", createdAt);
         activityData.put("questions", questionList);
 
         if (isEditMode) {
-            fStore.collection("DiscoveryActivities").document(discoveryId).set(activityData, com.google.firebase.firestore.SetOptions.merge())
+            fStore.collection("DiscoveryActivities")
+                    .document(discoveryId)
+                    .set(activityData, com.google.firebase.firestore.SetOptions.merge())
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Activity updated successfully!", Toast.LENGTH_LONG).show();
                         finish();
                     })
                     .addOnFailureListener(e -> Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         } else {
-            fStore.collection("DiscoveryActivities").add(activityData)
+            fStore.collection("DiscoveryActivities")
+                    .add(activityData)
                     .addOnSuccessListener(documentReference -> {
                         Toast.makeText(this, "Activity added successfully!", Toast.LENGTH_LONG).show();
+                        notifyFollowers(documentReference.getId(), title, createdAt);
                         finish();
                     })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         }
+    }
+
+    private void notifyFollowers(String activityId, String activityTitle, com.google.firebase.Timestamp createdAt) {
+        String authorId = mAuth.getUid();
+        if (authorId == null) {
+            return;
+        }
+
+        fStore.collection("Users").document(authorId).get().addOnSuccessListener(authorDoc -> {
+            String authorName = authorDoc.getString("full_name");
+            String authorImage = authorDoc.getString("profile_pic");
+            String safeAuthorName = (authorName == null || authorName.trim().isEmpty()) ? "An author" : authorName;
+
+            fStore.collection("Followers").document(authorId)
+                    .collection("UserFollowers")
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        if (querySnapshot.isEmpty()) {
+                            return;
+                        }
+
+                        com.google.firebase.firestore.WriteBatch batch = fStore.batch();
+
+                        for (com.google.firebase.firestore.QueryDocumentSnapshot followerDoc : querySnapshot) {
+                            String followerId = followerDoc.getId();
+                            com.google.firebase.firestore.DocumentReference notifRef = fStore.collection("Notifications")
+                                    .document(followerId)
+                                    .collection("UserNotifications")
+                                    .document();
+
+                            Map<String, Object> notifData = new HashMap<>();
+                            notifData.put("senderId", authorId);
+                            notifData.put("senderName", safeAuthorName);
+                            notifData.put("senderImage", authorImage == null ? "" : authorImage);
+                            notifData.put("title", "New Discovery!");
+                            notifData.put("message", safeAuthorName + " just posted a new quiz: " + activityTitle);
+                            notifData.put("type", "new_discovery");
+                            notifData.put("activityId", activityId);
+                            notifData.put("timestamp", createdAt);
+                            notifData.put("read", false);
+
+                            batch.set(notifRef, notifData);
+                        }
+
+                        batch.commit().addOnFailureListener(e -> Toast.makeText(
+                                this,
+                                "Post saved, but notification delivery failed: " + e.getMessage(),
+                                Toast.LENGTH_SHORT
+                        ).show());
+                    });
+        });
     }
 }
