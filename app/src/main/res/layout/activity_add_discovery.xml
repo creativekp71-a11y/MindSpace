@@ -128,27 +128,27 @@
                 android:elevation="2dp"
                 android:layout_marginBottom="20dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Description"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Description"-->
+<!--                android:textColor="#000000"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textSize="18sp"-->
+<!--                android:layout_marginBottom="8dp" />-->
 
-            <EditText
-                android:id="@+id/etDiscoveryDescription"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:hint="Enter detailed description"
-                android:padding="16dp"
-                android:gravity="top"
-                android:textColor="#000000"
-                android:textColorHint="#888888"
-                android:background="@drawable/bg_rounded_white"
-                android:elevation="2dp"
-                android:layout_marginBottom="20dp" />
+<!--            <EditText-->
+<!--                android:id="@+id/etDiscoveryDescription"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="120dp"-->
+<!--                android:hint="Enter detailed description"-->
+<!--                android:padding="16dp"-->
+<!--                android:gravity="top"-->
+<!--                android:textColor="#000000"-->
+<!--                android:textColorHint="#888888"-->
+<!--                android:background="@drawable/bg_rounded_white"-->
+<!--                android:elevation="2dp"-->
+<!--                android:layout_marginBottom="20dp" />-->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -163,7 +163,7 @@
                 android:id="@+id/etDiscoveryCategory"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="e.g. Science, Fun, Productivity, etc..."
+                android:hint="e.g. Science, Math, GK, etc..."
                 android:paddingHorizontal="16dp"
                 android:textColor="#000000"
                 android:textColorHint="#888888"

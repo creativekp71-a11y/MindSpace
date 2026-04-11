@@ -60,7 +60,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         questionList = new ArrayList<>();
 
         etTitle = findViewById(R.id.etDiscoveryTitle);
-        etDescription = findViewById(R.id.etDiscoveryDescription);
+//        etDescription = findViewById(R.id.etDiscoveryDescription);
         etCategory = findViewById(R.id.etDiscoveryCategory);
         tvQuestionCount = findViewById(R.id.tvQuestionCount);
         btnAdd = findViewById(R.id.btnAddDiscovery);
