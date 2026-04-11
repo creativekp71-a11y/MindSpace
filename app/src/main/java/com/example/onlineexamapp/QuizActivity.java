@@ -1,7 +1,5 @@
 package com.example.onlineexamapp;
 
-import android.app.AlertDialog; // 👈 पॉपअप के लिए नया इम्पोर्ट
-import android.content.DialogInterface; // 👈 पॉपअप के बटन के लिए
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -18,12 +16,9 @@ public class QuizActivity extends AppCompatActivity {
     private int currentQuestionIndex = 0;
     private String selectedOption = "";
 
-    // ==========================================
-    // 👉 नए वेरिएबल्स (स्कोर गिनने के लिए) 👈
-    // ==========================================
-    private int correctAnswers = 0; // सही जवाबों की गिनती
-    private int wrongAnswers = 0;   // गलत जवाबों की गिनती
-    private boolean isAnswered = false; // ये रोकेगा कि यूज़र एक सवाल पर दो बार क्लिक ना करे
+    private int correctAnswers = 0;
+    private int wrongAnswers = 0;
+    private boolean isAnswered = false;
 
     private TextView tvQuestion, tvOption1, tvOption2, tvOption3, tvOption4;
     private AppCompatButton btnSubmitNext;
@@ -42,7 +37,6 @@ public class QuizActivity extends AppCompatActivity {
 
         questionList = new ArrayList<>();
 
-        // केटेगरी के हिसाब से सवाल लोड करना
         String category = getIntent().getStringExtra("QUIZ_CATEGORY");
         String discoveryId = getIntent().getStringExtra("DISCOVERY_ID");
         if (category == null) category = "Productivity";
@@ -53,29 +47,26 @@ public class QuizActivity extends AppCompatActivity {
             loadStaticQuestions(category);
         }
 
-        // ==========================================
-        // 👉 ऑप्शंस पर क्लिक करने का नया लॉजिक 👈
-        // ==========================================
         View.OnClickListener optionClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // अगर यूज़र पहले ही जवाब दे चुका है, तो कुछ मत करो (Lock कर दो)
                 if (isAnswered) return;
+                if (questionList == null || questionList.isEmpty()) return;
 
-                isAnswered = true; // लॉक लगा दिया
+                isAnswered = true;
                 resetOptions();
+
                 v.setBackgroundResource(R.drawable.bg_option_selected);
                 selectedOption = ((TextView) v).getText().toString();
 
                 QuizQuestion currentQ = questionList.get(currentQuestionIndex);
 
-                // स्कोर बढ़ाना और सही/गलत बताना
                 if (selectedOption.equals(currentQ.getCorrectAnswer())) {
-                    correctAnswers++; // सही स्कोर +1
+                    correctAnswers++;
                     updatePoints(true);
                     Toast.makeText(QuizActivity.this, "Right Answer! 🎉", Toast.LENGTH_SHORT).show();
                 } else {
-                    wrongAnswers++;   // गलत स्कोर +1
+                    wrongAnswers++;
                     updatePoints(false);
                     Toast.makeText(QuizActivity.this, "Wrong Answer! ❌", Toast.LENGTH_SHORT).show();
                 }
@@ -87,38 +78,35 @@ public class QuizActivity extends AppCompatActivity {
         tvOption3.setOnClickListener(optionClickListener);
         tvOption4.setOnClickListener(optionClickListener);
 
-        // ==========================================
-        // 👉 'Submit and Next' और 'Result Popup' का लॉजिक 👈
-        // ==========================================
         btnSubmitNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (questionList == null || questionList.isEmpty()) {
+                    Toast.makeText(QuizActivity.this, "No questions found!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (!isAnswered) {
                     Toast.makeText(QuizActivity.this, "Please select an option first!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (currentQuestionIndex < questionList.size() - 1) {
-                    // अगर और सवाल बचे हैं तो आगे बढ़ो
                     currentQuestionIndex++;
-                    isAnswered = false; // नए सवाल के लिए लॉक खोल दो
+                    isAnswered = false;
                     displayQuestion();
                 } else {
-                    // 👉 अगर ये आख़िरी सवाल था, तो रिज़ल्ट का पॉपअप दिखाओ 👈
                     showResultDialog();
                 }
             }
         });
 
-        // ==========================================
-        // 👉 वापस (Back) जाने वाले बटन का लॉजिक (यहाँ लगाओ!) 👈
-        // ==========================================
         android.widget.ImageView ivBackQuiz = findViewById(R.id.ivBackQuiz);
         if (ivBackQuiz != null) {
             ivBackQuiz.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
-                    finish(); // ये क्विज़ पेज को बंद करके तुम्हें वापस पीछे वाले पेज पर ले जाएगा
+                    finish();
                 }
             });
         }
@@ -131,9 +119,12 @@ public class QuizActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        List<Map<String, String>> dynamicQs = (List<Map<String, String>>) documentSnapshot.get("questions");
+                        List<Map<String, String>> dynamicQs =
+                                (List<Map<String, String>>) documentSnapshot.get("questions");
+
                         if (dynamicQs != null && !dynamicQs.isEmpty()) {
                             questionList.clear();
+
                             for (Map<String, String> qMap : dynamicQs) {
                                 questionList.add(new QuizQuestion(
                                         qMap.get("question"),
@@ -144,11 +135,16 @@ public class QuizActivity extends AppCompatActivity {
                                         qMap.get("correctAnswer")
                                 ));
                             }
+
+                            currentQuestionIndex = 0;
+                            isAnswered = false;
                             displayQuestion();
                             Toast.makeText(this, "Dynamic questions loaded!", Toast.LENGTH_SHORT).show();
                         } else {
                             loadStaticQuestions(getIntent().getStringExtra("QUIZ_CATEGORY"));
                         }
+                    } else {
+                        loadStaticQuestions(getIntent().getStringExtra("QUIZ_CATEGORY"));
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -158,6 +154,8 @@ public class QuizActivity extends AppCompatActivity {
 
     private void loadStaticQuestions(String category) {
         if (category == null) category = "Productivity";
+
+        questionList.clear();
 
         if (category.equals("Productivity")) {
             loadProductivityQuestions();
@@ -174,7 +172,6 @@ public class QuizActivity extends AppCompatActivity {
         } else if (category.equals("Geography")) {
             loadGeographyQuestions();
         } else if (category.equals("Quick Play")) {
-            // 👉 यहाँ हमने 'Quick Play' का रास्ता जोड़ दिया
             loadQuickPlayQuestions();
         } else {
             Toast.makeText(this, "Loading default questions...", Toast.LENGTH_SHORT).show();
@@ -182,12 +179,18 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         if (questionList.size() > 0) {
+            currentQuestionIndex = 0;
+            isAnswered = false;
             displayQuestion();
         }
     }
 
     private void displayQuestion() {
+        if (questionList == null || questionList.isEmpty()) return;
+        if (currentQuestionIndex < 0 || currentQuestionIndex >= questionList.size()) return;
+
         resetOptions();
+
         QuizQuestion currentQ = questionList.get(currentQuestionIndex);
 
         if (tvQuestion != null) tvQuestion.setText(currentQ.getQuestion());
@@ -195,69 +198,66 @@ public class QuizActivity extends AppCompatActivity {
         if (tvOption2 != null) tvOption2.setText(currentQ.getOptionB());
         if (tvOption3 != null) tvOption3.setText(currentQ.getOptionC());
         if (tvOption4 != null) tvOption4.setText(currentQ.getOptionD());
+
+        if (btnSubmitNext != null) {
+            if (currentQuestionIndex == questionList.size() - 1) {
+                btnSubmitNext.setText("Submit");
+            } else {
+                btnSubmitNext.setText("Submit and Next");
+            }
+        }
     }
 
     private void resetOptions() {
-        tvOption1.setBackgroundResource(R.drawable.bg_option);
-        tvOption2.setBackgroundResource(R.drawable.bg_option);
-        tvOption3.setBackgroundResource(R.drawable.bg_option);
-        tvOption4.setBackgroundResource(R.drawable.bg_option);
+        if (tvOption1 != null) tvOption1.setBackgroundResource(R.drawable.bg_quiz_option);
+        if (tvOption2 != null) tvOption2.setBackgroundResource(R.drawable.bg_quiz_option);
+        if (tvOption3 != null) tvOption3.setBackgroundResource(R.drawable.bg_quiz_option);
+        if (tvOption4 != null) tvOption4.setBackgroundResource(R.drawable.bg_quiz_option);
         selectedOption = "";
     }
 
-    // ==========================================
-    // 👉 नया और एडवांस आख़िरी पॉपअप (Custom Dialog) 👈
-    // ==========================================
-    // ==========================================
-    // 👉 आख़िरी पॉपअप (Custom Dialog) + Discover पेज पर जाने का जादू 👈
-    // ==========================================
     private void showResultDialog() {
         android.app.Dialog dialog = new android.app.Dialog(this);
-        dialog.setContentView(R.layout.dialog_result); // अपनी नई XML फ़ाइल जोड़ो
+        dialog.setContentView(R.layout.dialog_result);
 
-        // यह लाइन डिब्बे के पीछे का सफ़ेद हिस्सा पारदर्शी (Transparent) कर देती है,
-        // ताकि तुम्हारे CardView के गोल कोने एकदम मस्त दिखें!
         if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
+            );
         }
-        dialog.setCancelable(false); // बाहर क्लिक करने से बंद नहीं होगा
 
-        // XML के टेक्स्ट और बटन को ढूँढो
+        dialog.setCancelable(false);
+
         android.widget.TextView tvTotalScore = dialog.findViewById(R.id.tvTotalScore);
         android.widget.TextView tvRightScore = dialog.findViewById(R.id.tvRightScore);
         android.widget.TextView tvWrongScore = dialog.findViewById(R.id.tvWrongScore);
         androidx.appcompat.widget.AppCompatButton btnTaskComplete = dialog.findViewById(R.id.btnTaskComplete);
 
-        // स्कोर को सेट करो
         tvTotalScore.setText("कुल सवाल: " + questionList.size());
         tvRightScore.setText("सही जवाब: " + correctAnswers + " 😁👏✅");
         tvWrongScore.setText("गलत जवाब: " + wrongAnswers + " ☹️❌");
 
-        // टास्क कम्पलीट बटन पर क्लिक करने पर क्या होगा
         btnTaskComplete.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
-                dialog.dismiss(); // पॉपअप बंद करो
+                dialog.dismiss();
 
-                // 👉 यहाँ से सीधे Discover पेज पर जाने का जादू 👈
-                android.content.Intent intent = new android.content.Intent(QuizActivity.this, DiscoverActivity.class);
+                android.content.Intent intent =
+                        new android.content.Intent(QuizActivity.this, DiscoverActivity.class);
+                intent.addFlags(
+                        android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                );
 
-                // ये लाइन पुरानी हिस्ट्री क्लियर कर देगी ताकि यूज़र 'Back' दबाकर वापस क्विज़ में ना आ जाए
-                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                startActivity(intent); // Discover पेज खोलो
-                finish(); // क्विज़ वाला पेज हमेशा के लिए बंद कर दो
+                startActivity(intent);
+                finish();
             }
         });
 
-        dialog.show(); // पॉपअप को स्क्रीन पर दिखाओ
+        dialog.show();
     }
 
-    // ==========================================
-    // 🏆 Points Update करने का फंक्शन (Firestore + Local)
-    // ==========================================
     private void updatePoints(boolean isCorrect) {
-        // 1. लोकल मेमोरी में अपडेट (UI के लिए)
         android.content.SharedPreferences prefs = getSharedPreferences("MindSpacePrefs", MODE_PRIVATE);
         int currentPoints = prefs.getInt("total_points", 950);
 
@@ -271,23 +271,21 @@ public class QuizActivity extends AppCompatActivity {
         editor.putInt("total_points", currentPoints);
         editor.apply();
 
-        // 2. फायरबेस डेटाबेस में रिअल-टाइम सिंक 🚀
         com.google.firebase.auth.FirebaseAuth auth = com.google.firebase.auth.FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             String uid = auth.getCurrentUser().getUid();
-            com.google.firebase.firestore.FirebaseFirestore fStore = com.google.firebase.firestore.FirebaseFirestore.getInstance();
-            
+            com.google.firebase.firestore.FirebaseFirestore fStore =
+                    com.google.firebase.firestore.FirebaseFirestore.getInstance();
+
             long pointDelta = isCorrect ? 10 : -5;
-            
+
             fStore.collection("Users").document(uid)
                     .update("points", com.google.firebase.firestore.FieldValue.increment(pointDelta))
-                    .addOnFailureListener(e -> android.util.Log.e("FirebasePoints", "Update failed: " + e.getMessage()));
+                    .addOnFailureListener(e ->
+                            android.util.Log.e("FirebasePoints", "Update failed: " + e.getMessage()));
         }
     }
 
-       // ==========================================
-    // 👉 10 शुद्ध हिंदी प्रोडक्टिविटी सवाल (Pure Hindi) 👈
-    // ==========================================
     private void loadProductivityQuestions() {
         questionList.add(new QuizQuestion(
                 "1. 'पोमोडोरो तकनीक' (Pomodoro Technique) क्या है?",
@@ -379,13 +377,9 @@ public class QuizActivity extends AppCompatActivity {
                 "B) काम उतना ही खिंचता है जितना उसको समय दिया जाता है"
         ));
 
-        // Test karne ke liye Toast
         Toast.makeText(this, "10 शुद्ध हिंदी सवाल लोड हो गए!", Toast.LENGTH_SHORT).show();
     }
 
-    // ==========================================
-    // 👉 10 शुद्ध हिंदी 'Brilliant Minds' (IQ & Logic) सवाल 👈
-    // ==========================================
     private void loadBrilliantMindsQuestions() {
         questionList.add(new QuizQuestion(
                 "1. एक आदमी बारिश में बिना छाते के जा रहा था, फिर भी उसके सिर का एक भी बाल नहीं भीगा। कैसे?",
@@ -477,13 +471,9 @@ public class QuizActivity extends AppCompatActivity {
                 "B) अंडा"
         ));
 
-        // Test karne ke liye Toast
         Toast.makeText(this, "Brilliant Minds Quiz Loaded! 🧠", Toast.LENGTH_SHORT).show();
     }
 
-    // ==========================================
-    // 👉 10 मज़ेदार और ट्रिकी 'Having Fun' सवाल 👈
-    // ==========================================
     private void loadHavingFunQuestions() {
         questionList.add(new QuizQuestion(
                 "1. ऐसा कौन सा महीना है जिसमें लोग सबसे कम सोते हैं?",
@@ -491,7 +481,7 @@ public class QuizActivity extends AppCompatActivity {
                 "B) फरवरी",
                 "C) मार्च",
                 "D) दिसंबर",
-                "B) फरवरी" // (क्योंकि इसमें दिन ही 28 होते हैं!)
+                "B) फरवरी"
         ));
 
         questionList.add(new QuizQuestion(
@@ -563,7 +553,7 @@ public class QuizActivity extends AppCompatActivity {
                 "B) जलेबी",
                 "C) गुलाब जामुन",
                 "D) बर्फी",
-                "C) गुलाब जामुन" // (गुलाब=फूल, जामुन=फल, गुलाब जामुन=मिठाई)
+                "C) गुलाब जामुन"
         ));
 
         questionList.add(new QuizQuestion(
@@ -575,12 +565,9 @@ public class QuizActivity extends AppCompatActivity {
                 "B) गूँज (Echo)"
         ));
 
-        // Test karne ke liye Toast
         Toast.makeText(this, "Having Fun Quiz Loaded! 😂", Toast.LENGTH_SHORT).show();
     }
-    // ==========================================
-    // 👉 15 जनरल नॉलेज (GK) के सवाल 👈
-    // ==========================================
+
     private void loadGKQuestions() {
         questionList.add(new QuizQuestion(
                 "1. भारत की राजधानी क्या है?",
@@ -642,12 +629,9 @@ public class QuizActivity extends AppCompatActivity {
                 "B) रबीन्द्रनाथ टैगोर"
         ));
 
-        // Test karne ke liye Toast
         Toast.makeText(this, "15 GK Questions Loaded! 🌍", Toast.LENGTH_SHORT).show();
     }
-    // ==========================================
-    // 👉 10 गणित (Mathematics) के सवाल 👈
-    // ==========================================
+
     private void loadMathQuestions() {
         questionList.add(new QuizQuestion(
                 "1. 25 + 45 का सही उत्तर क्या है?",
@@ -670,7 +654,7 @@ public class QuizActivity extends AppCompatActivity {
         questionList.add(new QuizQuestion(
                 "4. BODMAS के नियम से हल करें: 8 + 2 × 5 = ?",
                 "A) 50", "B) 15", "C) 18", "D) 10",
-                "C) 18" // (पहले गुणा होगा: 2x5=10, फिर जोड़: 10+8=18)
+                "C) 18"
         ));
 
         questionList.add(new QuizQuestion(
@@ -700,22 +684,18 @@ public class QuizActivity extends AppCompatActivity {
         questionList.add(new QuizQuestion(
                 "9. एक वर्ग (Square) की भुजा 5 cm है। उसका परिमाप (Perimeter) क्या होगा?",
                 "A) 10 cm", "B) 15 cm", "C) 20 cm", "D) 25 cm",
-                "C) 20 cm" // (परिमाप = 4 x भुजा)
+                "C) 20 cm"
         ));
 
         questionList.add(new QuizQuestion(
                 "10. 100 ÷ 4 + 5 को हल करें:",
                 "A) 10", "B) 20", "C) 30", "D) 25",
-                "C) 30" // (100/4 = 25, 25+5 = 30)
+                "C) 30"
         ));
 
-        // Test karne ke liye Toast
         Toast.makeText(this, "Math Quiz Loaded! 🧮", Toast.LENGTH_SHORT).show();
     }
 
-    // ==========================================
-    // 👉 10 विज्ञान (Science) के सवाल 👈
-    // ==========================================
     private void loadScienceQuestions() {
         questionList.add(new QuizQuestion(
                 "1. पानी (Water) का रासायनिक सूत्र (Chemical Formula) क्या है?",
@@ -777,13 +757,9 @@ public class QuizActivity extends AppCompatActivity {
                 "D) पारा (Mercury)"
         ));
 
-        // Test karne ke liye Toast
         Toast.makeText(this, "Science Quiz Loaded! 🔬", Toast.LENGTH_SHORT).show();
     }
 
-    // ==========================================
-    // 👉 10 भूगोल (Geography) के सवाल 👈
-    // ==========================================
     private void loadGeographyQuestions() {
         questionList.add(new QuizQuestion(
                 "1. क्षेत्रफल के हिसाब से दुनिया का सबसे बड़ा देश कौन सा है?",
@@ -845,13 +821,9 @@ public class QuizActivity extends AppCompatActivity {
                 "C) टोक्यो"
         ));
 
-        // Test karne ke liye Toast
         Toast.makeText(this, "Geography Quiz Loaded! 🗺️", Toast.LENGTH_SHORT).show();
     }
 
-    // ==========================================
-    // 👉 5 Quick Play (Mix) के सवाल 👈
-    // ==========================================
     private void loadQuickPlayQuestions() {
         questionList.add(new QuizQuestion(
                 "1. (Science) पानी का रासायनिक सूत्र क्या है?",
@@ -880,10 +852,9 @@ public class QuizActivity extends AppCompatActivity {
         questionList.add(new QuizQuestion(
                 "5. (Fun) ऐसा कौन सा महीना है जिसमें लोग सबसे कम सोते हैं?",
                 "A) जनवरी", "B) फरवरी", "C) मार्च", "D) दिसंबर",
-                "B) फरवरी" // (क्योंकि इसमें 28 दिन ही होते हैं!)
+                "B) फरवरी"
         ));
 
-        // Test karne ke liye Toast
         Toast.makeText(this, "Rapid Fire: Quick Play Started! 🚀", Toast.LENGTH_SHORT).show();
     }
 }

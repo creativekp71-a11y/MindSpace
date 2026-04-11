@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F6FA">
+    android:background="#F5F6FA"
+    android:fitsSystemWindows="true">
 
     <!-- Scrollable content -->
     <ScrollView
@@ -18,39 +19,43 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Purple Header Container (Unifies with Status Bar) -->
+            <!-- Purple Header Container -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#6C5CE7"
-                android:paddingTop="54dp"
-                android:paddingBottom="24dp"
+                android:paddingTop="48dp"
+                android:paddingBottom="16dp"
                 android:paddingHorizontal="20dp"
-                android:elevation="8dp">
+                android:elevation="8dp"
+                android:minHeight="72dp">
 
                 <ImageView
                     android:id="@+id/ivBack"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/ic_back"
-                    app:tint="#FFFFFF"/>
+                    app:tint="#FFFFFF" />
 
                 <TextView
+                    android:id="@+id/tvDiscoverTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
                     android:text="Discover"
                     android:textColor="#FFFFFF"
                     android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:layout_centerInParent="true"/>
+                    android:textStyle="bold" />
 
                 <ImageView
                     android:id="@+id/ivSearch"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/ic_nav_search"
-                    app:tint="#FFFFFF"/>
+                    app:tint="#FFFFFF" />
             </RelativeLayout>
 
             <LinearLayout
@@ -65,15 +70,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginBottom="12dp"
+                    android:visibility="gone"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
-                    android:visibility="gone">
+                    app:cardElevation="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"
                         android:gravity="center_vertical"
+                        android:orientation="horizontal"
                         android:paddingHorizontal="12dp">
 
                         <ImageView
@@ -88,13 +93,13 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:layout_marginStart="8dp"
-                            android:hint="Search discoveries..."
                             android:background="@null"
-                            android:textSize="14sp"
+                            android:hint="Search discoveries..."
+                            android:inputType="text"
+                            android:maxLines="1"
                             android:textColor="#000000"
                             android:textColorHint="#888888"
-                            android:maxLines="1"
-                            android:inputType="text" />
+                            android:textSize="14sp" />
 
                         <ImageView
                             android:id="@+id/ivCloseSearch"
@@ -109,23 +114,23 @@
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollbars="none"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="16dp"
+                    android:scrollbars="none">
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/chipGroupCategories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:singleSelection="true"
-                        app:selectionRequired="true">
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAll"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="All"
                             android:checked="true"
+                            android:text="All"
                             app:chipBackgroundColor="@color/white"
                             app:chipStrokeColor="#DDD"
                             app:chipStrokeWidth="1dp" />
@@ -188,11 +193,13 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_nav_home"
                 app:tint="#888888" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -209,11 +216,13 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_nav_discover"
                 app:tint="#000000" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -230,12 +239,14 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
             <androidx.cardview.widget.CardView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="25dp"
                 app:cardElevation="6dp">
+
                 <ImageView
                     android:id="@+id/ivCenterLogo"
                     android:layout_width="match_parent"
@@ -251,11 +262,13 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_nav_rank"
                 app:tint="#888888" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -272,11 +285,13 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_nav_profile"
                 app:tint="#888888" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -286,4 +301,5 @@
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
+
 </RelativeLayout>
