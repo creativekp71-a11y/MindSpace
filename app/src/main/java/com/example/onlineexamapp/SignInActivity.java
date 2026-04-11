@@ -9,9 +9,14 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.HashMap;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -19,10 +24,13 @@ public class SignInActivity extends AppCompatActivity {
     private static final String KEY_REMEMBERED_EMAIL = "remembered_email";
 
     private FirebaseAuth mAuth;
+    private FirebaseFirestore fStore;
     private EditText etEmail;
     private EditText etPassword;
     private Button btnSignIn;
     private CheckBox chkRememberMe;
+    private GoogleSignInClient googleSignInClient;
+    private ActivityResultLauncher<Intent> googleAuthLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +38,40 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
 
         mAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        googleSignInClient = SocialAuthHelper.createGoogleSignInClient(this);
+        googleAuthLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getData() == null) {
+                        return;
+                    }
+
+                    SocialAuthHelper.handleGoogleSignInResult(
+                            this,
+                            result.getData(),
+                            mAuth,
+                            fStore,
+                            new HashMap<>(),
+                            new SocialAuthHelper.Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
+                                    finish();
+                                }
+
+                                @Override
+                                public void onError(String message) {
+                                    Toast.makeText(SignInActivity.this, message, Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                }
+                            }
+                    );
+                }
+        );
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -48,7 +90,7 @@ public class SignInActivity extends AppCompatActivity {
 
         CardView btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         CardView btnFacebookLogin = findViewById(R.id.btnFacebookLogin);
-        btnGoogleLogin.setOnClickListener(v -> showSocialAuthMessage("Google"));
+        btnGoogleLogin.setOnClickListener(v -> googleAuthLauncher.launch(googleSignInClient.getSignInIntent()));
         btnFacebookLogin.setOnClickListener(v -> showSocialAuthMessage("Facebook"));
     }
 

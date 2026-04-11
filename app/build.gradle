@@ -52,6 +52,7 @@ dependencies {
     implementation libs.firebase.auth
     implementation libs.firebase.firestore
     implementation libs.firebase.storage
+    implementation 'com.google.android.gms:play-services-auth:21.2.0'
 
     // Glide for image loading
     implementation libs.glide

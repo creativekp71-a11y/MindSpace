@@ -7,11 +7,23 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateAccountActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore fStore;
+    private GoogleSignInClient googleSignInClient;
+    private ActivityResultLauncher<Intent> googleAuthLauncher;
 
     private EditText etFullName;
     private EditText tvDob;
@@ -23,6 +35,50 @@ public class CreateAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+        mAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        googleSignInClient = SocialAuthHelper.createGoogleSignInClient(this);
+
+        googleAuthLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getData() == null) {
+                        return;
+                    }
+
+                    Map<String, Object> seedProfile = new HashMap<>();
+                    seedProfile.put("full_name", getText(etFullName));
+                    seedProfile.put("dob", getText(tvDob));
+                    seedProfile.put("phone", getText(etPhone));
+                    seedProfile.put("country", getText(etCountry));
+                    seedProfile.put("age", getText(etAge));
+
+                    SocialAuthHelper.handleGoogleSignInResult(
+                            this,
+                            result.getData(),
+                            mAuth,
+                            fStore,
+                            seedProfile,
+                            new SocialAuthHelper.Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    startActivity(new Intent(CreateAccountActivity.this, MainHomeActivity.class));
+                                    finish();
+                                }
+
+                                @Override
+                                public void onError(String message) {
+                                    Toast.makeText(CreateAccountActivity.this, message, Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                }
+                            }
+                    );
+                }
+        );
 
         etFullName = findViewById(R.id.etFullName);
         tvDob = findViewById(R.id.tvDob);
@@ -38,7 +94,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         tvDob.setOnClickListener(v -> showDatePicker());
 
         btnContinue.setOnClickListener(v -> continueToSignUp());
-        btnGoogleLogin.setOnClickListener(v -> showSocialAuthMessage("Google"));
+        btnGoogleLogin.setOnClickListener(v -> googleAuthLauncher.launch(googleSignInClient.getSignInIntent()));
         btnFacebookLogin.setOnClickListener(v -> showSocialAuthMessage("Facebook"));
     }
 
