@@ -65,6 +65,9 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.btnEditProfile).setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), EditProfileActivity.class)));
 
+        view.findViewById(R.id.tvMenuSettings).setOnClickListener(v ->
+                startActivity(new Intent(getActivity(), SettingsActivity.class)));
+
         view.findViewById(R.id.tvMenuLogout).setOnClickListener(v -> {
             mAuth.signOut();
             startActivity(new Intent(getActivity(), SignInActivity.class));
