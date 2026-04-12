@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:text="All"
                     android:checked="true"
-                    app:chipBackgroundColor="?android:attr/colorSurface"
+                    app:chipBackgroundColor="?attr/colorSurface"
                     app:chipStrokeColor="?android:attr/listDivider"
                     app:chipStrokeWidth="1dp" />
 
