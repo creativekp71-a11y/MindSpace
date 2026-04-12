@@ -8,10 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -34,7 +36,6 @@ public class ProfileFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
 
-        // Initialize UI components
         tvName = view.findViewById(R.id.tvProfileName);
         tvUsername = view.findViewById(R.id.tvProfileUsername);
         tvEmail = view.findViewById(R.id.tvProfileEmail);
@@ -61,21 +62,44 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupClickListeners(View view) {
-        view.findViewById(R.id.btnEditProfile).setOnClickListener(v -> startActivity(new Intent(getActivity(), EditProfileActivity.class)));
+        view.findViewById(R.id.btnEditProfile).setOnClickListener(v ->
+                startActivity(new Intent(getActivity(), EditProfileActivity.class)));
+
         view.findViewById(R.id.tvMenuLogout).setOnClickListener(v -> {
             mAuth.signOut();
             startActivity(new Intent(getActivity(), SignInActivity.class));
             requireActivity().finish();
         });
 
-        view.findViewById(R.id.tvMenuFollowing).setOnClickListener(v -> startActivity(new Intent(getActivity(), FollowingListActivity.class)));
-        
+        view.findViewById(R.id.tvMenuFollowing).setOnClickListener(v ->
+                startActivity(new Intent(getActivity(), FollowingListActivity.class)));
+
+        // ✅ My Achievements click added
+        view.findViewById(R.id.tvMenuAchievements).setOnClickListener(v ->
+                startActivity(new Intent(getActivity(), AchievementsActivity.class)));
+
+        // ✅ Invite Friends / Share click added
+        view.findViewById(R.id.tvMenuShare).setOnClickListener(v -> {
+            String shareText = "📱 MindSpace Quiz App\n\n"
+                    + "Hey! Try my app made for a college project.\n"
+                    + "Download the APK from here:\n"
+                    + "https://drive.google.com/file/d/1pwyLyBBJw3rjpffOcvoWWUUOkM1-IheX/view?usp=sharing"
+                    + "Install it and enjoy the quiz app 🎯";
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "MindSpace Quiz App");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+            startActivity(Intent.createChooser(shareIntent, "Invite via"));
+        });
+
         switchBecomeAuthor = view.findViewById(R.id.switchBecomeAuthor);
         switchBecomeAuthor.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updateAuthorStatus(isChecked);
         });
 
-        tvMenuAddActivity.setOnClickListener(v -> startActivity(new Intent(getActivity(), AddDiscoveryActivity.class)));
+        tvMenuAddActivity.setOnClickListener(v ->
+                startActivity(new Intent(getActivity(), AddDiscoveryActivity.class)));
     }
 
     private void updateAuthorStatus(boolean isAuthor) {
@@ -83,8 +107,7 @@ public class ProfileFragment extends Fragment {
         if (uid != null) {
             fStore.collection("Users").document(uid).update("isAuthor", isAuthor)
                     .addOnSuccessListener(aVoid -> {
-                        String msg = isAuthor ? "You are now an Author!" : "Author status removed.";
-                        // Toast removed or kept as needed
+                        // success
                     });
         }
     }
@@ -100,7 +123,7 @@ public class ProfileFragment extends Fragment {
                     tvPoints.setText(String.valueOf(doc.get("points") != null ? doc.get("points") : 0));
                     tvCoins.setText(String.valueOf(doc.get("coins") != null ? doc.get("coins") : 0));
                     tvRank.setText(doc.getString("rank") != null ? doc.getString("rank") : "--");
-                    
+
                     Boolean isAuthor = doc.getBoolean("isAuthor");
                     switchBecomeAuthor.setChecked(isAuthor != null && isAuthor);
                     tvMenuAddActivity.setVisibility(isAuthor != null && isAuthor ? View.VISIBLE : View.GONE);

@@ -1,49 +1,200 @@
-package com.example.onlineexamapp; // 👈 अपने पैकेज का नाम चेक कर लेना
+package com.example.onlineexamapp;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class AchievementsActivity extends AppCompatActivity {
+
+    private ImageView ivBackAchievements;
+
+    private TextView tvPoints;
+    private TextView tvCurrentLevelIcon;
+    private TextView tvCurrentLevelName;
+    private TextView tvNextTarget;
+    private TextView tvProgressMessage;
+
+    private TextView tvBronzeStatus;
+    private TextView tvSilverStatus;
+    private TextView tvGoldStatus;
+    private TextView tvDiamondStatus;
+
+    private ProgressBar pbLevelProgress;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore fStore;
+    private String currentUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_achievements);
 
-        // ==========================================
-        // 🏅 Saved Points को स्क्रीन पर दिखाना
-        // ==========================================
-        android.content.SharedPreferences prefs = getSharedPreferences("MindSpacePrefs", MODE_PRIVATE);
-        int totalPoints = prefs.getInt("total_points", 950);
+        mAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        currentUid = mAuth.getUid();
 
-        TextView tvCurrentPoints = findViewById(R.id.tvPoints);
+        ivBackAchievements = findViewById(R.id.ivBackAchievements);
 
-        if (tvCurrentPoints != null) {
-            tvCurrentPoints.setText(totalPoints + " Points");
+        tvPoints = findViewById(R.id.tvPoints);
+        tvCurrentLevelIcon = findViewById(R.id.tvCurrentLevelIcon);
+        tvCurrentLevelName = findViewById(R.id.tvCurrentLevelName);
+        tvNextTarget = findViewById(R.id.tvNextTarget);
+        tvProgressMessage = findViewById(R.id.tvProgressMessage);
 
-            if(totalPoints >= 1000) {
-                Toast.makeText(this, "You reached Silver Level! 🥈", Toast.LENGTH_LONG).show();
-            }
+        tvBronzeStatus = findViewById(R.id.tvBronzeStatus);
+        tvSilverStatus = findViewById(R.id.tvSilverStatus);
+        tvGoldStatus = findViewById(R.id.tvGoldStatus);
+        tvDiamondStatus = findViewById(R.id.tvDiamondStatus);
+
+        pbLevelProgress = findViewById(R.id.pbLevelProgress);
+
+        ivBackAchievements.setOnClickListener(v -> finish());
+
+        loadUserPoints();
+    }
+
+    private void loadUserPoints() {
+        if (currentUid == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // ==========================================
-        // 🔙 Back Button (Left Arrow) का कनेक्शन
-        // ==========================================
-        ImageView ivBackAchievements = findViewById(R.id.ivBackAchievements);
+        fStore.collection("Users")
+                .document(currentUid)
+                .get()
+                .addOnSuccessListener(this::applyAchievementData)
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to load achievements", Toast.LENGTH_SHORT).show());
+    }
 
-        if (ivBackAchievements != null) {
-            ivBackAchievements.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // इस पेज को बंद कर देगा और यूज़र पिछले पेज पर चला जाएगा
-                    finish();
-                }
-            });
+    private void applyAchievementData(@NonNull DocumentSnapshot documentSnapshot) {
+        Long pointsLong = documentSnapshot.getLong("points");
+        int points = pointsLong != null ? pointsLong.intValue() : 0;
+
+        // Negative points ko UI me 0 treat karenge
+        if (points < 0) {
+            points = 0;
         }
 
-    } // 👈 onCreate का ब्रैकेट यहाँ खत्म हो रहा है, सब कुछ इसके अंदर है!
+        tvPoints.setText(points + " Points");
+        resetTierStatus();
+
+        // Bronze: 0 - 49
+        if (points < 50) {
+            showBronze(points);
+        }
+        // Silver: 50 - 99
+        else if (points < 100) {
+            showSilver(points);
+        }
+        // Gold: 100 - 199
+        else if (points < 200) {
+            showGold(points);
+        }
+        // Diamond: 200+
+        else {
+            showDiamond(points);
+        }
+    }
+
+    private void showBronze(int points) {
+        tvCurrentLevelIcon.setText("🥉");
+        tvCurrentLevelName.setText("Bronze Beginner");
+        tvNextTarget.setText("50 (Silver)");
+
+        pbLevelProgress.setMax(50);
+        pbLevelProgress.setProgress(points);
+
+        int remaining = 50 - points;
+        tvProgressMessage.setText("Almost there! Only " + remaining + " points needed for Silver! 🔥");
+
+        tvBronzeStatus.setText("📍 Current");
+        tvBronzeStatus.setTextColor(Color.parseColor("#E17055"));
+    }
+
+    private void showSilver(int points) {
+        tvCurrentLevelIcon.setText("🥈");
+        tvCurrentLevelName.setText("Silver Pro");
+        tvNextTarget.setText("100 (Gold)");
+
+        pbLevelProgress.setMax(50);
+        pbLevelProgress.setProgress(points - 50);
+
+        int remaining = 100 - points;
+        tvProgressMessage.setText("Nice! Only " + remaining + " points needed for Gold! 🚀");
+
+        tvBronzeStatus.setText("✅ Unlocked");
+        tvBronzeStatus.setTextColor(Color.parseColor("#27AE60"));
+
+        tvSilverStatus.setText("📍 Current");
+        tvSilverStatus.setTextColor(Color.parseColor("#6C5CE7"));
+    }
+
+    private void showGold(int points) {
+        tvCurrentLevelIcon.setText("🥇");
+        tvCurrentLevelName.setText("Gold Master");
+        tvNextTarget.setText("200 (Diamond)");
+
+        pbLevelProgress.setMax(100);
+        pbLevelProgress.setProgress(points - 100);
+
+        int remaining = 200 - points;
+        tvProgressMessage.setText("Great job! Only " + remaining + " points needed for Diamond! ✨");
+
+        tvBronzeStatus.setText("✅ Unlocked");
+        tvBronzeStatus.setTextColor(Color.parseColor("#27AE60"));
+
+        tvSilverStatus.setText("✅ Unlocked");
+        tvSilverStatus.setTextColor(Color.parseColor("#27AE60"));
+
+        tvGoldStatus.setText("📍 Current");
+        tvGoldStatus.setTextColor(Color.parseColor("#F39C12"));
+    }
+
+    private void showDiamond(int points) {
+        tvCurrentLevelIcon.setText("💎");
+        tvCurrentLevelName.setText("Diamond Legend");
+        tvNextTarget.setText("MAX LEVEL");
+
+        // 200 ke baad bhi bar full/fullest dikhe
+        pbLevelProgress.setMax(100);
+        pbLevelProgress.setProgress(100);
+
+        tvProgressMessage.setText("Amazing! You reached Diamond Legend! 👑");
+
+        tvBronzeStatus.setText("✅ Unlocked");
+        tvBronzeStatus.setTextColor(Color.parseColor("#27AE60"));
+
+        tvSilverStatus.setText("✅ Unlocked");
+        tvSilverStatus.setTextColor(Color.parseColor("#27AE60"));
+
+        tvGoldStatus.setText("✅ Unlocked");
+        tvGoldStatus.setTextColor(Color.parseColor("#27AE60"));
+
+        tvDiamondStatus.setText("📍 Current");
+        tvDiamondStatus.setTextColor(Color.parseColor("#00A8FF"));
+    }
+
+    private void resetTierStatus() {
+        tvBronzeStatus.setText("🔒 Locked");
+        tvSilverStatus.setText("🔒 Locked");
+        tvGoldStatus.setText("🔒 Locked");
+        tvDiamondStatus.setText("🔒 Locked");
+
+        tvBronzeStatus.setTextColor(Color.parseColor("#A4B0BE"));
+        tvSilverStatus.setTextColor(Color.parseColor("#A4B0BE"));
+        tvGoldStatus.setTextColor(Color.parseColor("#A4B0BE"));
+        tvDiamondStatus.setTextColor(Color.parseColor("#A4B0BE"));
+    }
 }
