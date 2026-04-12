@@ -222,10 +222,12 @@
     <LinearLayout
         android:id="@+id/bottomNavBar"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#FFFFFF"
         android:elevation="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="24dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 

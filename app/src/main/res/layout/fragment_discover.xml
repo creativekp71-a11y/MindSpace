@@ -7,7 +7,7 @@
     android:background="#F5F6FA">
 
     <!-- Purple Header Container (Unifies with Status Bar) -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#6C5CE7"
@@ -15,32 +15,39 @@
         android:paddingBottom="24dp"
         android:paddingHorizontal="20dp"
         android:elevation="8dp">
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/ivBack"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_back"
-            app:tint="#FFFFFF"
-            android:visibility="gone"/> <!-- Hidden in fragment -->
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_back"
+                app:tint="#FFFFFF"
+                android:visibility="gone"/> <!-- Hidden in fragment -->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Discover"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_centerInParent="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Discover"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_centerInParent="true"/>
 
-        <ImageView
-            android:id="@+id/ivSearch"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_nav_search"
-            app:tint="#FFFFFF"/>
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/ivSearch"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_nav_search"
+                app:tint="#FFFFFF"/>
+        </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
