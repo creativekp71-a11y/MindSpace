@@ -24,11 +24,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#6C5CE7"
-                android:paddingTop="48dp"
-                android:paddingBottom="16dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="40dp"
                 android:paddingHorizontal="20dp"
                 android:elevation="8dp"
-                android:minHeight="72dp">
+                android:minHeight="50dp">
 
                 <ImageView
                     android:id="@+id/ivBack"
@@ -148,6 +148,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Math" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipGK"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="GK/GS" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipBrain"

@@ -15,7 +15,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.bumptech.glide.Glide;
 import androidx.activity.result.ActivityResultLauncher;
@@ -36,7 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
     private SwitchCompat switchBecomeAuthor;
     private ImageView ivProfilePic, ivCover;
     private ActivityResultLauncher<String> imagePickerLauncher;
-    private String uploadType = ""; // "profile_pic" or "cover_pic"
+    private String uploadType = "";
     private ProgressDialog progressDialog;
 
     @Override
@@ -47,7 +46,6 @@ public class ProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
 
-        // Initialize UI components
         tvName = findViewById(R.id.tvProfileName);
         tvUsername = findViewById(R.id.tvProfileUsername);
         tvEmail = findViewById(R.id.tvProfileEmail);
@@ -60,31 +58,33 @@ public class ProfileActivity extends AppCompatActivity {
         tvFollowingCount = findViewById(R.id.tvProfileFollowingCount);
         tvMenuFollowing = findViewById(R.id.tvMenuFollowing);
 
-        // --- Bottom Navigation ---
         setupBottomNavigation();
 
-        // --- Back Button ---
         findViewById(R.id.ivBackProfile).setOnClickListener(v -> finish());
 
-        // --- Menu Navigation ---
-        findViewById(R.id.tvMenuAchievements).setOnClickListener(v -> 
-            startActivity(new Intent(this, AchievementsActivity.class)));
+        findViewById(R.id.tvMenuAchievements).setOnClickListener(v ->
+                startActivity(new Intent(this, AchievementsActivity.class)));
 
-        findViewById(R.id.tvMenuSettings).setOnClickListener(v -> 
-            startActivity(new Intent(this, SettingsActivity.class)));
+        findViewById(R.id.tvMenuSettings).setOnClickListener(v ->
+                startActivity(new Intent(this, SettingsActivity.class)));
 
         findViewById(R.id.tvMenuShare).setOnClickListener(v -> {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey! Check out MindSpace for awesome quizzes!");
+            String shareText = "📱 MindSpace Quiz App\n\n"
+                    + "Hey! Try my app made for a college project.\n"
+                    + "Download the APK from here:\n"
+                    + "https://drive.google.com/file/d/1pwyLyBBJw3rjpffOcvoWWUUOkM1-IheX/view?usp=sharing"
+                    + "Install it and enjoy the quiz app 🎯";
+
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
             sendIntent.setType("text/plain");
-            startActivity(Intent.createChooser(sendIntent, null));
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT, "MindSpace Quiz App");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+            startActivity(Intent.createChooser(sendIntent, "Invite via"));
         });
 
-        tvMenuFollowing.setOnClickListener(v -> 
-            startActivity(new Intent(this, FollowingListActivity.class)));
+        tvMenuFollowing.setOnClickListener(v ->
+                startActivity(new Intent(this, FollowingListActivity.class)));
 
-        // --- Image Picker Setup ---
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
                 uploadImageToFirebase(uri);
@@ -93,7 +93,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Click listeners for the camera icons
         findViewById(R.id.btnEditProfilePic).setOnClickListener(v -> {
             uploadType = "profile_pic";
             imagePickerLauncher.launch("image/*");
@@ -104,7 +103,6 @@ public class ProfileActivity extends AppCompatActivity {
             imagePickerLauncher.launch("image/*");
         });
 
-        // --- Author Menu Items ---
         switchBecomeAuthor = findViewById(R.id.switchBecomeAuthor);
         tvMenuAddActivity = findViewById(R.id.tvMenuAddActivity);
         viewDividerAddActivity = findViewById(R.id.viewDividerAddActivity);
@@ -115,7 +113,6 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(new Intent(this, AddDiscoveryActivity.class));
         });
 
-        // --- Logout Logic ---
         View btnLogout = findViewById(R.id.tvMenuLogout);
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {
@@ -135,7 +132,6 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize ProgressDialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Processing Image");
         progressDialog.setMessage("Optimizing and uploading directly to database...");
@@ -144,31 +140,24 @@ public class ProfileActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
-                // 1. Get Bitmap from Uri
                 InputStream inputStream = getContentResolver().openInputStream(uri);
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                 if (inputStream != null) inputStream.close();
 
-                // 2. Scale it down to ensure it stays well under 1MB
                 int width = bitmap.getWidth();
                 int height = bitmap.getHeight();
                 float ratio = (float) width / (float) height;
-                int newWidth = 400; 
+                int newWidth = 400;
                 int newHeight = (int) (400 / ratio);
                 Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
 
-                // 3. Compress to JPEG
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);
                 byte[] bytes = bos.toByteArray();
 
-                // 4. Encode to Base64
                 String base64String = Base64.encodeToString(bytes, Base64.DEFAULT);
 
-                // 5. Update UI and Firestore on Main Thread
-                runOnUiThread(() -> {
-                    updateFirestore(base64String);
-                });
+                runOnUiThread(() -> updateFirestore(base64String));
 
             } catch (Exception e) {
                 runOnUiThread(() -> {
@@ -181,15 +170,19 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private boolean isNetworkAvailable() {
-        android.net.ConnectivityManager connectivityManager = (android.net.ConnectivityManager) getSystemService(android.content.Context.CONNECTIVITY_SERVICE);
+        android.net.ConnectivityManager connectivityManager =
+                (android.net.ConnectivityManager) getSystemService(android.content.Context.CONNECTIVITY_SERVICE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-             android.net.Network network = connectivityManager.getActiveNetwork();
-             if (network == null) return false;
-             android.net.NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
-             return capabilities != null && (capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_CELLULAR));
+            android.net.Network network = connectivityManager.getActiveNetwork();
+            if (network == null) return false;
+            android.net.NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
+            return capabilities != null &&
+                    (capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI)
+                            || capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_CELLULAR));
         } else {
-             android.net.NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-             return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+            android.net.NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
     }
 
@@ -226,7 +219,7 @@ public class ProfileActivity extends AppCompatActivity {
         fStore.collection("Users").document(uid).update(map).addOnSuccessListener(aVoid -> {
             if (progressDialog.isShowing()) progressDialog.dismiss();
             Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-            
+
             byte[] imageBytes = Base64.decode(base64, Base64.DEFAULT);
             if (uploadType.equals("profile_pic")) {
                 Glide.with(this).load(imageBytes).placeholder(R.drawable.ic_user_placeholder).error(R.drawable.ic_user_placeholder).into(ivProfilePic);
@@ -251,7 +244,7 @@ public class ProfileActivity extends AppCompatActivity {
                     String fullName = documentSnapshot.getString("full_name");
                     String username = documentSnapshot.getString("username");
                     String email = documentSnapshot.getString("email");
-                    
+
                     Long points = documentSnapshot.getLong("points");
                     Long coins = documentSnapshot.getLong("coins");
                     String rank = documentSnapshot.getString("rank");
@@ -261,9 +254,9 @@ public class ProfileActivity extends AppCompatActivity {
                     tvName.setText(fullName != null ? fullName : "N/A");
                     tvUsername.setText(username != null ? "@" + username : "@username");
                     tvEmail.setText(email != null ? email : "No Email Found");
-                    
-                    tvPoints.setText(String.valueOf(points != null ? points : 0)); 
-                    tvCoins.setText(String.valueOf(coins != null ? coins : 0));   
+
+                    tvPoints.setText(String.valueOf(points != null ? points : 0));
+                    tvCoins.setText(String.valueOf(coins != null ? coins : 0));
                     tvRank.setText(rank != null ? rank : "--");
 
                     Long followers = documentSnapshot.getLong("followersCount");

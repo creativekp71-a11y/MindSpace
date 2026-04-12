@@ -92,7 +92,9 @@ public class FindFriendsActivity extends AppCompatActivity {
     }
 
     private void sendInvite() {
-        String inviteMessage = "Hey, maine ek app banayi hai. Tu install karke join karna chahe to mujhe bata, me APK share kar dunga.";
+        String inviteMessage = "Hey! Try my MindSpace Quiz App 🎯\n\n"
+                + "Download APK here:\n"
+                +"https://drive.google.com/file/d/1pwyLyBBJw3rjpffOcvoWWUUOkM1-IheX/view?usp=sharing";
 
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");

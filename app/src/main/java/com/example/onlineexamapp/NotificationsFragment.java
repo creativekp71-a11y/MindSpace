@@ -1,21 +1,26 @@
 package com.example.onlineexamapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +45,15 @@ public class NotificationsFragment extends Fragment {
         rvNotifications = view.findViewById(R.id.rvNotifications);
         llEmpty = view.findViewById(R.id.llEmptyNotifications);
         tvMarkAllRead = view.findViewById(R.id.tvMarkAllRead);
+
+        // 🔙 Back Button
+        ImageView ivBack = view.findViewById(R.id.ivBackNotifications);
+        ivBack.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), DashboardActivity.class);
+            startActivity(intent);
+            requireActivity().finish();
+        });
+
         notifList = new ArrayList<>();
 
         adapter = new NotificationAdapter(getContext(), notifList, model -> {

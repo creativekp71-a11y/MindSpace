@@ -4,26 +4,21 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore fStore;
-    private GoogleSignInClient googleSignInClient;
-    private ActivityResultLauncher<Intent> googleAuthLauncher;
 
     private EditText etFullName;
     private EditText tvDob;
@@ -38,47 +33,6 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-        googleSignInClient = SocialAuthHelper.createGoogleSignInClient(this);
-
-        googleAuthLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getData() == null) {
-                        return;
-                    }
-
-                    Map<String, Object> seedProfile = new HashMap<>();
-                    seedProfile.put("full_name", getText(etFullName));
-                    seedProfile.put("dob", getText(tvDob));
-                    seedProfile.put("phone", getText(etPhone));
-                    seedProfile.put("country", getText(etCountry));
-                    seedProfile.put("age", getText(etAge));
-
-                    SocialAuthHelper.handleGoogleSignInResult(
-                            this,
-                            result.getData(),
-                            mAuth,
-                            fStore,
-                            seedProfile,
-                            new SocialAuthHelper.Callback() {
-                                @Override
-                                public void onSuccess() {
-                                    startActivity(new Intent(CreateAccountActivity.this, MainHomeActivity.class));
-                                    finish();
-                                }
-
-                                @Override
-                                public void onError(String message) {
-                                    Toast.makeText(CreateAccountActivity.this, message, Toast.LENGTH_LONG).show();
-                                }
-
-                                @Override
-                                public void onComplete() {
-                                }
-                            }
-                    );
-                }
-        );
 
         etFullName = findViewById(R.id.etFullName);
         tvDob = findViewById(R.id.tvDob);
@@ -86,16 +40,24 @@ public class CreateAccountActivity extends AppCompatActivity {
         etCountry = findViewById(R.id.etCountry);
         etAge = findViewById(R.id.etAge);
         Button btnContinue = findViewById(R.id.btnContinue);
-        CardView btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
-        CardView btnFacebookLogin = findViewById(R.id.btnFacebookLogin);
+        View btnBack = findViewById(R.id.btnBack);
+        View btnCalendarIcon = findViewById(R.id.btnCalendarIcon);
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        findViewById(R.id.btnCalendarIcon).setOnClickListener(v -> showDatePicker());
-        tvDob.setOnClickListener(v -> showDatePicker());
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
 
-        btnContinue.setOnClickListener(v -> continueToSignUp());
-        btnGoogleLogin.setOnClickListener(v -> googleAuthLauncher.launch(googleSignInClient.getSignInIntent()));
-        btnFacebookLogin.setOnClickListener(v -> showSocialAuthMessage("Facebook"));
+        if (btnCalendarIcon != null) {
+            btnCalendarIcon.setOnClickListener(v -> showDatePicker());
+        }
+
+        if (tvDob != null) {
+            tvDob.setOnClickListener(v -> showDatePicker());
+        }
+
+        if (btnContinue != null) {
+            btnContinue.setOnClickListener(v -> continueToSignUp());
+        }
     }
 
     private void showDatePicker() {
@@ -104,12 +66,26 @@ public class CreateAccountActivity extends AppCompatActivity {
         int month = today.get(Calendar.MONTH);
         int day = today.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
-            String dob = String.format(java.util.Locale.getDefault(), "%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear);
-            tvDob.setText(dob);
-            int age = calculateAge(selectedYear, selectedMonth, selectedDay);
-            etAge.setText(String.valueOf(age));
-        }, year, month, day);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    String dob = String.format(
+                            java.util.Locale.getDefault(),
+                            "%02d/%02d/%04d",
+                            selectedDay,
+                            selectedMonth + 1,
+                            selectedYear
+                    );
+
+                    tvDob.setText(dob);
+
+                    int age = calculateAge(selectedYear, selectedMonth, selectedDay);
+                    etAge.setText(String.valueOf(age));
+                },
+                year,
+                month,
+                day
+        );
 
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
@@ -118,12 +94,14 @@ public class CreateAccountActivity extends AppCompatActivity {
     private int calculateAge(int year, int month, int dayOfMonth) {
         Calendar dob = Calendar.getInstance();
         dob.set(year, month, dayOfMonth);
+
         Calendar today = Calendar.getInstance();
 
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
+
         return Math.max(age, 0);
     }
 
@@ -162,12 +140,22 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(age)) {
             etAge.setError("Age is required");
+            etAge.requestFocus();
             return;
         }
 
-        int ageValue = Integer.parseInt(age);
+        int ageValue;
+        try {
+            ageValue = Integer.parseInt(age);
+        } catch (NumberFormatException e) {
+            etAge.setError("Enter a valid age");
+            etAge.requestFocus();
+            return;
+        }
+
         if (ageValue < 13) {
             etAge.setError("You must be at least 13 years old");
+            etAge.requestFocus();
             return;
         }
 
@@ -181,18 +169,16 @@ public class CreateAccountActivity extends AppCompatActivity {
     }
 
     private String getText(EditText editText) {
-        return editText.getText() == null ? "" : editText.getText().toString().trim();
+        return editText == null || editText.getText() == null
+                ? ""
+                : editText.getText().toString().trim();
     }
 
     private void clearErrors() {
-        etFullName.setError(null);
-        tvDob.setError(null);
-        etPhone.setError(null);
-        etCountry.setError(null);
-        etAge.setError(null);
-    }
-
-    private void showSocialAuthMessage(String provider) {
-        Toast.makeText(this, provider + " sign-in is not configured in this build yet.", Toast.LENGTH_LONG).show();
+        if (etFullName != null) etFullName.setError(null);
+        if (tvDob != null) tvDob.setError(null);
+        if (etPhone != null) etPhone.setError(null);
+        if (etCountry != null) etCountry.setError(null);
+        if (etAge != null) etAge.setError(null);
     }
 }

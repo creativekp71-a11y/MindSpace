@@ -4,19 +4,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.HashMap;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -29,8 +27,6 @@ public class SignInActivity extends AppCompatActivity {
     private EditText etPassword;
     private Button btnSignIn;
     private CheckBox chkRememberMe;
-    private GoogleSignInClient googleSignInClient;
-    private ActivityResultLauncher<Intent> googleAuthLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,59 +35,31 @@ public class SignInActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-        googleSignInClient = SocialAuthHelper.createGoogleSignInClient(this);
-        googleAuthLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getData() == null) {
-                        return;
-                    }
-
-                    SocialAuthHelper.handleGoogleSignInResult(
-                            this,
-                            result.getData(),
-                            mAuth,
-                            fStore,
-                            new HashMap<>(),
-                            new SocialAuthHelper.Callback() {
-                                @Override
-                                public void onSuccess() {
-                                    startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
-                                    finish();
-                                }
-
-                                @Override
-                                public void onError(String message) {
-                                    Toast.makeText(SignInActivity.this, message, Toast.LENGTH_LONG).show();
-                                }
-
-                                @Override
-                                public void onComplete() {
-                                }
-                            }
-                    );
-                }
-        );
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnSignIn = findViewById(R.id.btnSignIn);
         chkRememberMe = findViewById(R.id.chkRememberMe);
-        TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
+        View btnBack = findViewById(R.id.btnBack);
+
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
+
         bindRememberedEmail();
 
-        btnSignIn.setOnClickListener(v -> attemptSignIn());
-        tvForgotPassword.setOnClickListener(v -> {
-            Intent intent = new Intent(SignInActivity.this, ForgotPasswordActivity.class);
-            startActivity(intent);
-        });
+        if (btnSignIn != null) {
+            btnSignIn.setOnClickListener(v -> attemptSignIn());
+        }
 
-        CardView btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
-        CardView btnFacebookLogin = findViewById(R.id.btnFacebookLogin);
-        btnGoogleLogin.setOnClickListener(v -> googleAuthLauncher.launch(googleSignInClient.getSignInIntent()));
-        btnFacebookLogin.setOnClickListener(v -> showSocialAuthMessage("Facebook"));
+        if (tvForgotPassword != null) {
+            tvForgotPassword.setOnClickListener(v -> {
+                Intent intent = new Intent(SignInActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void attemptSignIn() {
@@ -138,7 +106,9 @@ public class SignInActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(
                         SignInActivity.this,
-                        task.getException() != null ? task.getException().getMessage() : "Login failed. Please try again.",
+                        task.getException() != null
+                                ? task.getException().getMessage()
+                                : "Login failed. Please try again.",
                         Toast.LENGTH_LONG
                 ).show();
             }
@@ -163,20 +133,12 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    private void showSocialAuthMessage(String provider) {
-        Toast.makeText(
-                this,
-                provider + " sign-in is not configured in this build yet.",
-                Toast.LENGTH_LONG
-        ).show();
-    }
-
     private String getText(EditText editText) {
         return editText.getText() == null ? "" : editText.getText().toString().trim();
     }
 
     private void clearErrors() {
-        etEmail.setError(null);
-        etPassword.setError(null);
+        if (etEmail != null) etEmail.setError(null);
+        if (etPassword != null) etPassword.setError(null);
     }
 }
