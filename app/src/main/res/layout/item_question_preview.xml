@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="?android:attr/colorBackground"
     app:cardElevation="2dp">
 
     <LinearLayout
@@ -34,7 +35,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:text="Sample Question text goes here..."
-            android:textColor="#2F3640"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="14sp" />
 
         <ImageView

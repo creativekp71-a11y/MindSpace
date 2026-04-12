@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Quiz Complete! 🎯"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="26sp"
             android:textStyle="bold"
             android:layout_marginBottom="20dp" />
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="कुल सवाल: 10"
-            android:textColor="#555555"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="20sp"
             android:layout_marginBottom="10dp" />
 

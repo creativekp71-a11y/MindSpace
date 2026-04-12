@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"> <ScrollView
+    android:background="?android:attr/colorBackground"> <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/btnContainer"
@@ -20,14 +20,14 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_back_purple"
-            app:tint="#000000" />
+            app:tint="?android:attr/textColorPrimary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="You've got mail 📩"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="26sp"
             android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="We have sent the OTP verification code to your email address. Check your email and enter the code below."
-            android:textColor="#757575"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
 
         <LinearLayout
@@ -102,7 +102,7 @@
             android:layout_marginTop="30dp"
             android:gravity="center"
             android:text="Didn't receive email?\nYou can resend code in 55s"
-            android:textColor="#757575" />
+            android:textColor="?android:attr/textColorSecondary" />
 
     </LinearLayout>
 </ScrollView>
@@ -113,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:padding="24dp"
-        android:background="#FFFFFF">
+        android:background="?android:attr/colorBackground">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

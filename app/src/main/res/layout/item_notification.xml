@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="6dp"
-    app:cardBackgroundColor="#FFFFFF"
+    app:cardBackgroundColor="?android:attr/colorBackground"
     app:cardCornerRadius="16dp"
     app:cardElevation="1dp">
 
@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="New Discovery!"
-                android:textColor="#1A1A1A"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -71,7 +71,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:text="Author Name just posted a new quiz: Title"
-                android:textColor="#5D5D5D"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="13sp" />
 
             <TextView
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:text="2 mins ago"
-                android:textColor="#8A8A8A"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="11sp" />
         </LinearLayout>
 

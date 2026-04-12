@@ -44,7 +44,7 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="Please wait a moment, we are\npreparing for you..."
-            android:textColor="#757575"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
 
         <ProgressBar

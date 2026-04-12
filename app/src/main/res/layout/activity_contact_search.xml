@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
     android:padding="40dp">
 
@@ -19,14 +19,14 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@android:drawable/ic_menu_revert"
-            app:tint="#000000" />
+            app:tint="?android:attr/textColorPrimary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Search Contacts"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -35,13 +35,15 @@
         android:id="@+id/etSearchContact"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#F5F5F5"
+        android:background="?android:attr/listDivider"
         android:drawableStart="@android:drawable/ic_menu_search"
         android:drawablePadding="12dp"
         android:hint="Search by name or number"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:textSize="14sp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textColorHint="?android:attr/textColorSecondary"
         android:layout_marginBottom="20dp"/>
 
     <ScrollView
@@ -58,8 +60,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC1" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_1" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC1" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="jaydeepbhai parmar" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 98765 43210" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="jaydeepbhai parmar" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 98765 43210" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -67,8 +69,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC2" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_2" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC2" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dr.Bhavinbhai" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 87654 32109" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dr.Bhavinbhai" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 87654 32109" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -76,8 +78,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC3" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_3" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC3" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Rashilaben" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Rashilaben" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -85,8 +87,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC4" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_4" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC4" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Akkiy" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 56743 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Akkiy" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 56743 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -94,8 +96,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC5" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_5" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC5" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Jamna Dohi" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 98796 803667" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Jamna Dohi" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 98796 803667" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -103,8 +105,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC6" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_6" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC6" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kishan" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 34567 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kishan" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 34567 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -112,8 +114,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC7" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_7" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC7" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Jemlo" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 98765 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Jemlo" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 98765 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -121,8 +123,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC8" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_8" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC8" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pasi Dadi" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 98765" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pasi Dadi" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 98765" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -130,8 +132,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC9" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_9" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC9" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dineshmasa" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 54321 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dineshmasa" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 54321 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -139,8 +141,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC10" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_10" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC10" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vijudi" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 12345 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vijudi" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 12345 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -148,8 +150,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC11" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_11" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC11" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kamo" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 12345" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kamo" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 12345" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -157,8 +159,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC12" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_12" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC12" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Chako Barot " android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 89390 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Chako Barot " android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 89390 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -166,8 +168,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC13" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_13" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC13" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Laghro" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 97247 98389" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Laghro" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 97247 98389" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -175,8 +177,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC14" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_14" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC14" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tika kaka" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 95741 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tika kaka" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 95741 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -184,8 +186,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC15" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_15" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC15" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bhupat" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bhupat" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -193,8 +195,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC16" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_16" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC16" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Champaklal" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 56478 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Champaklal" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 56478 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -202,8 +204,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC17" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_17" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC17" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Khimji" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 90999" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Khimji" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 90999" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -211,8 +213,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC18" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_18" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC18" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mepo" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 24375 21098" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mepo" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 24375 21098" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -220,8 +222,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC19" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_19" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC19" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pithiyo Aati" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 44491 99389" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pithiyo Aati" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 44491 99389" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>
@@ -229,8 +231,8 @@
             <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="20dp">
                 <de.hdodenhof.circleimageview.CircleImageView android:id="@+id/imgC20" android:layout_width="45dp" android:layout_height="45dp" android:src="@drawable/no_20" />
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_toEndOf="@id/imgC20" android:layout_marginStart="15dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ManiBen" android:textStyle="bold" android:textColor="#000000"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 99345" android:textSize="12sp" android:textColor="#888888"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ManiBen" android:textStyle="bold" android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+91 76543 99345" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary"/>
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton android:layout_width="wrap_content" android:layout_height="32dp" android:layout_alignParentEnd="true" android:backgroundTint="#6C5CE7" android:text="Invite" android:textColor="#FFFFFF" android:textAllCaps="false" android:textSize="11sp"/>
             </RelativeLayout>

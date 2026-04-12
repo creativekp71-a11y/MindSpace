@@ -39,7 +39,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="You have successfully reset and\ncreated a new password."
-        android:textColor="#757575"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp" />
 
     <androidx.appcompat.widget.AppCompatButton

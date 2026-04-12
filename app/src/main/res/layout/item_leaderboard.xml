@@ -6,7 +6,8 @@
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="6dp"
     app:cardCornerRadius="14dp"
-    app:cardElevation="3dp">
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="?android:attr/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
             android:text="#1"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#2F3640"
+            android:textColor="?android:attr/textColorPrimary"
             android:gravity="center" />
 
         <!-- Profile Pic -->
@@ -51,7 +52,7 @@
                 android:text="John Doe"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#000000" />
+                android:textColor="?android:attr/textColorPrimary" />
 
             <TextView
                 android:id="@+id/tvLeaderboardUsername"
@@ -59,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:text="@johndoe"
                 android:textSize="12sp"
-                android:textColor="#7F8C8D" />
+                android:textColor="?android:attr/textColorSecondary" />
         </LinearLayout>
 
         <!-- Points -->

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="?android:attr/colorBackground"
     android:fillViewport="true">
 
     <LinearLayout
@@ -25,7 +25,7 @@
                 android:focusable="true"
                 android:padding="10dp"
                 android:src="@drawable/ic_back_purple"
-                app:tint="#111111" />
+                app:tint="?android:attr/textColorPrimary" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="MindSpace"
-                    android:textColor="#111111"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:text="Create your account"
-            android:textColor="#111111"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="28sp"
             android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Finish your account with a secure login and a unique username."
-            android:textColor="#6B7280"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -77,7 +77,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="#D1D5DB">
+            app:boxStrokeColor="?android:attr/listDivider">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFullName"
@@ -86,8 +86,8 @@
                 android:hint=""
                 android:inputType="textPersonName"
                 android:maxLines="1"
-                android:textColor="#111111"
-                android:textColorHint="#9CA3AF" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -100,7 +100,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="#D1D5DB"
+            app:boxStrokeColor="?android:attr/listDivider"
             app:helperText="3-20 characters, letters, numbers, dot or underscore">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -110,8 +110,8 @@
                 android:hint=""
                 android:inputType="text"
                 android:maxLines="1"
-                android:textColor="#111111"
-                android:textColorHint="#9CA3AF" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -124,7 +124,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="#D1D5DB">
+            app:boxStrokeColor="?android:attr/listDivider">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
@@ -133,8 +133,8 @@
                 android:hint=""
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:textColor="#111111"
-                android:textColorHint="#9CA3AF" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -147,9 +147,9 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="#D1D5DB"
+            app:boxStrokeColor="?android:attr/listDivider"
             app:endIconMode="password_toggle"
-            app:endIconTint="#6B7280"
+            app:endIconTint="?android:attr/textColorSecondary"
             app:helperText="At least 8 characters with letters and numbers">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -159,8 +159,8 @@
                 android:hint=""
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:textColor="#111111"
-                android:textColorHint="#9CA3AF" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -173,7 +173,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="#D1D5DB"
+            app:boxStrokeColor="?android:attr/listDivider"
             app:endIconMode="password_toggle"
             app:endIconTint="#6B7280">
 
@@ -184,8 +184,8 @@
                 android:hint=""
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:textColor="#111111"
-                android:textColorHint="#9CA3AF" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -194,7 +194,7 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="Or continue with"
-            android:textColor="#6B7280"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="13sp" />
 
         <com.google.android.material.card.MaterialCardView
@@ -202,10 +202,10 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="?android:attr/colorBackground"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
-            app:strokeColor="#E5E7EB"
+            app:strokeColor="?android:attr/listDivider"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -224,7 +224,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="Continue with Google"
-                    android:textColor="#111827"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>

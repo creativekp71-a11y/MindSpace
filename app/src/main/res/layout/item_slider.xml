@@ -17,7 +17,7 @@
     android:layout_height="wrap_content"
     android:textSize="22sp"
     android:textStyle="bold"
-    android:textColor="#333333"
+    android:textColor="?android:attr/textColorPrimary"
     android:gravity="center"
     android:lineSpacingExtra="6dp"
     android:paddingStart="15dp"

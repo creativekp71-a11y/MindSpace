@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF"
+    android:background="?android:attr/colorBackground"
     android:fitsSystemWindows="true">
 
     <RelativeLayout
@@ -19,7 +19,7 @@
             android:layout_centerVertical="true"
             android:padding="4dp"
             android:src="@drawable/ic_back"
-            app:tint="#000000" />
+            app:tint="?android:attr/textColorPrimary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
             android:layout_toEndOf="@id/ivBackAuthors"
             android:layout_marginStart="16dp"
             android:text="Top Authors"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -38,7 +38,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:src="@android:drawable/ic_menu_search"
-            app:tint="#000000" />
+            app:tint="?android:attr/textColorPrimary" />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView

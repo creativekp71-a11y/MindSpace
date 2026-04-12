@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
     android:padding="50dp">
 
@@ -19,7 +19,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_back_purple"
-            app:tint="#000000" />
+            app:tint="?android:attr/textColorPrimary" />
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
@@ -37,7 +37,7 @@
         android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="What type of account do\nyou like to create? 👨‍💼"
-        android:textColor="#000000"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="26sp"
         android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
         android:layout_marginBottom="30dp"
         android:gravity="center"
         android:text="You can skip it if you're not sure."
-        android:textColor="#757575"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp" />
 
     <LinearLayout
@@ -87,7 +87,7 @@
                     android:layout_gravity="center_vertical"
                     android:paddingStart="20dp"
                     android:text="Personal"
-                    android:textColor="#333333"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -124,7 +124,7 @@
                     android:layout_gravity="center_vertical"
                     android:paddingStart="20dp"
                     android:text="Teacher"
-                    android:textColor="#333333"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -161,7 +161,7 @@
                     android:layout_gravity="center_vertical"
                     android:paddingStart="20dp"
                     android:text="Student"
-                    android:textColor="#333333"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -198,7 +198,7 @@
                     android:layout_gravity="center_vertical"
                     android:paddingStart="20dp"
                     android:text="Professional"
-                    android:textColor="#333333"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -214,7 +214,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="#F2E7FE"
+        app:cardBackgroundColor="?android:attr/colorBackground"
         app:cardCornerRadius="30dp"
         app:cardElevation="5dp">
 

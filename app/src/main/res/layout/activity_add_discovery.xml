@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F6FA">
+    android:background="?android:attr/colorBackground">
 
     <!-- Header (Fixed at top) -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:background="#FFFFFF"
+        android:background="?android:attr/colorBackground"
         android:elevation="2dp">
         
         <ImageView
@@ -20,7 +20,7 @@
             android:layout_height="32dp"
             android:src="@drawable/ic_back"
             android:padding="4dp"
-            app:tint="#000000" />
+            app:tint="?android:attr/textColorPrimary" />
             
         <TextView
             android:id="@+id/tvAddDiscoveryHeaderTitle"
@@ -31,7 +31,7 @@
             android:textStyle="bold"
             android:layout_toEndOf="@id/ivBackAddDiscovery"
             android:layout_marginStart="16dp"
-            android:textColor="#000000" />
+            android:textColor="?android:attr/textColorPrimary" />
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Activity Cover Photo"
-                android:textColor="#000000"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
@@ -85,7 +85,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/bg_rounded_white"
+                        android:background="?android:attr/listDivider"
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="8dp"
                         android:gravity="center"
@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Activity Title"
-                android:textColor="#000000"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
@@ -122,9 +122,9 @@
                 android:layout_height="50dp"
                 android:hint="Enter activity title"
                 android:paddingHorizontal="16dp"
-                android:textColor="#000000"
-                android:textColorHint="#888888"
-                android:background="@drawable/bg_rounded_white"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
+                android:background="?android:attr/listDivider"
                 android:elevation="2dp"
                 android:layout_marginBottom="20dp" />
 
@@ -146,7 +146,7 @@
 <!--                android:gravity="top"-->
 <!--                android:textColor="#000000"-->
 <!--                android:textColorHint="#888888"-->
-<!--                android:background="@drawable/bg_rounded_white"-->
+<!--                android:background="?android:attr/listDivider"-->
 <!--                android:elevation="2dp"-->
 <!--                android:layout_marginBottom="20dp" />-->
 
@@ -154,7 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Quiz Category"
-                android:textColor="#000000"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
@@ -165,9 +165,9 @@
                 android:layout_height="50dp"
                 android:hint="e.g. Science, Math, GK, etc..."
                 android:paddingHorizontal="16dp"
-                android:textColor="#000000"
-                android:textColorHint="#888888"
-                android:background="@drawable/bg_rounded_white"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
+                android:background="?android:attr/listDivider"
                 android:elevation="2dp"
                 android:layout_marginBottom="24dp" />
 
@@ -180,7 +180,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Questions"
-                    android:textColor="#000000"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textStyle="bold"
                     android:textSize="18sp" />
                 

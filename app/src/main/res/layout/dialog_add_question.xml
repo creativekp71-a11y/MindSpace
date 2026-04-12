@@ -29,6 +29,8 @@
             android:minHeight="48dp"
             android:background="@drawable/bg_rounded_white"
             android:padding="12dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary"
             android:layout_marginBottom="12dp" />
 
         <GridLayout
@@ -44,6 +46,8 @@
                 android:layout_columnWeight="1"
                 android:hint="Option A"
                 android:maxLength="50"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:background="@drawable/bg_rounded_white"
                 android:padding="12dp"
                 android:layout_margin="4dp" />
@@ -55,6 +59,8 @@
                 android:layout_columnWeight="1"
                 android:hint="Option B"
                 android:maxLength="50"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:background="@drawable/bg_rounded_white"
                 android:padding="12dp"
                 android:layout_margin="4dp" />
@@ -66,6 +72,8 @@
                 android:layout_columnWeight="1"
                 android:hint="Option C"
                 android:maxLength="50"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:background="@drawable/bg_rounded_white"
                 android:padding="12dp"
                 android:layout_margin="4dp" />
@@ -77,6 +85,8 @@
                 android:layout_columnWeight="1"
                 android:hint="Option D"
                 android:maxLength="50"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:background="@drawable/bg_rounded_white"
                 android:padding="12dp"
                 android:layout_margin="4dp" />
@@ -88,7 +98,7 @@
             android:layout_height="wrap_content"
             android:text="Correct Answer (Exact Option Text)"
             android:textStyle="bold"
-            android:textColor="#2F3640"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:layout_marginBottom="6dp" />
 
@@ -100,6 +110,8 @@
             android:maxLength="50"
             android:background="@drawable/bg_rounded_white"
             android:padding="12dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary"
             android:layout_marginBottom="20dp" />
 
         <androidx.appcompat.widget.AppCompatButton

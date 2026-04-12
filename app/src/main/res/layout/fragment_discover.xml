@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F6FA">
+    android:background="?android:attr/colorBackground">
 
     <!-- Purple Header Container (Unifies with Status Bar) -->
     <LinearLayout
@@ -87,8 +87,8 @@
                     android:hint="Search discoveries..."
                     android:background="@null"
                     android:textSize="14sp"
-                    android:textColor="#000000"
-                    android:textColorHint="#888888"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary"
                     android:maxLines="1"
                     android:inputType="text" />
 
@@ -97,7 +97,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_delete"
-                    app:tint="#888888" />
+                    app:tint="?android:attr/textColorSecondary" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -122,8 +122,8 @@
                     android:layout_height="wrap_content"
                     android:text="All"
                     android:checked="true"
-                    app:chipBackgroundColor="@color/white"
-                    app:chipStrokeColor="#DDD"
+                    app:chipBackgroundColor="?android:attr/colorSurface"
+                    app:chipStrokeColor="?android:attr/listDivider"
                     app:chipStrokeWidth="1dp" />
 
                 <com.google.android.material.chip.Chip

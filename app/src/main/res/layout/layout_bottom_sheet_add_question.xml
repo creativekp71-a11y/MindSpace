@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
-        android:background="@drawable/bg_rounded_white">
+        android:background="?android:attr/colorBackground">
 
         <!-- Drag Handle -->
         <View
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:text="Add New Question"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -51,8 +51,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
-                android:textColor="#000000"
-                android:textColorHint="#888888"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:maxLines="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -83,8 +83,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:textColor="#000000"
-                    android:textColorHint="#888888" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Option B -->
@@ -107,8 +107,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:textColor="#000000"
-                    android:textColorHint="#888888" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -140,8 +140,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:textColor="#000000"
-                    android:textColorHint="#888888" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Option D -->
@@ -164,8 +164,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:textColor="#000000"
-                android:textColorHint="#888888" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary" />
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
@@ -190,8 +190,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:textColor="#000000"
-            android:textColorHint="#888888" />
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Button -->

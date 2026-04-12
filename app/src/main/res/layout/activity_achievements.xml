@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F6FA"
+    android:background="?android:attr/colorBackground"
     android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="#FFFFFF"
+        android:background="?android:attr/colorBackground"
         android:paddingHorizontal="20dp"
         android:elevation="2dp">
 
@@ -21,7 +21,7 @@
             android:layout_centerVertical="true"
             android:padding="4dp"
             android:src="@drawable/ic_back"
-            app:tint="#000000" />
+            app:tint="?android:attr/textColorPrimary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
             android:layout_toEndOf="@id/ivBackAchievements"
             android:layout_marginStart="16dp"
             android:text="My Journey"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -149,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                app:cardBackgroundColor="#FFFFFF"
+                app:cardBackgroundColor="?android:attr/colorBackground"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp">
 
@@ -186,7 +186,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0 - 49 Points"
-                            android:textColor="#7F8FA6"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -206,7 +206,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                app:cardBackgroundColor="#EAF0F6"
+                app:cardBackgroundColor="?android:attr/listDivider"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
@@ -263,7 +263,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                app:cardBackgroundColor="#EAF0F6"
+                app:cardBackgroundColor="?android:attr/listDivider"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
@@ -320,7 +320,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
-                app:cardBackgroundColor="#EAF0F6"
+                app:cardBackgroundColor="?android:attr/listDivider"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 

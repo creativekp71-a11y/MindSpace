@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="?android:attr/colorBackground">
 
     <LinearLayout
         android:id="@+id/topBarQuiz"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
             android:text="Welcome Candidate!"
-            android:textColor="#8C8C8C"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Loading Question..."
-                android:textColor="#111111"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:lineSpacingExtra="6dp" />
@@ -70,7 +70,7 @@
                 android:background="@drawable/bg_quiz_option"
                 android:padding="18dp"
                 android:text="Option A"
-                android:textColor="#222222"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="17sp" />
 
             <TextView
@@ -81,7 +81,7 @@
                 android:background="@drawable/bg_quiz_option"
                 android:padding="18dp"
                 android:text="Option B"
-                android:textColor="#222222"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="17sp" />
 
             <TextView
@@ -92,7 +92,7 @@
                 android:background="@drawable/bg_quiz_option"
                 android:padding="18dp"
                 android:text="Option C"
-                android:textColor="#222222"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="17sp" />
 
             <TextView
@@ -102,7 +102,7 @@
                 android:background="@drawable/bg_quiz_option"
                 android:padding="18dp"
                 android:text="Option D"
-                android:textColor="#222222"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="17sp" />
 
         </LinearLayout>
