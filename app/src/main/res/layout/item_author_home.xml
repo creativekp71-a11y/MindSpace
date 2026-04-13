@@ -16,7 +16,7 @@
         android:scaleType="centerCrop"
         android:padding="2dp"
         app:strokeWidth="2dp"
-        app:strokeColor="?android:attr/listDivider"
+        app:strokeColor="#E0E0E0"
         app:shapeAppearanceOverlay="@style/CircleImageView" />
 
     <TextView
