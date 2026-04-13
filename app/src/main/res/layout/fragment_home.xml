@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="#FFFFFF">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -21,7 +21,6 @@
             android:paddingRight="20dp"
             android:paddingBottom="20dp">
 
-            <!-- Top Logo & Icons -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -33,16 +32,18 @@
                     android:layout_centerVertical="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <ImageView
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:src="@drawable/mindspace_logo2" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="MindSpace"
-                        android:textColor="?android:attr/textColorPrimary"
+                        android:textColor="#111111"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -54,7 +55,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_notification"
-                    app:tint="?android:attr/textColorPrimary" />
+                    app:tint="#111111" />
 
                 <ImageView
                     android:id="@+id/ivSearch"
@@ -64,15 +65,15 @@
                     android:layout_marginEnd="16dp"
                     android:layout_toStartOf="@id/ivBell"
                     android:src="@drawable/ic_search_purple"
-                    app:tint="?android:attr/textColorPrimary" />
+                    app:tint="#111111" />
             </RelativeLayout>
 
-            <!-- Play with Friends Banner -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_marginBottom="40dp"
-                app:cardBackgroundColor="#6C5CE7" app:cardCornerRadius="24dp"
+                app:cardBackgroundColor="#6C5CE7"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp">
 
                 <RelativeLayout
@@ -103,12 +104,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Play quiz together\nwith your friends now!"
+                            android:text="Play quiz together&#10;with your friends now!"
                             android:textColor="#FFFFFF"
                             android:textSize="22sp"
                             android:textStyle="bold" />
 
                         <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnFindFriendsBanner"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
                             android:layout_marginTop="12dp"
@@ -116,7 +118,6 @@
                             android:paddingStart="16dp"
                             android:paddingEnd="16dp"
                             android:text="Find Friends"
-                            android:id="@+id/btnFindFriendsBanner"
                             android:textAllCaps="false"
                             android:textColor="#6C5CE7"
                             android:textStyle="bold" />
@@ -124,23 +125,19 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Discovery Header -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp">
 
-                <com.google.android.material.imageview.ShapeableImageView
+                <ImageView
                     android:id="@+id/ivHeaderProfilePic"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user_placeholder"
-                    app:shapeAppearanceOverlay="@style/CircleImageView"
-                    app:strokeColor="?android:attr/listDivider"
-                    app:strokeWidth="1dp" />
+                    android:src="@drawable/ic_user_placeholder" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -149,20 +146,20 @@
                     android:layout_marginStart="12dp"
                     android:layout_toEndOf="@id/ivHeaderProfilePic"
                     android:orientation="vertical">
-                    
+
                     <TextView
                         android:id="@+id/tvUserGreeting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Hi, User 👋"
-                        android:textColor="?android:attr/textColorSecondary"
+                        android:textColor="#777777"
                         android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Discover"
-                        android:textColor="?android:attr/textColorPrimary"
+                        android:textColor="#111111"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -177,16 +174,13 @@
                     android:textStyle="bold" />
             </RelativeLayout>
 
-            <!-- Discovery RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHomeDiscover"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="40dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                android:nestedScrollingEnabled="false" />
 
-            <!-- Authors Header -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -196,7 +190,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Top Authors"
-                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColor="#111111"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -210,13 +204,11 @@
                     android:textStyle="bold" />
             </RelativeLayout>
 
-            <!-- Authors RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHomeAuthors"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
     </ScrollView>
