@@ -72,26 +72,28 @@
             android:gravity="center"
             android:layout_marginBottom="25dp"/>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGetStarted"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="LET'S GET STARTED"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:background="@drawable/btn_primary_background"
+            android:backgroundTint="#6200EE"
             android:textColor="#FFFFFF"
             app:cornerRadius="30dp"
             android:layout_marginBottom="16dp"/>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAlreadyAccount"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="I ALREADY HAVE AN ACCOUNT"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:background="@drawable/btn_secondary_background"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="#6200EE"
+            app:strokeWidth="2dp"
             android:textColor="#6200EE"
             app:cornerRadius="30dp"/>
     </LinearLayout>

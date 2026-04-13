@@ -123,7 +123,7 @@
                     android:text="All"
                     android:checked="true"
                     app:chipBackgroundColor="?attr/colorSurface"
-                    app:chipStrokeColor="?android:attr/listDivider"
+                    app:chipStrokeColor="?android:attr/textColorSecondary"
                     app:chipStrokeWidth="1dp" />
 
                 <com.google.android.material.chip.Chip

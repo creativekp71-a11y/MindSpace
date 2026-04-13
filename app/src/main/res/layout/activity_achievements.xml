@@ -206,7 +206,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                app:cardBackgroundColor="?android:attr/listDivider"
+                app:cardBackgroundColor="?android:attr/colorBackground"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
@@ -263,7 +263,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                app:cardBackgroundColor="?android:attr/listDivider"
+                app:cardBackgroundColor="?android:attr/colorBackground"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
@@ -320,7 +320,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
-                app:cardBackgroundColor="?android:attr/listDivider"
+                app:cardBackgroundColor="?android:attr/colorBackground"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
