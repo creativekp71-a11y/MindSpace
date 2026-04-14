@@ -8,5 +8,21 @@
         <item name="android:windowBackground">#121212</item>
         <item name="android:statusBarColor">#121212</item>
         <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Secondary / Accent color -->
+        <item name="colorSecondary">#6C5CE7</item>
+        <item name="colorSecondaryVariant">#5B4BCB</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorAccent">#6C5CE7</item>
+    </style>
+
+    <!-- Circle Style for ShapeableImageView -->
+    <style name="CircleImageViewShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CircleImageView" parent="Widget.MaterialComponents.ShapeableImageView">
+        <item name="shapeAppearanceOverlay">@style/CircleImageViewShape</item>
     </style>
 </resources>

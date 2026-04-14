@@ -16,6 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+
 public class SignInActivity extends AppCompatActivity {
 
     private static final String PREFS_AUTH = "auth_prefs";
@@ -27,6 +31,15 @@ public class SignInActivity extends AppCompatActivity {
     private EditText etPassword;
     private Button btnSignIn;
     private CheckBox chkRememberMe;
+    private View btnGoogleLogin;
+    private GoogleSignInClient googleSignInClient;
+
+    private final ActivityResultLauncher<Intent> googleSignInLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    processGoogleSignIn(result.getData());
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +48,13 @@ public class SignInActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
+        googleSignInClient = SocialAuthHelper.createGoogleSignInClient(this);
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnSignIn = findViewById(R.id.btnSignIn);
         chkRememberMe = findViewById(R.id.chkRememberMe);
+        btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
 
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
         View btnBack = findViewById(R.id.btnBack);
@@ -54,12 +69,38 @@ public class SignInActivity extends AppCompatActivity {
             btnSignIn.setOnClickListener(v -> attemptSignIn());
         }
 
+        if (btnGoogleLogin != null) {
+            btnGoogleLogin.setOnClickListener(v -> {
+                googleSignInLauncher.launch(googleSignInClient.getSignInIntent());
+            });
+        }
+
         if (tvForgotPassword != null) {
             tvForgotPassword.setOnClickListener(v -> {
                 Intent intent = new Intent(SignInActivity.this, ForgotPasswordActivity.class);
                 startActivity(intent);
             });
         }
+    }
+
+    private void processGoogleSignIn(Intent data) {
+        SocialAuthHelper.handleGoogleSignInResult(this, data, mAuth, fStore, null, new SocialAuthHelper.Callback() {
+            @Override
+            public void onSuccess() {
+                startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(SignInActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onComplete() {
+                // Done
+            }
+        });
     }
 
     private void attemptSignIn() {

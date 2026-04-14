@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +29,15 @@ public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore fStore;
+    private View btnGoogleLogin;
+    private GoogleSignInClient googleSignInClient;
+
+    private final ActivityResultLauncher<Intent> googleSignInLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    processGoogleSignIn(result.getData());
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
+        googleSignInClient = SocialAuthHelper.createGoogleSignInClient(this);
 
         EditText etFullName = findViewById(R.id.etFullName);
         EditText etUsername = findViewById(R.id.etUsername);
@@ -41,6 +54,7 @@ public class SignUpActivity extends AppCompatActivity {
         EditText etPassword = findViewById(R.id.etPassword);
         EditText etConfirmPassword = findViewById(R.id.etConfirmPassword);
         Button btnSignUp = findViewById(R.id.btnSignUp);
+        btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         View btnBack = findViewById(R.id.btnBack);
 
         if (btnBack != null) {
@@ -152,6 +166,38 @@ public class SignUpActivity extends AppCompatActivity {
                 });
             });
         }
+
+        if (btnGoogleLogin != null) {
+            btnGoogleLogin.setOnClickListener(v -> {
+                googleSignInLauncher.launch(googleSignInClient.getSignInIntent());
+            });
+        }
+    }
+
+    private void processGoogleSignIn(Intent data) {
+        Map<String, Object> seedProfile = new HashMap<>();
+        seedProfile.put("dob", getIntent().getStringExtra(EXTRA_DOB));
+        seedProfile.put("phone", getIntent().getStringExtra(EXTRA_PHONE));
+        seedProfile.put("country", getIntent().getStringExtra(EXTRA_COUNTRY));
+        seedProfile.put("age", getIntent().getStringExtra(EXTRA_AGE));
+
+        SocialAuthHelper.handleGoogleSignInResult(this, data, mAuth, fStore, seedProfile, new SocialAuthHelper.Callback() {
+            @Override
+            public void onSuccess() {
+                startActivity(new Intent(SignUpActivity.this, MainHomeActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onComplete() {
+                // Done
+            }
+        });
     }
 
     private boolean isStrongPassword(String password) {

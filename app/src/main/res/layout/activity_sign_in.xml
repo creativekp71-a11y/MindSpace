@@ -77,7 +77,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="?android:attr/listDivider"
+            app:boxStrokeColor="?android:attr/textColorSecondary"
             app:hintTextColor="?android:attr/textColorSecondary">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -103,7 +103,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="?android:attr/listDivider"
+            app:boxStrokeColor="?android:attr/textColorSecondary"
             app:endIconMode="password_toggle"
             app:endIconTint="?android:attr/textColorSecondary"
             app:hintTextColor="?android:attr/textColorSecondary">
@@ -156,7 +156,7 @@
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:cardUseCompatPadding="false"
-            app:strokeColor="?android:attr/listDivider"
+            app:strokeColor="?android:attr/textColorSecondary"
             app:strokeWidth="1dp">
 
             <LinearLayout

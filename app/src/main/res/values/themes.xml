@@ -21,8 +21,12 @@
     </style>
 
     <!-- Circle Style for ShapeableImageView -->
-    <style name="CircleImageView" parent="">
+    <style name="CircleImageViewShape">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CircleImageView" parent="Widget.MaterialComponents.ShapeableImageView">
+        <item name="shapeAppearanceOverlay">@style/CircleImageViewShape</item>
     </style>
 </resources>

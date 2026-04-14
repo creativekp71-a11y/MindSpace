@@ -22,18 +22,19 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         // ==========================================
-        // 🌙 1. Dark Mode का असली जादू
+        // 🌙 1. Dark Mode का असली जादू (With Persistence)
         // ==========================================
         SwitchCompat switchDarkMode = findViewById(R.id.switchDarkMode);
         if (switchDarkMode != null) {
+            // Load current state
+            switchDarkMode.setChecked(ThemeHelper.isDarkMode(this));
+            
             switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    // पूरे ऐप को डार्क मोड में डालो
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                } else {
-                    // पूरे ऐप को लाइट मोड में डालो
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                }
+                // Save and Apply
+                ThemeHelper.saveTheme(this, isChecked);
+                
+                String mode = isChecked ? "Dark Mode Enabled" : "Light Mode Enabled";
+                Toast.makeText(this, mode, Toast.LENGTH_SHORT).show();
             });
         }
 

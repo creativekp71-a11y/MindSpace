@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
+        android:name=".MindSpaceApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="MindSpace"
@@ -51,10 +52,6 @@
         <activity
             android:name=".SignInActivity"
             android:exported="false" />
-
-<!--        <activity-->
-<!--            android:name=".ForgotPasswordActivity"-->
-<!--            android:exported="false" />-->
 
         <activity
             android:name=".OtpVerificationActivity"
@@ -97,7 +94,6 @@
 
         <activity android:name=".AuthorProfileActivity" />
         <activity android:name=".FollowingListActivity" />
-
 
     </application>
 

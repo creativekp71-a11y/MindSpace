@@ -16,8 +16,8 @@
         android:scaleType="centerCrop"
         android:padding="2dp"
         app:strokeWidth="2dp"
-        app:strokeColor="#E0E0E0"
-        app:shapeAppearanceOverlay="@style/CircleImageView" />
+        app:strokeColor="?android:attr/textColorSecondary"
+        app:shapeAppearanceOverlay="@style/CircleImageViewShape" />
 
     <TextView
         android:id="@+id/tvAuthorHomeName"

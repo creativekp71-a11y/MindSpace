@@ -77,7 +77,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="?android:attr/listDivider">
+            app:boxStrokeColor="?android:attr/textColorSecondary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFullName"
@@ -100,7 +100,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="?android:attr/listDivider"
+            app:boxStrokeColor="?android:attr/textColorSecondary"
             app:helperText="3-20 characters, letters, numbers, dot or underscore">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -124,7 +124,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="?android:attr/listDivider">
+            app:boxStrokeColor="?android:attr/textColorSecondary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
@@ -147,7 +147,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="?android:attr/listDivider"
+            app:boxStrokeColor="?android:attr/textColorSecondary"
             app:endIconMode="password_toggle"
             app:endIconTint="?android:attr/textColorSecondary"
             app:helperText="At least 8 characters with letters and numbers">
@@ -173,7 +173,7 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:boxStrokeColor="?android:attr/listDivider"
+            app:boxStrokeColor="?android:attr/textColorSecondary"
             app:endIconMode="password_toggle"
             app:endIconTint="#6B7280">
 
@@ -205,7 +205,7 @@
             app:cardBackgroundColor="?android:attr/colorBackground"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
-            app:strokeColor="?android:attr/listDivider"
+            app:strokeColor="?android:attr/textColorSecondary"
             app:strokeWidth="1dp">
 
             <LinearLayout
