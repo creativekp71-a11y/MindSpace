@@ -38,6 +38,8 @@ public class SignInActivity extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     processGoogleSignIn(result.getData());
+                } else if (result.getResultCode() == RESULT_CANCELED) {
+                    Toast.makeText(this, "Google Sign-In cancelled", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -71,7 +73,11 @@ public class SignInActivity extends AppCompatActivity {
 
         if (btnGoogleLogin != null) {
             btnGoogleLogin.setOnClickListener(v -> {
-                googleSignInLauncher.launch(googleSignInClient.getSignInIntent());
+                if (googleSignInClient != null) {
+                    googleSignInClient.signOut().addOnCompleteListener(task -> {
+                        googleSignInLauncher.launch(googleSignInClient.getSignInIntent());
+                    });
+                }
             });
         }
 

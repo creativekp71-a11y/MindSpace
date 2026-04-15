@@ -47,17 +47,25 @@ public final class SocialAuthHelper {
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
         try {
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            if (account != null) {
+            if (account != null && account.getIdToken() != null) {
                 firebaseAuthWithGoogle(account.getIdToken(), auth, store, seedProfile, callback);
             } else {
                 if (callback != null) {
-                    callback.onError("Google account is null.");
+                    callback.onError("Google account or ID Token is null.");
                     callback.onComplete();
                 }
             }
         } catch (ApiException e) {
+            String errorMessage = "Google sign in failed (Code: " + e.getStatusCode() + "): ";
+            switch (e.getStatusCode()) {
+                case 10: errorMessage += "Developer error (likely SHA-1 mismatch or wrong package name)."; break;
+                case 7: errorMessage += "Network error. Please check your connection."; break;
+                case 12501: errorMessage += "Sign-in cancelled by user."; break;
+                case 12500: errorMessage += "Sign-in failed. Please check your Firebase configuration."; break;
+                default: errorMessage += e.getMessage(); break;
+            }
             if (callback != null) {
-                callback.onError("Google sign in failed: " + e.getMessage());
+                callback.onError(errorMessage);
                 callback.onComplete();
             }
         }
