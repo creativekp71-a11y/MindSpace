@@ -39,6 +39,7 @@ public class AuthorHomeAdapter extends RecyclerView.Adapter<AuthorHomeAdapter.Vi
                 byte[] imageBytes = android.util.Base64.decode(author.getProfile_pic(), android.util.Base64.DEFAULT);
                 Glide.with(context)
                         .load(imageBytes)
+                        .circleCrop()
                         .placeholder(R.drawable.ic_user_placeholder)
                         .error(R.drawable.ic_user_placeholder)
                         .into(holder.ivPic);

@@ -98,6 +98,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                                 byte[] bytes = Base64.decode(profilePic, Base64.DEFAULT);
                                 Glide.with(context)
                                         .load(bytes)
+                                        .circleCrop()
                                         .placeholder(R.drawable.ic_user_placeholder)
                                         .into(image);
                             } catch (Exception e) {

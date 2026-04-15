@@ -75,7 +75,11 @@ public class DashboardActivity extends AppCompatActivity {
                     if (profilePic != null && !profilePic.isEmpty()) {
                         try {
                             byte[] imageBytes = Base64.decode(profilePic, Base64.DEFAULT);
-                            Glide.with(this).load(imageBytes).placeholder(R.drawable.ic_user_placeholder).into(ivHeaderProfile);
+                            Glide.with(DashboardActivity.this)
+                                    .load(imageBytes)
+                                    .circleCrop()
+                                    .placeholder(R.drawable.ic_user_placeholder)
+                                    .into(ivHeaderProfile);
                         } catch (Exception e) {
                             ivHeaderProfile.setImageResource(R.drawable.ic_user_placeholder);
                         }

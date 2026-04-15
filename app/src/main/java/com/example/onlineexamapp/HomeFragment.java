@@ -169,6 +169,7 @@ public class HomeFragment extends Fragment {
                             byte[] bytes = Base64.decode(pic, Base64.DEFAULT);
                             Glide.with(this)
                                     .load(bytes)
+                                    .circleCrop()
                                     .placeholder(R.drawable.ic_user_placeholder)
                                     .error(R.drawable.ic_user_placeholder)
                                     .into(ivHeaderProfile);
