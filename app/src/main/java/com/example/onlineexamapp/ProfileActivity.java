@@ -1,5 +1,6 @@
 package com.example.onlineexamapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,14 +13,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.bumptech.glide.Glide;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import android.app.ProgressDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+
+import com.bumptech.glide.Glide;
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
+import com.canhub.cropper.CropImageView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -34,7 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
     private View viewDividerAddActivity;
     private SwitchCompat switchBecomeAuthor;
     private ImageView ivProfilePic, ivCover;
-    private ActivityResultLauncher<String> imagePickerLauncher;
+    private ActivityResultLauncher<CropImageContractOptions> cropImageLauncher;
     private String uploadType = "";
     private ProgressDialog progressDialog;
 
@@ -85,23 +91,20 @@ public class ProfileActivity extends AppCompatActivity {
         tvMenuFollowing.setOnClickListener(v ->
                 startActivity(new Intent(this, FollowingListActivity.class)));
 
-        imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-            if (uri != null) {
-                uploadImageToFirebase(uri);
+        cropImageLauncher = registerForActivityResult(new CropImageContract(), result -> {
+            if (result.isSuccessful()) {
+                Uri uri = result.getUriContent();
+                if (uri != null) {
+                    uploadImageToFirebase(uri);
+                }
             } else {
-                Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
+                Exception error = result.getError();
+                if (error != null) Toast.makeText(this, "Cropping failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
-        findViewById(R.id.btnEditProfilePic).setOnClickListener(v -> {
-            uploadType = "profile_pic";
-            imagePickerLauncher.launch("image/*");
-        });
-
-        findViewById(R.id.btnEditCover).setOnClickListener(v -> {
-            uploadType = "cover_pic";
-            imagePickerLauncher.launch("image/*");
-        });
+        findViewById(R.id.btnEditProfilePic).setOnClickListener(v -> startCrop(true));
+        findViewById(R.id.btnEditCover).setOnClickListener(v -> startCrop(false));
 
         switchBecomeAuthor = findViewById(R.id.switchBecomeAuthor);
         tvMenuAddActivity = findViewById(R.id.tvMenuAddActivity);
@@ -126,6 +129,24 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void startCrop(boolean forProfile) {
+        this.uploadType = forProfile ? "profile_pic" : "cover_pic";
+        CropImageOptions options = new CropImageOptions();
+        options.guidelines = CropImageView.Guidelines.ON;
+        
+        if (forProfile) {
+            options.fixAspectRatio = true;
+            options.aspectRatioX = 1;
+            options.aspectRatioY = 1;
+        } else {
+            options.fixAspectRatio = true;
+            options.aspectRatioX = 16;
+            options.aspectRatioY = 9;
+        }
+        
+        cropImageLauncher.launch(new CropImageContractOptions(null, options));
+    }
+
     private void uploadImageToFirebase(Uri uri) {
         if (!isNetworkAvailable()) {
             Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
@@ -140,22 +161,54 @@ public class ProfileActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
-                InputStream inputStream = getContentResolver().openInputStream(uri);
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                if (inputStream != null) inputStream.close();
+                // 1. First decode with inJustDecodeBounds=true to check dimensions
+                InputStream is = getContentResolver().openInputStream(uri);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(is, null, options);
+                if (is != null) is.close();
 
-                int width = bitmap.getWidth();
-                int height = bitmap.getHeight();
-                float ratio = (float) width / (float) height;
-                int newWidth = 400;
-                int newHeight = (int) (400 / ratio);
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+                // 2. Calculate inSampleSize to decode a smaller version
+                int reqWidth = 800;
+                int reqHeight = 800;
+                options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+                options.inJustDecodeBounds = false;
 
+                // 3. Decode the bitmap with inSampleSize
+                is = getContentResolver().openInputStream(uri);
+                Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
+                if (is != null) is.close();
+
+                if (bitmap == null) {
+                    runOnUiThread(() -> {
+                        if (progressDialog.isShowing()) progressDialog.dismiss();
+                        Toast.makeText(this, "Failed to decode image", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
+
+                // 4. Process the bitmap (crop for profile, maintain aspect for cover)
+                Bitmap processed;
+                boolean isProfile = "profile_pic".equals(uploadType);
+                if (isProfile) {
+                    processed = centerCropSquare(bitmap);
+                    processed = Bitmap.createScaledBitmap(processed, 400, 400, true);
+                } else {
+                    float ratio = (float) bitmap.getWidth() / (float) bitmap.getHeight();
+                    int targetWidth = 800;
+                    int targetHeight = (int) (targetWidth / ratio);
+                    processed = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
+                }
+
+                // 5. Compress and encode
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);
+                processed.compress(Bitmap.CompressFormat.JPEG, 80, bos);
                 byte[] bytes = bos.toByteArray();
-
                 String base64String = Base64.encodeToString(bytes, Base64.DEFAULT);
+
+                // Cleanup
+                if (processed != bitmap) processed.recycle();
+                bitmap.recycle();
 
                 runOnUiThread(() -> updateFirestore(base64String));
 
@@ -167,6 +220,34 @@ public class ProfileActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    private Bitmap centerCropSquare(Bitmap srcBmp) {
+        if (srcBmp.getWidth() == srcBmp.getHeight()) return srcBmp;
+        
+        int side = Math.min(srcBmp.getWidth(), srcBmp.getHeight());
+        return Bitmap.createBitmap(
+                srcBmp,
+                srcBmp.getWidth() / 2 - side / 2,
+                srcBmp.getHeight() / 2 - side / 2,
+                side,
+                side
+        );
     }
 
     private boolean isNetworkAvailable() {

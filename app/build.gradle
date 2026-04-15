@@ -38,17 +38,14 @@ dependencies {
     // CircleImageView Library
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-    // 🔴 यहाँ से पुरानी 'libs.firebase.auth' वाली लाइन हटा दी गई है ताकि Duplicate Error न आये
-
+    // Firebase Setup
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    // 🔥 Firebase Master Setup 🔥
-    // BoM (Bill of Materials) सारे वर्ज़न को कंट्रोल करता है
+    // Firebase Master Setup
     implementation platform('com.google.firebase:firebase-bom:33.9.0')
 
-    // अब ये सब BoM के साथ मिल कर बिना किसी झगड़े के चलेंगी
     implementation libs.firebase.auth
     implementation libs.firebase.firestore
     implementation libs.firebase.storage
@@ -57,4 +54,7 @@ dependencies {
     // Glide for image loading
     implementation libs.glide
     annotationProcessor libs.glide.compiler
+
+    // Image Cropper
+    implementation libs.image.cropper
 }

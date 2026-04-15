@@ -17,6 +17,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
+import com.canhub.cropper.CropImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,8 +42,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private String base64Cover = null;
     private ProgressDialog progressDialog;
 
-    private ActivityResultLauncher<String> pickDpLauncher;
-    private ActivityResultLauncher<String> pickCoverLauncher;
+    private ActivityResultLauncher<CropImageContractOptions> cropImageLauncher;
+    private boolean isPickingProfile = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,43 +93,125 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void setupLaunchers() {
-        pickDpLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-            if (uri != null) {
-                base64Profile = uriToBase64(uri);
-                if (base64Profile != null) {
-                    ivEditProfilePic.setImageURI(uri);
+        cropImageLauncher = registerForActivityResult(new CropImageContract(), result -> {
+            if (result.isSuccessful()) {
+                Uri uri = result.getUriContent();
+                if (uri != null) {
+                    if (isPickingProfile) {
+                        base64Profile = uriToBase64(uri, true);
+                        if (base64Profile != null) ivEditProfilePic.setImageURI(uri);
+                    } else {
+                        base64Cover = uriToBase64(uri, false);
+                        if (base64Cover != null) ivEditCover.setImageURI(uri);
+                    }
                 }
-            }
-        });
-
-        pickCoverLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-            if (uri != null) {
-                base64Cover = uriToBase64(uri);
-                if (base64Cover != null) {
-                    ivEditCover.setImageURI(uri);
-                }
+            } else {
+                Exception error = result.getError();
+                if (error != null) Toast.makeText(this, "Cropping failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private String uriToBase64(Uri uri) {
+    private void startCrop(boolean forProfile) {
+        this.isPickingProfile = forProfile;
+        CropImageOptions options = new CropImageOptions();
+        options.guidelines = CropImageView.Guidelines.ON;
+        
+        if (forProfile) {
+            options.fixAspectRatio = true;
+            options.aspectRatioX = 1;
+            options.aspectRatioY = 1;
+        } else {
+            options.fixAspectRatio = true;
+            options.aspectRatioX = 16;
+            options.aspectRatioY = 9;
+        }
+        
+        cropImageLauncher.launch(new CropImageContractOptions(null, options));
+    }
+
+    private String uriToBase64(Uri uri, boolean isProfile) {
         try {
+            // 1. First decode with inJustDecodeBounds=true to check dimensions
             InputStream is = getContentResolver().openInputStream(uri);
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            Bitmap resized = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(is, null, options);
+            if (is != null) is.close();
+
+            // 2. Calculate inSampleSize to decode a smaller version
+            int reqWidth = 800;
+            int reqHeight = 800;
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+            options.inJustDecodeBounds = false;
+
+            // 3. Decode the bitmap with inSampleSize
+            is = getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
+            if (is != null) is.close();
+
+            if (bitmap == null) return null;
+
+            // 4. Process the bitmap (crop for profile, maintain aspect for cover)
+            Bitmap processed;
+            if (isProfile) {
+                processed = centerCropSquare(bitmap);
+                processed = Bitmap.createScaledBitmap(processed, 400, 400, true);
+            } else {
+                float ratio = (float) bitmap.getWidth() / (float) bitmap.getHeight();
+                int targetWidth = 800;
+                int targetHeight = (int) (targetWidth / ratio);
+                processed = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
+            }
+
+            // 5. Compress and encode
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            resized.compress(Bitmap.CompressFormat.JPEG, 70, baos);
-            return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+            processed.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+            byte[] bytes = baos.toByteArray();
+            
+            // Cleanup
+            if (processed != bitmap) processed.recycle();
+            bitmap.recycle();
+
+            return Base64.encodeToString(bytes, Base64.DEFAULT);
         } catch (Exception e) {
-            Toast.makeText(this, "Image processing failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Image processing failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             return null;
         }
     }
 
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    private Bitmap centerCropSquare(Bitmap srcBmp) {
+        if (srcBmp.getWidth() == srcBmp.getHeight()) return srcBmp;
+        
+        int side = Math.min(srcBmp.getWidth(), srcBmp.getHeight());
+        return Bitmap.createBitmap(
+                srcBmp,
+                srcBmp.getWidth() / 2 - side / 2,
+                srcBmp.getHeight() / 2 - side / 2,
+                side,
+                side
+        );
+    }
+
     private void setupClickListeners() {
         findViewById(R.id.ivBackEditProfile).setOnClickListener(v -> finish());
-        findViewById(R.id.tvChangePhoto).setOnClickListener(v -> pickDpLauncher.launch("image/*"));
-        findViewById(R.id.tvChangeCover).setOnClickListener(v -> pickCoverLauncher.launch("image/*"));
+        findViewById(R.id.tvChangePhoto).setOnClickListener(v -> startCrop(true));
+        findViewById(R.id.tvChangeCover).setOnClickListener(v -> startCrop(false));
 
         findViewById(R.id.btnSaveProfile).setOnClickListener(v -> saveProfileChanges());
     }
