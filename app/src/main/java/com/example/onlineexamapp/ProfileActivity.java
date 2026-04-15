@@ -133,6 +133,9 @@ public class ProfileActivity extends AppCompatActivity {
         this.uploadType = forProfile ? "profile_pic" : "cover_pic";
         CropImageOptions options = new CropImageOptions();
         options.guidelines = CropImageView.Guidelines.ON;
+        options.activityTitle = forProfile ? "Crop Profile Picture" : "Crop Cover Photo";
+        options.cropMenuCropButtonTitle = "Done";
+        options.activityMenuIconColor = android.graphics.Color.WHITE; // Ensure icon is visible
         
         if (forProfile) {
             options.fixAspectRatio = true;

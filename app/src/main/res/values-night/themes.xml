@@ -25,4 +25,11 @@
     <style name="CircleImageView" parent="Widget.MaterialComponents.ShapeableImageView">
         <item name="shapeAppearanceOverlay">@style/CircleImageViewShape</item>
     </style>
+
+    <style name="Theme.Cropper" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">#6C5CE7</item>
+        <item name="colorPrimaryVariant">#5B4BCB</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
+    </style>
 </resources>
