@@ -5,7 +5,12 @@
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
     android:orientation="vertical"
-    android:padding="50dp">
+    android:paddingLeft="24dp"
+    android:paddingTop="48dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="24dp"
+    android:clipToPadding="false"
+    android:clipChildren="false">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,16 +19,21 @@
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
+            android:layout_marginStart="-8dp"
+            android:background="@drawable/bg_back_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
             android:src="@drawable/ic_back_purple"
-            app:tint="?android:attr/textColorPrimary" />
+            app:tint="#6C5CE7" />
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="200dp"
+            android:layout_width="160dp"
             android:layout_height="12dp"
             android:layout_centerInParent="true"
             android:progress="60"
@@ -214,7 +224,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="?android:attr/colorBackground"
+        app:cardBackgroundColor="@color/skip_button_bg"
         app:cardCornerRadius="30dp"
         app:cardElevation="5dp">
 
@@ -225,7 +235,7 @@
             android:background="@android:color/transparent"
             android:text="Skip"
             android:textAllCaps="false"
-            android:textColor="#6200EE"
+            android:textColor="#6C5CE7"
             android:textSize="18sp"
             android:textStyle="bold" />
 

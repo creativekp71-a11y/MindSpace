@@ -7,9 +7,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -19,12 +23,20 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore fStore;
+    private GoogleSignInClient googleSignInClient;
 
     private EditText etFullName;
     private EditText tvDob;
     private EditText etPhone;
     private EditText etCountry;
     private EditText etAge;
+
+    private final ActivityResultLauncher<Intent> googleSignInLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    processGoogleSignIn(result.getData());
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +45,7 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
+        googleSignInClient = SocialAuthHelper.createGoogleSignInClient(this);
 
         etFullName = findViewById(R.id.etFullName);
         tvDob = findViewById(R.id.tvDob);
@@ -42,6 +55,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         Button btnContinue = findViewById(R.id.btnContinue);
         View btnBack = findViewById(R.id.btnBack);
         View btnCalendarIcon = findViewById(R.id.btnCalendarIcon);
+        View btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
 
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
@@ -58,6 +72,53 @@ public class CreateAccountActivity extends AppCompatActivity {
         if (btnContinue != null) {
             btnContinue.setOnClickListener(v -> continueToSignUp());
         }
+
+        // ✅ Google Sign-In - directly signs in and goes to home
+        if (btnGoogleLogin != null) {
+            btnGoogleLogin.setOnClickListener(v -> {
+                // Sign out first to force account picker every time
+                googleSignInClient.signOut().addOnCompleteListener(task ->
+                        googleSignInLauncher.launch(googleSignInClient.getSignInIntent())
+                );
+            });
+        }
+    }
+
+    private void processGoogleSignIn(Intent data) {
+        // Collect whatever data the user already filled in the form
+        String fullName = getText(etFullName);
+        String dob = getText(tvDob);
+        String phone = getText(etPhone);
+        String country = getText(etCountry);
+        String age = getText(etAge);
+
+        java.util.Map<String, Object> seedProfile = new java.util.HashMap<>();
+        if (!dob.isEmpty())     seedProfile.put("dob", dob);
+        if (!phone.isEmpty())   seedProfile.put("phone", phone);
+        if (!country.isEmpty()) seedProfile.put("country", country);
+        if (!age.isEmpty())     seedProfile.put("age", age);
+        // full_name will be overridden by SocialAuthHelper from the Google account
+        // but pre-seed it in case Google name is empty
+        if (!fullName.isEmpty()) seedProfile.put("full_name", fullName);
+
+        SocialAuthHelper.handleGoogleSignInResult(this, data, mAuth, fStore, seedProfile, new SocialAuthHelper.Callback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(CreateAccountActivity.this, "Signed in with Google!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(CreateAccountActivity.this, MainHomeActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(CreateAccountActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onComplete() {
+                // Done
+            }
+        });
     }
 
     private void showDatePicker() {

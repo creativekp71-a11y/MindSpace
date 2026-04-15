@@ -4,7 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -110,16 +110,30 @@ public class MainHomeActivity extends AppCompatActivity {
     }
 
     private void configureStatusBar() {
-        getWindow().setStatusBarColor(Color.WHITE);
+        // Detect if currently in dark mode
+        boolean isDarkMode = (getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+
+        // Use dark background in dark mode, white in light mode
+        int statusColor = isDarkMode ? 0xFF121212 : 0xFFFFFFFF;
+        getWindow().setStatusBarColor(statusColor);
+
         WindowInsetsControllerCompat insetsController =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
         if (insetsController != null) {
-            insetsController.setAppearanceLightStatusBars(true);
-        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            // Light icons on dark background, dark icons on white background
+            insetsController.setAppearanceLightStatusBars(!isDarkMode);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(
-                    decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            );
+            if (!isDarkMode) {
+                decorView.setSystemUiVisibility(
+                        decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                );
+            } else {
+                decorView.setSystemUiVisibility(
+                        decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                );
+            }
         }
     }
 

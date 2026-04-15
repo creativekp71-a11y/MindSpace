@@ -78,13 +78,36 @@ public final class SocialAuthHelper {
                     if (docTask.isSuccessful() && !docTask.getResult().exists()) {
                         // Create new profile if it doesn't exist
                         Map<String, Object> user = new HashMap<>();
+                        // First apply seed data from the form (dob, phone, country, age, etc.)
                         if (seedProfile != null) user.putAll(seedProfile);
-                        
-                        user.put("full_name", auth.getCurrentUser().getDisplayName());
-                        user.put("email", auth.getCurrentUser().getEmail());
-                        user.put("profile_pic", auth.getCurrentUser().getPhotoUrl() != null ? auth.getCurrentUser().getPhotoUrl().toString() : "");
-                        
-                        // Default values
+
+                        // Google account data takes priority for identity fields
+                        String googleName = auth.getCurrentUser().getDisplayName();
+                        String googleEmail = auth.getCurrentUser().getEmail();
+                        String googlePhoto = auth.getCurrentUser().getPhotoUrl() != null
+                                ? auth.getCurrentUser().getPhotoUrl().toString() : "";
+
+                        if (googleName != null && !googleName.isEmpty())
+                            user.put("full_name", googleName);
+                        if (googleEmail != null && !googleEmail.isEmpty())
+                            user.put("email", googleEmail);
+                        user.put("profile_pic", googlePhoto);
+
+                        // Generate a default username from email (e.g. "john.doe@gmail.com" -> "john.doe")
+                        if (!user.containsKey("username") || user.get("username") == null) {
+                            String defaultUsername = googleEmail != null
+                                    ? googleEmail.split("@")[0].replaceAll("[^a-zA-Z0-9._]", "_")
+                                    : "user_" + uid.substring(0, 6);
+                            user.put("username", defaultUsername);
+                        }
+
+                        // Default values for fields not yet set
+                        user.putIfAbsent("dob", "");
+                        user.putIfAbsent("phone", "");
+                        user.putIfAbsent("country", "");
+                        user.putIfAbsent("age", "");
+                        user.putIfAbsent("bio", "");
+                        user.putIfAbsent("cover_pic", "");
                         user.putIfAbsent("points", 0);
                         user.putIfAbsent("coins", 0);
                         user.putIfAbsent("rank", "--");

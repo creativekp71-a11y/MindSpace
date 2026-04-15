@@ -14,6 +14,12 @@ public class AccountTypeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_type);
 
+        // Back button logic
+        View btnBack = findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
+
         // 1. Chaaron Cards ko code me link karna
         CardView cardPersonal = findViewById(R.id.cardPersonal);
         CardView cardTeacher = findViewById(R.id.cardTeacher);

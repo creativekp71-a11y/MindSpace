@@ -10,7 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingLeft="24dp"
+        android:paddingTop="48dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="24dp"
+        android:clipToPadding="false"
+        android:clipChildren="false">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -20,12 +25,13 @@
                 android:id="@+id/btnBack"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/bg_rounded_white"
+                android:layout_marginStart="-8dp"
+                android:background="@drawable/bg_back_button"
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="10dp"
                 android:src="@drawable/ic_back_purple"
-                app:tint="?android:attr/textColorPrimary" />
+                app:tint="#6C5CE7" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
