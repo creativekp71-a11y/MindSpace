@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import android.view.View;
+import android.widget.ScrollView;
 
 public class AchievementsActivity extends AppCompatActivity {
 
@@ -30,6 +33,10 @@ public class AchievementsActivity extends AppCompatActivity {
     private TextView tvDiamondStatus;
 
     private ProgressBar pbLevelProgress;
+
+    private ShimmerFrameLayout shimmerAchievements;
+    private ScrollView svAchievementsContent;
+    private View llAchievementsDynamicContent;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore fStore;
@@ -58,6 +65,13 @@ public class AchievementsActivity extends AppCompatActivity {
         tvDiamondStatus = findViewById(R.id.tvDiamondStatus);
 
         pbLevelProgress = findViewById(R.id.pbLevelProgress);
+
+        shimmerAchievements = findViewById(R.id.shimmer_achievements);
+        svAchievementsContent = findViewById(R.id.svAchievementsContent);
+        llAchievementsDynamicContent = findViewById(R.id.llAchievementsDynamicContent);
+
+        // Start Shimmer
+        shimmerAchievements.startShimmer();
 
         ivBackAchievements.setOnClickListener(v -> finish());
 
@@ -89,6 +103,13 @@ public class AchievementsActivity extends AppCompatActivity {
 
         tvPoints.setText(points + " Points");
         resetTierStatus();
+
+        // Stop Shimmer and show content
+        shimmerAchievements.stopShimmer();
+        shimmerAchievements.setVisibility(View.GONE);
+        if (llAchievementsDynamicContent != null) {
+            llAchievementsDynamicContent.setVisibility(View.VISIBLE);
+        }
 
         // Bronze: 0 - 49
         if (points < 50) {

@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import android.widget.ScrollView;
+import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class LeaderboardActivity extends AppCompatActivity {
     private LeaderboardAdapter adapter;
     private List<UserModel> userList;
     private FirebaseFirestore fStore;
+    private ShimmerFrameLayout shimmerLeaderboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,12 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         fStore = FirebaseFirestore.getInstance();
         rvLeaderboard = findViewById(R.id.rvLeaderboard);
+        shimmerLeaderboard = findViewById(R.id.shimmer_leaderboard);
+        // svLeaderboardContent removed, using rvLeaderboard for visibility toggle
+        
+        // Start Shimmer
+        shimmerLeaderboard.startShimmer();
+        
         userList = new ArrayList<>();
         
         rvLeaderboard.setLayoutManager(new LinearLayoutManager(this));
@@ -82,6 +92,11 @@ public class LeaderboardActivity extends AppCompatActivity {
                         userList.add(user);
                     }
                     adapter.notifyDataSetChanged();
+                    
+                    // Stop Shimmer and show content
+                    shimmerLeaderboard.stopShimmer();
+                    shimmerLeaderboard.setVisibility(View.GONE);
+                    rvLeaderboard.setVisibility(View.VISIBLE);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("LeaderboardError", "Error fetching rankings: " + e.getMessage());

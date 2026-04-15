@@ -3,4 +3,8 @@
     <color name="card_border_color">#FFFFFF</color>
     <color name="skip_button_bg">#2C2C2E</color>
     <color name="card_background">#2C2C2E</color>
+
+    <!-- Shimmer Colors (Dark Mode) -->
+    <color name="shimmer_color">#3B3B3D</color>
+    <color name="shimmer_base_color">#2C2C2E</color>
 </resources>

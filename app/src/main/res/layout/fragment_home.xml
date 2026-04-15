@@ -6,211 +6,239 @@
     android:orientation="vertical"
     android:background="?android:attr/colorBackground">
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/svHomeContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="50dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="20dp">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:src="@drawable/mindspace_logo2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="MindSpace"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/ivBell"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_notification"
-                    app:tint="?android:attr/textColorPrimary" />
-
-                <ImageView
-                    android:id="@+id/ivSearch"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@id/ivBell"
-                    android:src="@drawable/ic_search_purple"
-                    app:tint="?android:attr/textColorPrimary" />
-            </RelativeLayout>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:layout_marginBottom="40dp"
-                app:cardBackgroundColor="#6C5CE7"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp">
+                android:orientation="vertical"
+                android:paddingTop="50dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="20dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/ivBannerImg"
-                        android:layout_width="160dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginEnd="4dp"
-                        android:layout_marginBottom="7dp"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/img_find_friends_main"
-                        android:tint="#FFFFFF" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginStart="20dp"
-                        android:layout_toStartOf="@id/ivBannerImg"
-                        android:orientation="vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/mindspace_logo2" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Play quiz together&#10;with your friends now!"
-                            android:textColor="#FFFFFF"
-                            android:textSize="22sp"
-                            android:textStyle="bold" />
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btnFindFriendsBanner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="36dp"
-                            android:layout_marginTop="12dp"
-                            android:background="@drawable/bg_rounded_white"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:text="Find Friends"
-                            android:textAllCaps="false"
-                            android:textColor="#6C5CE7"
+                            android:layout_marginStart="10dp"
+                            android:text="MindSpace"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
                     </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/ivBell"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_notification"
+                        app:tint="?android:attr/textColorPrimary" />
+
+                    <ImageView
+                        android:id="@+id/ivSearch"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_toStartOf="@id/ivBell"
+                        android:src="@drawable/ic_search_purple"
+                        app:tint="?android:attr/textColorPrimary" />
                 </RelativeLayout>
-            </androidx.cardview.widget.CardView>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginBottom="40dp"
+                    app:cardBackgroundColor="#6C5CE7"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp">
 
-                <ImageView
-                    android:id="@+id/ivHeaderProfilePic"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user_placeholder" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="12dp"
-                    android:layout_toEndOf="@id/ivHeaderProfilePic"
-                    android:orientation="vertical">
+                        <ImageView
+                            android:id="@+id/ivBannerImg"
+                            android:layout_width="160dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginEnd="4dp"
+                            android:layout_marginBottom="7dp"
+                            android:padding="10dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/img_find_friends_main"
+                            android:tint="#FFFFFF" />
 
-                    <TextView
-                        android:id="@+id/tvUserGreeting"
-                        android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="20dp"
+                            android:layout_toStartOf="@id/ivBannerImg"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Play quiz together&#10;with your friends now!"
+                                android:textColor="#FFFFFF"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnFindFriendsBanner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="36dp"
+                                android:layout_marginTop="12dp"
+                                android:background="@drawable/bg_rounded_white"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                android:text="Find Friends"
+                                android:textAllCaps="false"
+                                android:textColor="#6C5CE7"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer_home"
+                        style="@style/ShimmerStyle"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Hi, User 👋"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="14sp" />
+                        android:visibility="visible">
+                        <include layout="@layout/shimmer_home_skeleton" />
+                    </com.facebook.shimmer.ShimmerFrameLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/llHomeDynamicContent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Discover"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/tvViewAllDiscover"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="View all →"
-                    android:textColor="#6C5CE7"
-                    android:textStyle="bold" />
-            </RelativeLayout>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvHomeDiscover"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="40dp"
-                android:nestedScrollingEnabled="false" />
+                            <ImageView
+                                android:id="@+id/ivHeaderProfilePic"
+                                android:layout_width="45dp"
+                                android:layout_height="45dp"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/ic_user_placeholder" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="12dp"
+                                android:layout_toEndOf="@id/ivHeaderProfilePic"
+                                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Top Authors"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                                <TextView
+                                    android:id="@+id/tvUserGreeting"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hi, User 👋"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/tvViewAllAuthors"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="View all →"
-                    android:textColor="#6C5CE7"
-                    android:textStyle="bold" />
-            </RelativeLayout>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Discover"
+                                    android:textColor="?android:attr/textColorPrimary"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvHomeAuthors"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+                            <TextView
+                                android:id="@+id/tvViewAllDiscover"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:text="View all →"
+                                android:textColor="#6C5CE7"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
 
-        </LinearLayout>
-    </ScrollView>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvHomeDiscover"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="40dp"
+                            android:nestedScrollingEnabled="false" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Top Authors"
+                                android:textColor="?android:attr/textColorPrimary"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvViewAllAuthors"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:text="View all →"
+                                android:textColor="#6C5CE7"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvHomeAuthors"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false" />
+
+                    </LinearLayout>
+                </FrameLayout>
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
 </LinearLayout>

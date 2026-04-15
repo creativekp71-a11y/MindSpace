@@ -6,58 +6,61 @@
     android:background="?android:attr/colorBackground"
     android:fitsSystemWindows="true">
 
-    <ScrollView
+    <!-- Header -->
+    <RelativeLayout
+        android:id="@+id/leaderboardHeader"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="?android:attr/colorBackground"
+        android:paddingHorizontal="16dp"
+        android:elevation="4dp">
+
+        <ImageView
+            android:id="@+id/ivBackLeaderboard"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:padding="4dp"
+            android:src="@drawable/ic_back"
+            app:tint="?android:attr/textColorPrimary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ivBackLeaderboard"
+            android:layout_marginStart="16dp"
+            android:text="Global Rankings 🏆"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavBar"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        android:layout_below="@id/leaderboardHeader"
+        android:layout_above="@id/bottomNavBar">
 
-        <LinearLayout
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_leaderboard"
+            style="@style/ShimmerStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:visibility="visible">
+            <include layout="@layout/shimmer_leaderboard_skeleton" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
-            <!-- Header -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="?android:attr/colorBackground"
-                android:paddingHorizontal="16dp"
-                android:elevation="4dp">
-
-                <ImageView
-                    android:id="@+id/ivBackLeaderboard"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_centerVertical="true"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="?android:attr/textColorPrimary" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/ivBackLeaderboard"
-                    android:layout_marginStart="16dp"
-                    android:text="Global Rankings 🏆"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-
-            <!-- Dynamic Leaderboard List -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvLeaderboard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingTop="12dp"
-                android:paddingBottom="24dp"
-                android:nestedScrollingEnabled="false" />
-        </LinearLayout>
-    </ScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvLeaderboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="24dp"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <!-- Bottom Navigation Bar -->
     <LinearLayout

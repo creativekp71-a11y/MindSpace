@@ -17,6 +17,9 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import java.util.ArrayList;
 
 public class ProfileFragment extends Fragment {
 
@@ -27,6 +30,9 @@ public class ProfileFragment extends Fragment {
     private View viewDividerAddActivity;
     private SwitchCompat switchBecomeAuthor;
     private ImageView ivProfilePic, ivCover;
+    private ShimmerFrameLayout shimmerProfile;
+    private CoordinatorLayout clProfileContent;
+    private View llProfileDynamicContent;
 
     @Nullable
     @Override
@@ -48,6 +54,15 @@ public class ProfileFragment extends Fragment {
         tvFollowingCount = view.findViewById(R.id.tvProfileFollowingCount);
         tvMenuAddActivity = view.findViewById(R.id.tvMenuAddActivity);
         viewDividerAddActivity = view.findViewById(R.id.viewDividerAddActivity);
+
+        shimmerProfile = view.findViewById(R.id.shimmer_profile);
+        clProfileContent = view.findViewById(R.id.clProfileContent);
+        llProfileDynamicContent = view.findViewById(R.id.llProfileDynamicContent);
+
+        // Start Shimmer
+        if (shimmerProfile != null) {
+            shimmerProfile.startShimmer();
+        }
 
         setupClickListeners(view);
         loadUserData();
@@ -147,6 +162,15 @@ public class ProfileFragment extends Fragment {
                     if (coverPic != null && !coverPic.isEmpty()) {
                         byte[] cBytes = Base64.decode(coverPic, Base64.DEFAULT);
                         Glide.with(this).load(cBytes).placeholder(R.drawable.cover_photo).error(R.drawable.cover_photo).into(ivCover);
+                    }
+
+                    // Stop Shimmer and show content
+                    if (isAdded() && shimmerProfile != null) {
+                        shimmerProfile.stopShimmer();
+                        shimmerProfile.setVisibility(View.GONE);
+                        if (llProfileDynamicContent != null) {
+                            llProfileDynamicContent.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
             });

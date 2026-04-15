@@ -36,4 +36,14 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="android:windowBackground">?android:attr/colorBackground</item>
     </style>
+
+    <!-- Smooth Shimmer Style -->
+    <style name="ShimmerStyle">
+        <item name="shimmer_duration">1500</item>
+        <item name="shimmer_intensity">0.1</item>
+        <item name="shimmer_base_alpha">1.0</item>
+        <item name="shimmer_highlight_alpha">0.6</item>
+        <item name="shimmer_auto_start">true</item>
+        <item name="shimmer_repeat_delay">100</item>
+    </style>
 </resources>

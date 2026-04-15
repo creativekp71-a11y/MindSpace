@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +35,11 @@ public class HomeFragment extends Fragment {
     private FirebaseFirestore fStore;
     private TextView tvUserGreeting;
     private ImageView ivHeaderProfile;
+    private ShimmerFrameLayout shimmerHome;
+    private ScrollView svHomeContent;
+    private View llHomeDynamicContent;
+    private boolean isDiscoveriesFetched = false;
+    private boolean isAuthorsFetched = false;
 
     @Nullable
     @Override
@@ -47,6 +54,13 @@ public class HomeFragment extends Fragment {
 
         rvHomeDiscover = view.findViewById(R.id.rvHomeDiscover);
         rvHomeAuthors = view.findViewById(R.id.rvHomeAuthors);
+
+        shimmerHome = view.findViewById(R.id.shimmer_home);
+        svHomeContent = view.findViewById(R.id.svHomeContent);
+        llHomeDynamicContent = view.findViewById(R.id.llHomeDynamicContent);
+
+        // Start Shimmer
+        shimmerHome.startShimmer();
 
         setupDiscoverRecycler();
         setupAuthorsRecycler();
@@ -196,7 +210,25 @@ public class HomeFragment extends Fragment {
                         discoveryList.add(model);
                     }
                     dashboardAdapter.notifyDataSetChanged();
+                    isDiscoveriesFetched = true;
+                    checkLoadingComplete();
+                })
+                .addOnFailureListener(e -> {
+                    isDiscoveriesFetched = true;
+                    checkLoadingComplete();
                 });
+    }
+
+    private void checkLoadingComplete() {
+        if (isDiscoveriesFetched && isAuthorsFetched) {
+            if (shimmerHome != null) {
+                shimmerHome.stopShimmer();
+                shimmerHome.setVisibility(View.GONE);
+            }
+            if (llHomeDynamicContent != null) {
+                llHomeDynamicContent.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void fetchTopAuthors() {
@@ -216,6 +248,12 @@ public class HomeFragment extends Fragment {
                         authorList.add(author);
                     }
                     authorAdapter.notifyDataSetChanged();
+                    isAuthorsFetched = true;
+                    checkLoadingComplete();
+                })
+                .addOnFailureListener(e -> {
+                    isAuthorsFetched = true;
+                    checkLoadingComplete();
                 });
     }
 }

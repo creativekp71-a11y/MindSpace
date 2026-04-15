@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class DiscoverFragment extends Fragment {
     private List<DiscoveryActivityModel> allDiscoveries = new ArrayList<>();
     private List<DiscoveryActivityModel> filteredList = new ArrayList<>();
     private FirebaseFirestore fStore;
+    private ShimmerFrameLayout shimmerDiscover;
     
     private CardView cvSearch;
     private EditText etSearch;
@@ -42,6 +45,13 @@ public class DiscoverFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_discover, container, false);
 
         fStore = FirebaseFirestore.getInstance();
+        shimmerDiscover = view.findViewById(R.id.shimmer_discover);
+        // llDiscoverContent removed, using rvDiscoverAll for visibility toggle
+
+        // Start Shimmer
+        if (shimmerDiscover != null) {
+            shimmerDiscover.startShimmer();
+        }
 
         cvSearch = view.findViewById(R.id.cvSearchContainer);
         etSearch = view.findViewById(R.id.etSearchDiscover);
@@ -144,6 +154,13 @@ public class DiscoverFragment extends Fragment {
         
         if (adapter != null) {
             adapter.updateList(new ArrayList<>(filteredList));
+        }
+
+        // Hide shimmer and show content once data is loaded
+        if (isAdded() && shimmerDiscover != null && allDiscoveries.size() > 0) {
+            shimmerDiscover.stopShimmer();
+            shimmerDiscover.setVisibility(View.GONE);
+            rvDiscoverAll.setVisibility(View.VISIBLE);
         }
     }
 }
