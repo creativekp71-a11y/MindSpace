@@ -1,6 +1,11 @@
 package com.example.onlineexamapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,6 +74,7 @@ public class QuizActivity extends AppCompatActivity {
                     wrongAnswers++;
                     updatePoints(false);
                     Toast.makeText(QuizActivity.this, "Wrong Answer! ❌", Toast.LENGTH_SHORT).show();
+                    triggerVibration();
                 }
             }
         };
@@ -255,6 +261,28 @@ public class QuizActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    // ─── Vibration Helper ────────────────────────────────────────────────────
+    private void triggerVibration() {
+        SharedPreferences prefs = getSharedPreferences("MindSpaceSettings", MODE_PRIVATE);
+        boolean vibrationEnabled = prefs.getBoolean("vibration_enabled", true);
+        if (!vibrationEnabled) return;
+
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator == null || !vibrator.hasVibrator()) return;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // API 26+ — use VibrationEffect (two short pulses = wrong-answer feel)
+            vibrator.vibrate(VibrationEffect.createWaveform(
+                    new long[]{0, 120, 80, 120},   // delay, on, off, on (ms)
+                    new int[]{0, VibrationEffect.DEFAULT_AMPLITUDE, 0, VibrationEffect.DEFAULT_AMPLITUDE},
+                    -1  // no repeat
+            ));
+        } else {
+            // Legacy fallback
+            vibrator.vibrate(new long[]{0, 120, 80, 120}, -1);
+        }
     }
 
     private void updatePoints(boolean isCorrect) {
