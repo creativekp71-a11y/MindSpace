@@ -90,7 +90,8 @@
                         android:layout_marginBottom="7dp"
                         android:padding="10dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/img_find_friends_main" />
+                        android:src="@drawable/img_find_friends_main"
+                        android:tint="#FFFFFF" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -152,14 +153,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Hi, User 👋"
-                        android:textColor="#777777"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Discover"
-                        android:textColor="#111111"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
