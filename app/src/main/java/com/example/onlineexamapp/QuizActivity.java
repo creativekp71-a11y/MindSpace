@@ -199,11 +199,18 @@ public class QuizActivity extends AppCompatActivity {
 
         QuizQuestion currentQ = questionList.get(currentQuestionIndex);
 
-        if (tvQuestion != null) tvQuestion.setText(currentQ.getQuestion());
-        if (tvOption1 != null) tvOption1.setText(currentQ.getOptionA());
-        if (tvOption2 != null) tvOption2.setText(currentQ.getOptionB());
-        if (tvOption3 != null) tvOption3.setText(currentQ.getOptionC());
-        if (tvOption4 != null) tvOption4.setText(currentQ.getOptionD());
+        // Handle Question Number (Ensures "1. ", "2. " etc.)
+        String questionText = currentQ.getQuestion();
+        String qNumberPrefix = (currentQuestionIndex + 1) + ". ";
+        // Remove existing number/symbol if present (e.g. "1. ", "1) ")
+        String cleanQuestion = questionText.replaceAll("^\\d+[.\\)]\\s*", "");
+        if (tvQuestion != null) tvQuestion.setText(qNumberPrefix + cleanQuestion);
+
+        // Handle Options A, B, C, D
+        setOptionText(tvOption1, "A", currentQ.getOptionA());
+        setOptionText(tvOption2, "B", currentQ.getOptionB());
+        setOptionText(tvOption3, "C", currentQ.getOptionC());
+        setOptionText(tvOption4, "D", currentQ.getOptionD());
 
         if (btnSubmitNext != null) {
             if (currentQuestionIndex == questionList.size() - 1) {
@@ -212,6 +219,13 @@ public class QuizActivity extends AppCompatActivity {
                 btnSubmitNext.setText("Submit and Next");
             }
         }
+    }
+
+    private void setOptionText(TextView textView, String letter, String originalText) {
+        if (textView == null || originalText == null) return;
+        // Remove existing "A. ", "A) ", "(A) ", etc if they were hardcoded
+        String cleanText = originalText.replaceAll("^[\\(\\[]?[A-D][\\.\\)\\:\\]]\\s*", "");
+        textView.setText("(" + letter + ") " + cleanText);
     }
 
     private void resetOptions() {

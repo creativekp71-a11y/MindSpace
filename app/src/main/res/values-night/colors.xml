@@ -2,4 +2,5 @@
 <resources>
     <color name="card_border_color">#FFFFFF</color>
     <color name="skip_button_bg">#2C2C2E</color>
+    <color name="card_background">#2C2C2E</color>
 </resources>

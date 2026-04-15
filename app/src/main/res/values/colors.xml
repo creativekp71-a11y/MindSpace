@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="card_border_color">#D8D8D8</color>
     <color name="skip_button_bg">#F2E7FE</color>
+    <color name="card_background">#F5F5F5</color>
 </resources>

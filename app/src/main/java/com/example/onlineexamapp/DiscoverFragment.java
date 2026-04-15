@@ -48,6 +48,22 @@ public class DiscoverFragment extends Fragment {
         chipGroup = view.findViewById(R.id.chipGroupCategories);
         ImageView ivCloseSearch = view.findViewById(R.id.ivCloseSearch);
         ImageView ivSearchToggle = view.findViewById(R.id.ivSearch);
+        ImageView ivBack = view.findViewById(R.id.ivBack);
+
+        if (ivBack != null) {
+            ivBack.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    // Navigate to Home tab in Bottom Navigation
+                    View navHome = getActivity().findViewById(R.id.navHome);
+                    if (navHome != null) {
+                        navHome.performClick();
+                    } else {
+                        // Fallback if not in MainHomeActivity
+                        getActivity().onBackPressed();
+                    }
+                }
+            });
+        }
 
         ivSearchToggle.setOnClickListener(v -> {
             cvSearch.setVisibility(View.VISIBLE);

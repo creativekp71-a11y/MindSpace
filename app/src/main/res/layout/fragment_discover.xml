@@ -27,7 +27,7 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_back"
                 app:tint="#FFFFFF"
-                android:visibility="gone"/> <!-- Hidden in fragment -->
+                android:visibility="visible"/> 
 
             <TextView
                 android:layout_width="wrap_content"

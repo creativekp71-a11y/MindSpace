@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,7 +54,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvCoverContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
+                    android:layout_height="220dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp">
                     <ImageView
@@ -86,7 +87,7 @@
                     app:cardElevation="6dp"
                     android:layout_below="@id/cvCoverContainer"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="-50dp">
+                    android:layout_marginTop="-60dp">
                     <ImageView
                         android:id="@+id/ivEditProfilePic"
                         android:layout_width="match_parent"
@@ -127,7 +128,8 @@
                 android:id="@+id/btnSaveProfile"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="#6C5CE7"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_button_purple"
                 android:text="Save Changes"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
