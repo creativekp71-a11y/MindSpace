@@ -1,53 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="?android:attr/colorBackground">
 
-    <!-- Header (Fixed at top) -->
-    <RelativeLayout
+    <!-- Content Container -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="?android:attr/colorBackground"
-        android:elevation="2dp">
-        
-        <ImageView
-            android:id="@+id/ivBackAddDiscovery"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_back"
-            android:padding="4dp"
-            app:tint="?android:attr/textColorPrimary" />
-            
-        <TextView
-            android:id="@+id/tvAddDiscoveryHeaderTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Discovery Activity"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_toEndOf="@id/ivBackAddDiscovery"
-            android:layout_marginStart="16dp"
-            android:textColor="?android:attr/textColorPrimary" />
-    </RelativeLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="40dp"
+        android:layout_above="@id/bottomNavBar">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="none">
-
-        <LinearLayout
+        <!-- Header (Fixed at top) -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="24dp">
+            android:padding="16dp"
+            android:background="?android:attr/colorBackground"
+            android:elevation="2dp">
+            
+            <ImageView
+                android:id="@+id/ivBackAddDiscovery"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_back"
+                android:padding="4dp"
+                app:tint="?android:attr/textColorPrimary" />
+                
+            <TextView
+                android:id="@+id/tvAddDiscoveryHeaderTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Discovery Activity"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@id/ivBackAddDiscovery"
+                android:layout_marginStart="16dp"
+                android:textColor="?android:attr/textColorPrimary" />
+        </RelativeLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="24dp">
+... [Rest of the internal content remains same, I will use multi_replace for less text] ...
+
+            <!-- Be an Author Toggle Row (Slim Version) -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="12dp"
+                android:layout_marginBottom="16dp">
+                <TextView
+                    android:id="@+id/tvBeAnAuthorLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✍️  Be an Author"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true" />
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchBecomeAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    app:thumbTint="#6C5CE7"
+                    app:trackTint="#D1C4E9" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/dividerAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                android:layout_marginBottom="24dp" />
 
             <TextView
+                android:id="@+id/tvSectionCover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Activity Cover Photo"
@@ -109,6 +151,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
+                android:id="@+id/tvSectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Activity Title"
@@ -119,13 +162,12 @@
             <EditText
                 android:id="@+id/etDiscoveryTitle"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="54dp"
                 android:hint="Enter activity title"
                 android:paddingHorizontal="16dp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textColorHint="?android:attr/textColorSecondary"
-                android:background="?android:attr/listDivider"
-                android:elevation="2dp"
+                android:background="@drawable/bg_option"
                 android:layout_marginBottom="20dp" />
 
 <!--            <TextView-->
@@ -151,6 +193,7 @@
 <!--                android:layout_marginBottom="20dp" />-->
 
             <TextView
+                android:id="@+id/tvSectionCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Quiz Category"
@@ -162,13 +205,12 @@
             <EditText
                 android:id="@+id/etDiscoveryCategory"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="54dp"
                 android:hint="e.g. Science, Math, GK, etc..."
                 android:paddingHorizontal="16dp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textColorHint="?android:attr/textColorSecondary"
-                android:background="?android:attr/listDivider"
-                android:elevation="2dp"
+                android:background="@drawable/bg_option"
                 android:layout_marginBottom="24dp" />
 
             <!-- Questions Section -->
@@ -177,6 +219,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp">
                 <TextView
+                    android:id="@+id/tvSectionQuestions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Questions"
@@ -224,7 +267,13 @@
                 android:background="@drawable/bg_btn_follow"
                 android:elevation="4dp" />
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
-</LinearLayout>
+    <!-- Persistent Bottom Navigation Bar -->
+    <include
+        android:id="@+id/bottomNavBar"
+        layout="@layout/layout_bottom_navigation" />
+
+</RelativeLayout>

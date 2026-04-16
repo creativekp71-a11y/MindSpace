@@ -1,5 +1,7 @@
 package com.example.onlineexamapp;
 
+import android.content.Intent;
+
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -41,6 +43,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
     private FirebaseFirestore fStore;
     private FirebaseAuth mAuth;
     private ImageView ivCoverPreview;
+    private androidx.appcompat.widget.SwitchCompat switchAuthor;
     private String coverBase64 = "";
     private ActivityResultLauncher<String> imagePickerLauncher;
     
@@ -68,8 +71,14 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         ivBack = findViewById(R.id.ivBackAddDiscovery);
         ivCoverPreview = findViewById(R.id.ivDiscoveryCoverPreview);
         rvQuestions = findViewById(R.id.rvAddedQuestions);
+        switchAuthor = findViewById(R.id.switchBecomeAuthor);
 
         ivBack.setOnClickListener(v -> finish());
+        
+        // --- Master Switch Logic ---
+        switchAuthor.setChecked(false); // Default OFF
+        setAuthorMode(false); 
+        switchAuthor.setOnCheckedChangeListener((buttonView, isChecked) -> setAuthorMode(isChecked));
 
         // --- RecyclerView Setup ---
         questionAdapter = new QuestionPreviewAdapter(questionList, new QuestionPreviewAdapter.OnQuestionActionListener() {
@@ -130,6 +139,9 @@ public class AddDiscoveryActivity extends AppCompatActivity {
 
             saveToFirestore(title, desc, cat);
         });
+
+        // Setup Bottom Navigation
+        setupBottomNavigation();
     }
 
     private void fetchDiscoveryData() {
@@ -394,5 +406,56 @@ public class AddDiscoveryActivity extends AppCompatActivity {
                         ).show());
                     });
         });
+    }
+
+    private void setAuthorMode(boolean enabled) {
+        float alpha = enabled ? 1.0f : 0.4f;
+
+        // Enable/Disable interactive elements
+        etTitle.setEnabled(enabled);
+        etCategory.setEnabled(enabled);
+        btnAdd.setEnabled(enabled);
+        btnAddQuestionDialog.setEnabled(enabled);
+        findViewById(R.id.btnChangeDiscoveryCover).setEnabled(enabled);
+        rvQuestions.setEnabled(enabled); // Prevents interaction with the list
+
+        // Apply visual fade effect
+        etTitle.setAlpha(alpha);
+        etCategory.setAlpha(alpha);
+        btnAdd.setAlpha(alpha);
+        btnAddQuestionDialog.setAlpha(alpha);
+        findViewById(R.id.cardDiscoveryCover).setAlpha(alpha);
+        rvQuestions.setAlpha(alpha);
+
+        findViewById(R.id.tvSectionCover).setAlpha(alpha);
+        findViewById(R.id.tvSectionTitle).setAlpha(alpha);
+        findViewById(R.id.tvSectionCategory).setAlpha(alpha);
+        findViewById(R.id.tvSectionQuestions).setAlpha(alpha);
+        findViewById(R.id.tvQuestionCount).setAlpha(alpha);
+    }
+
+    private void setupBottomNavigation() {
+        ImageView ivCreate = findViewById(R.id.ivNavCreate);
+        TextView tvCreate = findViewById(R.id.tvNavCreate);
+
+        // Highlight Create tab
+        int activeColor = 0xFF6C5CE7;
+        ivCreate.setColorFilter(activeColor);
+        tvCreate.setTextColor(activeColor);
+        tvCreate.setTypeface(null, android.graphics.Typeface.BOLD);
+
+        // Setup listeners for other tabs
+        findViewById(R.id.navHome).setOnClickListener(v -> navigateToMain("HOME"));
+        findViewById(R.id.navDiscover).setOnClickListener(v -> navigateToMain("DISCOVER"));
+        findViewById(R.id.navLeaderboard).setOnClickListener(v -> navigateToMain("RANK"));
+        findViewById(R.id.navProfile).setOnClickListener(v -> navigateToMain("PROFILE"));
+    }
+
+    private void navigateToMain(String tab) {
+        Intent intent = new Intent(this, MainHomeActivity.class);
+        intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, tab);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 }

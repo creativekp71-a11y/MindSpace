@@ -33,8 +33,8 @@ public class MainHomeActivity extends AppCompatActivity {
     private static final String PREFS_NOTIFICATIONS = "notification_prefs";
     private static final String KEY_PERMISSION_REQUESTED = "permission_requested";
 
-    private ImageView ivHome, ivDiscover, ivRank, ivProfile;
-    private TextView tvHome, tvDiscover, tvRank, tvProfile;
+    private ImageView ivHome, ivDiscover, ivNavCreate, ivRank, ivProfile;
+    private TextView tvHome, tvDiscover, tvNavCreate, tvRank, tvProfile;
     private final int ACTIVE_COLOR = 0xFF6C5CE7; // Brand Purple
     private final int INACTIVE_COLOR = 0xFF888888; // Gray
     private final Set<String> deliveredNotificationIds = new HashSet<>();
@@ -62,11 +62,13 @@ public class MainHomeActivity extends AppCompatActivity {
         // Initialize UI components for bottom nav
         ivHome = findViewById(R.id.ivNavHome);
         ivDiscover = findViewById(R.id.ivNavDiscover);
+        ivNavCreate = findViewById(R.id.ivNavCreate);
         ivRank = findViewById(R.id.ivNavLeaderboard);
         ivProfile = findViewById(R.id.ivNavProfile);
 
         tvHome = findViewById(R.id.tvNavHome);
         tvDiscover = findViewById(R.id.tvNavDiscover);
+        tvNavCreate = findViewById(R.id.tvNavCreate);
         tvRank = findViewById(R.id.tvNavLeaderboard);
         tvProfile = findViewById(R.id.tvNavProfile);
 
@@ -76,10 +78,9 @@ public class MainHomeActivity extends AppCompatActivity {
         findViewById(R.id.navLeaderboard).setOnClickListener(v -> loadFragment(new RankFragment(), "RANK"));
         findViewById(R.id.navProfile).setOnClickListener(v -> loadFragment(new ProfileFragment(), "PROFILE"));
 
-        // Center Quick Play Button
-        findViewById(R.id.cardQuickPlay).setOnClickListener(v -> {
-            Intent intent = new Intent(MainHomeActivity.this, QuizActivity.class);
-            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
+        // Create Quiz Tab
+        findViewById(R.id.navCreate).setOnClickListener(v -> {
+            Intent intent = new Intent(MainHomeActivity.this, AddDiscoveryActivity.class);
             startActivity(intent);
         });
 
@@ -89,6 +90,12 @@ public class MainHomeActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             if (TAB_NOTIFICATIONS.equals(initialTab)) {
                 openNotifications();
+            } else if ("DISCOVER".equals(initialTab)) {
+                loadFragment(new DiscoverFragment(), "DISCOVER");
+            } else if ("RANK".equals(initialTab)) {
+                loadFragment(new RankFragment(), "RANK");
+            } else if ("PROFILE".equals(initialTab)) {
+                loadFragment(new ProfileFragment(), "PROFILE");
             } else {
                 loadFragment(new HomeFragment(), "HOME");
             }
@@ -232,11 +239,13 @@ public class MainHomeActivity extends AppCompatActivity {
         // Reset all to inactive
         ivHome.setColorFilter(INACTIVE_COLOR);
         ivDiscover.setColorFilter(INACTIVE_COLOR);
+        ivNavCreate.setColorFilter(INACTIVE_COLOR);
         ivRank.setColorFilter(INACTIVE_COLOR);
         ivProfile.setColorFilter(INACTIVE_COLOR);
 
         tvHome.setTextColor(INACTIVE_COLOR);
         tvDiscover.setTextColor(INACTIVE_COLOR);
+        tvNavCreate.setTextColor(INACTIVE_COLOR);
         tvRank.setTextColor(INACTIVE_COLOR);
         tvProfile.setTextColor(INACTIVE_COLOR);
 
@@ -249,6 +258,10 @@ public class MainHomeActivity extends AppCompatActivity {
             case "DISCOVER":
                 ivDiscover.setColorFilter(ACTIVE_COLOR);
                 tvDiscover.setTextColor(ACTIVE_COLOR);
+                break;
+            case "CREATE":
+                ivNavCreate.setColorFilter(ACTIVE_COLOR);
+                tvNavCreate.setTextColor(ACTIVE_COLOR);
                 break;
             case "RANK":
                 ivRank.setColorFilter(ACTIVE_COLOR);
