@@ -108,7 +108,10 @@ public class DashboardActivity extends AppCompatActivity {
         // 3. Find Friends wale Banner ka connection
         View btnFindFriendsBanner = findViewById(R.id.btnFindFriendsBanner);
         if (btnFindFriendsBanner != null) {
-            btnFindFriendsBanner.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, FindFriendsActivity.class)));
+            btnFindFriendsBanner.setOnClickListener(v -> {
+                Intent intent = new Intent(DashboardActivity.this, FindFriendsActivity.class);
+                startActivity(intent);
+            });
         }
 
         // ==========================================

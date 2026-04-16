@@ -63,7 +63,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         questionList = new ArrayList<>();
 
         etTitle = findViewById(R.id.etDiscoveryTitle);
-//        etDescription = findViewById(R.id.etDiscoveryDescription);
+        etDescription = findViewById(R.id.etDiscoveryDescription);
         etCategory = findViewById(R.id.etDiscoveryCategory);
         tvQuestionCount = findViewById(R.id.tvQuestionCount);
         btnAdd = findViewById(R.id.btnAddDiscovery);
@@ -414,6 +414,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         // Enable/Disable interactive elements
         etTitle.setEnabled(enabled);
         etCategory.setEnabled(enabled);
+        etDescription.setEnabled(enabled);
         btnAdd.setEnabled(enabled);
         btnAddQuestionDialog.setEnabled(enabled);
         findViewById(R.id.btnChangeDiscoveryCover).setEnabled(enabled);
@@ -427,8 +428,10 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         findViewById(R.id.cardDiscoveryCover).setAlpha(alpha);
         rvQuestions.setAlpha(alpha);
 
+        etDescription.setAlpha(alpha);
         findViewById(R.id.tvSectionCover).setAlpha(alpha);
         findViewById(R.id.tvSectionTitle).setAlpha(alpha);
+        findViewById(R.id.tvSectionDescription).setAlpha(alpha); // This might be missing in layout
         findViewById(R.id.tvSectionCategory).setAlpha(alpha);
         findViewById(R.id.tvSectionQuestions).setAlpha(alpha);
         findViewById(R.id.tvQuestionCount).setAlpha(alpha);

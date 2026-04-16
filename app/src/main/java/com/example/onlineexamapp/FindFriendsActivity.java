@@ -51,6 +51,10 @@ public class FindFriendsActivity extends AppCompatActivity {
         btnInviteMenu = findViewById(R.id.btnInviteMenu);
         rvFriends = findViewById(R.id.rvFriends);
 
+        if (rvFriends != null) {
+            rvFriends.setLayoutManager(new LinearLayoutManager(this));
+        }
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -61,15 +65,21 @@ public class FindFriendsActivity extends AppCompatActivity {
             return;
         }
 
-        rvFriends.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new FriendAdapter(this, filteredFriendsList, currentUser.getUid());
-        rvFriends.setAdapter(adapter);
+        if (rvFriends != null && currentUser != null) {
+            adapter = new FriendAdapter(this, filteredFriendsList, currentUser.getUid());
+            rvFriends.setAdapter(adapter);
+        }
 
-        ivBack.setOnClickListener(v -> finish());
+        if (ivBack != null) {
+            ivBack.setOnClickListener(v -> finish());
+        }
 
-        btnInviteMenu.setOnClickListener(v -> sendInvite());
+        if (btnInviteMenu != null) {
+            btnInviteMenu.setOnClickListener(v -> sendInvite());
+        }
 
-        etSearchFriends.addTextChangedListener(new TextWatcher() {
+        if (etSearchFriends != null) {
+            etSearchFriends.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
@@ -81,6 +91,7 @@ public class FindFriendsActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) { }
         });
+        }
 
         loadFollowingThenUsers();
     }
@@ -105,11 +116,14 @@ public class FindFriendsActivity extends AppCompatActivity {
     }
 
     private void loadFollowingThenUsers() {
+        if (currentUser == null) return;
+
         db.collection("Users")
                 .document(currentUser.getUid())
                 .collection("following")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (isFinishing() || isDestroyed()) return;
                     followingIds.clear();
 
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
@@ -119,15 +133,20 @@ public class FindFriendsActivity extends AppCompatActivity {
                     loadAllUsers();
                 })
                 .addOnFailureListener(e -> {
+                    if (isFinishing() || isDestroyed()) return;
                     followingIds.clear();
                     loadAllUsers();
                 });
     }
 
     private void loadAllUsers() {
+        if (currentUser == null) return;
+
         db.collection("Users")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    
                     allFriendsList.clear();
                     filteredFriendsList.clear();
 
@@ -167,13 +186,16 @@ public class FindFriendsActivity extends AppCompatActivity {
                     }
 
                     filteredFriendsList.addAll(allFriendsList);
-                    adapter.notifyDataSetChanged();
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
 
-                    Toast.makeText(this, "Users found: " + filteredFriendsList.size(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FindFriendsActivity.this, "Users found: " + filteredFriendsList.size(), Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to load users: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                );
+                .addOnFailureListener(e -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    Toast.makeText(FindFriendsActivity.this, "Failed to load users: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 
     private void filterFriends(@NonNull String query) {
@@ -193,6 +215,8 @@ public class FindFriendsActivity extends AppCompatActivity {
             }
         }
 
-        adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 }

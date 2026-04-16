@@ -69,7 +69,9 @@
             android:name=".DashboardActivity"
             android:exported="false" />
 
-        <activity android:name=".FindFriendsActivity" />
+        <activity 
+            android:name=".FindFriendsActivity"
+            android:exported="false" />
 
         <activity android:name=".ContactSearchActivity" />
 

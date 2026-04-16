@@ -127,8 +127,9 @@ public class HomeFragment extends Fragment {
 
         if (btnFindFriendsBanner != null) {
             btnFindFriendsBanner.setOnClickListener(v -> {
-                if (getActivity() != null) {
-                    startActivity(new Intent(getActivity(), FindFriendsActivity.class));
+                if (getContext() != null) {
+                    Intent intent = new Intent(getContext(), FindFriendsActivity.class);
+                    startActivity(intent);
                 }
             });
         }

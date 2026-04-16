@@ -84,22 +84,7 @@ public class MainHomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        String initialTab = getIntent().getStringExtra(EXTRA_OPEN_TAB);
-
-        // Load Default Fragment
-        if (savedInstanceState == null) {
-            if (TAB_NOTIFICATIONS.equals(initialTab)) {
-                openNotifications();
-            } else if ("DISCOVER".equals(initialTab)) {
-                loadFragment(new DiscoverFragment(), "DISCOVER");
-            } else if ("RANK".equals(initialTab)) {
-                loadFragment(new RankFragment(), "RANK");
-            } else if ("PROFILE".equals(initialTab)) {
-                loadFragment(new ProfileFragment(), "PROFILE");
-            } else {
-                loadFragment(new HomeFragment(), "HOME");
-            }
-        }
+        handleIntent(getIntent(), savedInstanceState == null);
 
         askNotificationPermissionIfNeeded();
     }
@@ -271,6 +256,32 @@ public class MainHomeActivity extends AppCompatActivity {
                 ivProfile.setColorFilter(ACTIVE_COLOR);
                 tvProfile.setTextColor(ACTIVE_COLOR);
                 break;
+    }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent, true);
+    }
+
+    private void handleIntent(Intent intent, boolean shouldForceLoad) {
+        if (intent == null) return;
+        String initialTab = intent.getStringExtra(EXTRA_OPEN_TAB);
+
+        if (TAB_NOTIFICATIONS.equals(initialTab)) {
+            openNotifications();
+        } else if ("DISCOVER".equals(initialTab)) {
+            loadFragment(new DiscoverFragment(), "DISCOVER");
+        } else if ("RANK".equals(initialTab)) {
+            loadFragment(new RankFragment(), "RANK");
+        } else if ("PROFILE".equals(initialTab)) {
+            loadFragment(new ProfileFragment(), "PROFILE");
+        } else if ("HOME".equals(initialTab)) {
+            loadFragment(new HomeFragment(), "HOME");
+        } else if (shouldForceLoad) {
+            loadFragment(new HomeFragment(), "HOME");
         }
     }
 }

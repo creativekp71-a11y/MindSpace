@@ -51,12 +51,16 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
         FriendModel model = friendList.get(position);
 
-        holder.tvName.setText(TextUtils.isEmpty(model.getName()) ? "User" : model.getName());
-        holder.tvEmail.setText(TextUtils.isEmpty(model.getEmail()) ? "No email" : model.getEmail());
+        if (holder.tvName != null) {
+            holder.tvName.setText(TextUtils.isEmpty(model.getName()) ? "User" : model.getName());
+        }
+        if (holder.tvEmail != null) {
+            holder.tvEmail.setText(TextUtils.isEmpty(model.getEmail()) ? "No email" : model.getEmail());
+        }
 
         String profileImage = model.getProfileImage();
-
-        if (!TextUtils.isEmpty(profileImage)) {
+        if (holder.imgProfile != null) {
+            if (!TextUtils.isEmpty(profileImage)) {
             try {
                 byte[] imageBytes = Base64.decode(profileImage, Base64.DEFAULT);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
@@ -72,18 +76,21 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         } else {
             holder.imgProfile.setImageResource(R.drawable.ic_user_placeholder);
         }
+        }
 
-        setButtonState(holder.btnFollow, model.isFollowed());
+        if (holder.btnFollow != null) {
+            setButtonState(holder.btnFollow, model.isFollowed());
 
-        holder.btnFollow.setOnClickListener(v -> {
-            holder.btnFollow.setEnabled(false);
+            holder.btnFollow.setOnClickListener(v -> {
+                holder.btnFollow.setEnabled(false);
 
-            if (model.isFollowed()) {
-                unfollowUser(model, holder);
-            } else {
-                followUser(model, holder);
-            }
-        });
+                if (model.isFollowed()) {
+                    unfollowUser(model, holder);
+                } else {
+                    followUser(model, holder);
+                }
+            });
+        }
     }
 
     private void followUser(FriendModel model, FriendViewHolder holder) {
