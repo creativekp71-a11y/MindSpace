@@ -5,219 +5,244 @@
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
 
-    <ScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavBar"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        android:layout_above="@id/bottomNavBar">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="50dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="20dp">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:src="@drawable/mindspace_logo2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="MindSpace"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/ivBell"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_notification"
-                    app:tint="?android:attr/textColorPrimary" />
-
-                <ImageView
-                    android:id="@+id/ivSearch"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@id/ivBell"
-                    android:src="@drawable/ic_search_purple"
-                    app:tint="?android:attr/textColorPrimary" />
-            </RelativeLayout>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:layout_marginBottom="40dp"
-                app:cardBackgroundColor="#6C5CE7" app:cardCornerRadius="24dp"
-                app:cardElevation="0dp">
+                android:orientation="vertical"
+                android:paddingTop="50dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="20dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/ivBannerImg"
-                        android:layout_width="160dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginEnd="4dp"
-                        android:layout_marginBottom="7dp"
-                        android:padding="10dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/img_find_friends_main"
-                        android:tint="#FFFFFF" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginStart="20dp"
-                        android:layout_toStartOf="@id/ivBannerImg"
-                        android:orientation="vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/mindspace_logo2" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Play quiz together\nwith your friends now!"
-                            android:textColor="#FFFFFF"
-                            android:textSize="22sp"
+                            android:layout_marginStart="10dp"
+                            android:text="MindSpace"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="36dp"
-                            android:layout_marginTop="12dp"
-                            android:background="@drawable/bg_rounded_white"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:text="Find Friends"
-                            android:id="@+id/btnFindFriendsBanner"
-                            android:textAllCaps="false"
-                            android:textColor="#6C5CE7"
-                            android:textStyle="bold" />
-
                     </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/flBell"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true">
+
+                        <ImageView
+                            android:id="@+id/ivBell"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_notification"
+                            app:tint="?android:attr/textColorPrimary" />
+
+                        <View
+                            android:id="@+id/viewBellBadge"
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:background="@drawable/bg_dot_purple"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+
+                    <ImageView
+                        android:id="@+id/ivSearch"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_toStartOf="@id/flBell"
+                        android:src="@drawable/ic_search_purple"
+                        app:tint="?android:attr/textColorPrimary" />
+
                 </RelativeLayout>
-            </androidx.cardview.widget.CardView>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginBottom="40dp"
+                    app:cardBackgroundColor="#6C5CE7" app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/ivHeaderProfilePic"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user_placeholder"
-                    app:shapeAppearanceOverlay="@style/CircleImageViewShape"
-                    app:strokeColor="?android:attr/textColorSecondary"
-                    app:strokeWidth="1dp" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                        <ImageView
+                            android:id="@+id/ivBannerImg"
+                            android:layout_width="160dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginEnd="4dp"
+                            android:layout_marginBottom="7dp"
+                            android:padding="10dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/img_find_friends_main"
+                            android:tint="#FFFFFF" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="20dp"
+                            android:layout_toStartOf="@id/ivBannerImg"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Play quiz together\nwith your friends now!"
+                                android:textColor="#FFFFFF"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="36dp"
+                                android:layout_marginTop="12dp"
+                                android:background="@drawable/bg_rounded_white"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                android:text="Find Friends"
+                                android:id="@+id/btnFindFriendsBanner"
+                                android:textAllCaps="false"
+                                android:textColor="#6C5CE7"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="12dp"
-                    android:layout_toEndOf="@id/ivHeaderProfilePic"
-                    android:orientation="vertical">
-                    
-                    <TextView
-                        android:id="@+id/tvUserGreeting"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivHeaderProfilePic"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_user_placeholder"
+                        app:shapeAppearanceOverlay="@style/CircleImageViewShape"
+                        app:strokeColor="?android:attr/textColorSecondary"
+                        app:strokeWidth="1dp" />
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hi, User 👋"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="14sp" />
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="12dp"
+                        android:layout_toEndOf="@id/ivHeaderProfilePic"
+                        android:orientation="vertical">
+                        
+                        <TextView
+                            android:id="@+id/tvUserGreeting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hi, User 👋"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Discover"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvViewAllDiscover"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="View all →"
+                        android:textColor="#6C5CE7"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvHomeDiscover"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="40dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Discover"
+                        android:text="Top Authors"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
-                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvViewAllDiscover"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/tvViewAllAuthors"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="View all →"
+                        android:textColor="#6C5CE7"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvHomeAuthors"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="View all →"
-                    android:textColor="#6C5CE7"
-                    android:textStyle="bold" />
-            </RelativeLayout>
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvHomeDiscover"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="40dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            </LinearLayout>
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Top Authors"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvViewAllAuthors"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="View all →"
-                    android:textColor="#6C5CE7"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvHomeAuthors"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-        </LinearLayout>
-    </ScrollView>
 
     <LinearLayout
         android:id="@+id/bottomNavBar"
@@ -275,25 +300,26 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navCreate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
-            <androidx.cardview.widget.CardView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:cardBackgroundColor="?android:attr/colorBackground"
-                app:cardCornerRadius="25dp"
-                app:cardElevation="6dp">
-                <ImageView
-                    android:id="@+id/ivCenterLogo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="0dp"
-                    android:src="@drawable/mindspace_logo2" />
-            </androidx.cardview.widget.CardView>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_create"
+                app:tint="?android:attr/textColorSecondary" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Create"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="0dp"

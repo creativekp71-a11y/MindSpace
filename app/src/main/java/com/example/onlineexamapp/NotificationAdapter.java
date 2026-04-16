@@ -17,15 +17,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private final Context context;
     private final List<NotificationModel> notifList;
+    private final String currentUserId;
     private final OnNotifClickListener listener;
 
     public interface OnNotifClickListener {
         void onNotifClick(NotificationModel model);
     }
 
-    public NotificationAdapter(Context context, List<NotificationModel> notifList, OnNotifClickListener listener) {
+    public NotificationAdapter(Context context, List<NotificationModel> notifList, String currentUserId, OnNotifClickListener listener) {
         this.context = context;
         this.notifList = notifList;
+        this.currentUserId = currentUserId;
         this.listener = listener;
     }
 
@@ -39,22 +41,26 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull NotifViewHolder holder, int position) {
         NotificationModel model = notifList.get(position);
-        holder.tvTitle.setText(getSafeText(model.getTitle(), "New notification"));
-        holder.tvMessage.setText(getSafeText(model.getMessage(), "You have a new update."));
+        
+        // --- Instagram style message ---
+        holder.tvMessage.setText(getSafeText(model.getMessage(), "New notification"));
 
         if (model.getTimestamp() != null) {
-            String timeAgo = (String) DateUtils.getRelativeTimeSpanString(model.getTimestamp().getSeconds() * 1000);
+            String timeAgo = (String) android.text.format.DateUtils.getRelativeTimeSpanString(
+                    model.getTimestamp().getSeconds() * 1000,
+                    System.currentTimeMillis(),
+                    android.text.format.DateUtils.MINUTE_IN_MILLIS,
+                    android.text.format.DateUtils.FORMAT_ABBREV_RELATIVE);
             holder.tvTime.setText(timeAgo);
         } else {
             holder.tvTime.setText("");
         }
 
-        holder.unreadDot.setVisibility(model.isRead() ? View.GONE : View.VISIBLE);
-        holder.ivType.setImageResource(resolveNotificationIcon(model.getType()));
+        // Unread dot logic removed as requested
 
         if (model.getSenderImage() != null && !model.getSenderImage().isEmpty()) {
             try {
-                byte[] bytes = Base64.decode(model.getSenderImage(), Base64.DEFAULT);
+                byte[] bytes = android.util.Base64.decode(model.getSenderImage(), android.util.Base64.DEFAULT);
                 Glide.with(context).load(bytes).placeholder(R.drawable.ic_user_placeholder).into(holder.ivSender);
             } catch (Exception e) {
                 holder.ivSender.setImageResource(R.drawable.ic_user_placeholder);
@@ -63,9 +69,84 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.ivSender.setImageResource(R.drawable.ic_user_placeholder);
         }
 
+        // --- Follow Back Button logic ---
+        if ("follow".equalsIgnoreCase(model.getType()) && model.getSenderId() != null) {
+            holder.btnFollowBack.setVisibility(View.VISIBLE);
+            checkFollowStatus(model.getSenderId(), holder.btnFollowBack);
+            holder.btnFollowBack.setOnClickListener(v -> toggleFollow(model.getSenderId(), holder.btnFollowBack));
+        } else {
+            holder.btnFollowBack.setVisibility(View.GONE);
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onNotifClick(model);
+            
+            // Open sender profile if it's a follow notification
+            if (model.getSenderId() != null) {
+                android.content.Intent intent = new android.content.Intent(context, AuthorProfileActivity.class);
+                intent.putExtra("authorUid", model.getSenderId());
+                context.startActivity(intent);
+            }
         });
+    }
+
+    private void checkFollowStatus(String targetUid, androidx.appcompat.widget.AppCompatButton btn) {
+        if (currentUserId == null) return;
+        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("Following").document(currentUserId)
+                .collection("UserFollowing").document(targetUid)
+                .get().addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        btn.setText("Following");
+                        btn.setBackgroundResource(R.drawable.bg_btn_unfollow);
+                    } else {
+                        btn.setText("Follow Back");
+                        btn.setBackgroundResource(R.drawable.bg_btn_follow);
+                    }
+                });
+    }
+
+    private void toggleFollow(String targetUid, androidx.appcompat.widget.AppCompatButton btn) {
+        if (currentUserId == null) return;
+        boolean isFollowing = btn.getText().toString().equalsIgnoreCase("Following");
+        btn.setEnabled(false);
+
+        com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+        com.google.firebase.firestore.WriteBatch batch = db.batch();
+
+        com.google.firebase.firestore.DocumentReference followingRef = db.collection("Following").document(currentUserId)
+                .collection("UserFollowing").document(targetUid);
+        com.google.firebase.firestore.DocumentReference followersRef = db.collection("Followers").document(targetUid)
+                .collection("UserFollowers").document(currentUserId);
+        
+        com.google.firebase.firestore.DocumentReference currentUserRef = db.collection("Users").document(currentUserId);
+        com.google.firebase.firestore.DocumentReference targetUserRef = db.collection("Users").document(targetUid);
+
+        if (isFollowing) {
+            batch.delete(followingRef);
+            batch.delete(followersRef);
+            batch.update(currentUserRef, "followingCount", com.google.firebase.firestore.FieldValue.increment(-1));
+            batch.update(targetUserRef, "followersCount", com.google.firebase.firestore.FieldValue.increment(-1));
+        } else {
+            java.util.Map<String, Object> data = new java.util.HashMap<>();
+            data.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
+            batch.set(followingRef, data);
+            batch.set(followersRef, data);
+            batch.update(currentUserRef, "followingCount", com.google.firebase.firestore.FieldValue.increment(1));
+            batch.update(targetUserRef, "followersCount", com.google.firebase.firestore.FieldValue.increment(1));
+        }
+
+        batch.commit().addOnSuccessListener(aVoid -> {
+            btn.setEnabled(true);
+            if (isFollowing) {
+                btn.setText("Follow Back");
+                btn.setBackgroundResource(R.drawable.bg_btn_follow);
+            } else {
+                btn.setText("Following");
+                btn.setBackgroundResource(R.drawable.bg_btn_unfollow);
+                // No need to send follow back notification for now unless asked
+            }
+        }).addOnFailureListener(e -> btn.setEnabled(true));
     }
 
     @Override
@@ -100,18 +181,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     class NotifViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivSender, ivType;
-        TextView tvTitle, tvMessage, tvTime;
-        View unreadDot;
+        ImageView ivSender;
+        TextView tvMessage, tvTime;
+        androidx.appcompat.widget.AppCompatButton btnFollowBack;
 
         public NotifViewHolder(@NonNull View itemView) {
             super(itemView);
             ivSender = itemView.findViewById(R.id.ivNotifSender);
-            ivType = itemView.findViewById(R.id.ivNotifType);
-            tvTitle = itemView.findViewById(R.id.tvNotifTitle);
             tvMessage = itemView.findViewById(R.id.tvNotifMessage);
             tvTime = itemView.findViewById(R.id.tvNotifTime);
-            unreadDot = itemView.findViewById(R.id.viewUnreadDot);
+            btnFollowBack = itemView.findViewById(R.id.btnFollowBack);
         }
     }
 }

@@ -56,7 +56,7 @@ public class NotificationsFragment extends Fragment {
 
         notifList = new ArrayList<>();
 
-        adapter = new NotificationAdapter(getContext(), notifList, model -> {
+        adapter = new NotificationAdapter(getContext(), notifList, currentUid, model -> {
             if (!model.isRead()) {
                 markAsRead(model.getId());
             }

@@ -18,7 +18,11 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
+import android.content.Intent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -91,45 +95,93 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
                 }
             });
         }
+
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, AuthorProfileActivity.class);
+            intent.putExtra("authorUid", model.getUserId());
+            context.startActivity(intent);
+        });
     }
 
     private void followUser(FriendModel model, FriendViewHolder holder) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("followedAt", System.currentTimeMillis());
+        String targetUid = model.getUserId();
+        WriteBatch batch = db.batch();
 
-        db.collection("Users")
-                .document(currentUserId)
-                .collection("following")
-                .document(model.getUserId())
-                .set(map)
-                .addOnSuccessListener(unused -> {
-                    model.setFollowed(true);
-                    setButtonState(holder.btnFollow, true);
-                    holder.btnFollow.setEnabled(true);
-                    Toast.makeText(context, "Followed", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    holder.btnFollow.setEnabled(true);
-                    Toast.makeText(context, "Follow failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+        DocumentReference followingRef = db.collection("Following").document(currentUserId)
+                .collection("UserFollowing").document(targetUid);
+        DocumentReference followersRef = db.collection("Followers").document(targetUid)
+                .collection("UserFollowers").document(currentUserId);
+        
+        DocumentReference currentUserRef = db.collection("Users").document(currentUserId);
+        DocumentReference targetUserRef = db.collection("Users").document(targetUid);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("timestamp", FieldValue.serverTimestamp());
+
+        batch.set(followingRef, data);
+        batch.set(followersRef, data);
+        batch.update(currentUserRef, "followingCount", FieldValue.increment(1));
+        batch.update(targetUserRef, "followersCount", FieldValue.increment(1));
+
+        batch.commit().addOnSuccessListener(unused -> {
+            model.setFollowed(true);
+            setButtonState(holder.btnFollow, true);
+            holder.btnFollow.setEnabled(true);
+            sendFollowNotification(targetUid);
+        }).addOnFailureListener(e -> {
+            holder.btnFollow.setEnabled(true);
+            Toast.makeText(context, "Follow failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void sendFollowNotification(String targetUid) {
+        db.collection("Users").document(currentUserId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                String senderName = doc.getString("full_name");
+                String senderImage = doc.getString("profile_pic");
+
+                Map<String, Object> notification = new HashMap<>();
+                notification.put("senderId", currentUserId);
+                notification.put("senderName", senderName != null ? senderName : "Someone");
+                notification.put("senderImage", senderImage != null ? senderImage : "");
+                notification.put("title", "New Follower");
+                notification.put("message", (senderName != null ? senderName : "Someone") + " started following you");
+                notification.put("type", "follow");
+                notification.put("timestamp", FieldValue.serverTimestamp());
+                notification.put("read", false);
+
+                db.collection("Notifications").document(targetUid)
+                        .collection("UserNotifications").add(notification);
+            }
+        });
     }
 
     private void unfollowUser(FriendModel model, FriendViewHolder holder) {
-        db.collection("Users")
-                .document(currentUserId)
-                .collection("following")
-                .document(model.getUserId())
-                .delete()
-                .addOnSuccessListener(unused -> {
-                    model.setFollowed(false);
-                    setButtonState(holder.btnFollow, false);
-                    holder.btnFollow.setEnabled(true);
-                    Toast.makeText(context, "Unfollowed", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    holder.btnFollow.setEnabled(true);
-                    Toast.makeText(context, "Unfollow failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+        String targetUid = model.getUserId();
+        WriteBatch batch = db.batch();
+
+        DocumentReference followingRef = db.collection("Following").document(currentUserId)
+                .collection("UserFollowing").document(targetUid);
+        DocumentReference followersRef = db.collection("Followers").document(targetUid)
+                .collection("UserFollowers").document(currentUserId);
+        
+        DocumentReference currentUserRef = db.collection("Users").document(currentUserId);
+        DocumentReference targetUserRef = db.collection("Users").document(targetUid);
+
+        batch.delete(followingRef);
+        batch.delete(followersRef);
+        batch.update(currentUserRef, "followingCount", FieldValue.increment(-1));
+        batch.update(targetUserRef, "followersCount", FieldValue.increment(-1));
+
+        batch.commit().addOnSuccessListener(unused -> {
+            model.setFollowed(false);
+            setButtonState(holder.btnFollow, false);
+            holder.btnFollow.setEnabled(true);
+        }).addOnFailureListener(e -> {
+            holder.btnFollow.setEnabled(true);
+            Toast.makeText(context, "Unfollow failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void setButtonState(AppCompatButton button, boolean isFollowed) {

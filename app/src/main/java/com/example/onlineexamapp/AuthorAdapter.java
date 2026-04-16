@@ -135,8 +135,33 @@ public class AuthorAdapter extends RecyclerView.Adapter<AuthorAdapter.AuthorView
             batch.commit().addOnSuccessListener(aVoid -> {
                 btnFollow.setText("Unfollow");
                 btnFollow.setBackgroundResource(R.drawable.bg_btn_unfollow);
+                sendFollowNotification(authorUid);
             });
         }
+    }
+
+    private void sendFollowNotification(String authorUid) {
+        if (currentUserId == null || authorUid == null) return;
+
+        fStore.collection("Users").document(currentUserId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                String senderName = doc.getString("full_name");
+                String senderImage = doc.getString("profile_pic");
+
+                java.util.Map<String, Object> notification = new java.util.HashMap<>();
+                notification.put("senderId", currentUserId);
+                notification.put("senderName", senderName != null ? senderName : "Someone");
+                notification.put("senderImage", senderImage != null ? senderImage : "");
+                notification.put("title", "New Follower");
+                notification.put("message", (senderName != null ? senderName : "Someone") + " started following you");
+                notification.put("type", "follow");
+                notification.put("timestamp", FieldValue.serverTimestamp());
+                notification.put("read", false);
+
+                fStore.collection("Notifications").document(authorUid)
+                        .collection("UserNotifications").add(notification);
+            }
+        });
     }
 
     @Override

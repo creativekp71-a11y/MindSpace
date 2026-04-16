@@ -16,81 +16,63 @@
         android:background="?android:attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="14dp">
+        android:padding="12dp">
 
         <FrameLayout
-            android:layout_width="56dp"
-            android:layout_height="56dp">
+            android:layout_width="50dp"
+            android:layout_height="50dp">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:cardCornerRadius="25dp"
-                app:cardElevation="0dp">
-
-                <ImageView
-                    android:id="@+id/ivNotifSender"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user_placeholder" />
-            </androidx.cardview.widget.CardView>
-
-            <ImageView
-                android:id="@+id/ivNotifType"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_gravity="bottom|end"
-                android:background="@drawable/circle_purple_bg"
-                android:padding="4dp"
-                android:src="@drawable/ic_notification"
-                app:tint="#FFFFFF" />
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivNotifSender"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_user_placeholder"
+                app:shapeAppearanceOverlay="@style/CircleImageViewShape" />
         </FrameLayout>
+
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvNotifTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="New Discovery!"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="14sp"
-                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvNotifMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:ellipsize="end"
-                android:maxLines="2"
-                android:text="Author Name just posted a new quiz: Title"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="13sp" />
+                android:maxLines="3"
+                android:text="User Name started following you."
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tvNotifTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="2dp"
                 android:text="2 mins ago"
                 android:textColor="?android:attr/textColorSecondary"
-                android:textSize="11sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <View
-            android:id="@+id/viewUnreadDot"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/bg_dot_purple"
-            android:visibility="visible" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnFollowBack"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_btn_follow"
+            android:paddingHorizontal="16dp"
+            android:text="Follow"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
     </LinearLayout>
+
+
 </androidx.cardview.widget.CardView>

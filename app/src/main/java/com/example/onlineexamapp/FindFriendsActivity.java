@@ -118,9 +118,9 @@ public class FindFriendsActivity extends AppCompatActivity {
     private void loadFollowingThenUsers() {
         if (currentUser == null) return;
 
-        db.collection("Users")
+        db.collection("Following")
                 .document(currentUser.getUid())
-                .collection("following")
+                .collection("UserFollowing")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (isFinishing() || isDestroyed()) return;

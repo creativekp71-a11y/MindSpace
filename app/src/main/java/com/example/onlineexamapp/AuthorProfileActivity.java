@@ -34,7 +34,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
 
     private ImageView ivCover, ivAvatar;
     private TextView tvFullName, tvUsername, tvBio;
-    private TextView tvFollowers, tvFollowing, tvDiscoveries;
+    private TextView tvFollowers, tvFollowing, tvDiscoveries, tvPoints, tvRank;
     private AppCompatButton btnFollow;
     private RecyclerView rvDiscoveries;
     private DiscoveryAdapter adapter;
@@ -83,6 +83,8 @@ public class AuthorProfileActivity extends AppCompatActivity {
         tvFollowers = findViewById(R.id.tvFollowersCount);
         tvFollowing = findViewById(R.id.tvFollowingCount);
         tvDiscoveries = findViewById(R.id.tvDiscoveryCount);
+        tvPoints = findViewById(R.id.tvAuthorPoints);
+        tvRank = findViewById(R.id.tvAuthorRank);
         btnFollow = findViewById(R.id.btnAuthorFollow);
 
         rvDiscoveries = findViewById(R.id.rvAuthorDiscoveries);
@@ -107,12 +109,16 @@ public class AuthorProfileActivity extends AppCompatActivity {
                 String coverPic = doc.getString("cover_pic");
                 Long followers = doc.getLong("followersCount");
                 Long following = doc.getLong("followingCount");
+                Long points = doc.getLong("points");
+                String rank = doc.getString("rank");
 
                 tvFullName.setText(fullName != null ? fullName : "Unknown Author");
                 tvUsername.setText(username != null ? "@" + username : "");
                 tvBio.setText(bio != null && !bio.isEmpty() ? bio : "No bio available.");
                 tvFollowers.setText(String.valueOf(followers != null ? followers : 0));
                 tvFollowing.setText(String.valueOf(following != null ? following : 0));
+                tvPoints.setText(String.valueOf(points != null ? points : 0));
+                tvRank.setText(rank != null && !rank.isEmpty() ? rank : "N/A");
 
                 if (profilePic != null && !profilePic.isEmpty()) {
                     try {
@@ -229,8 +235,33 @@ public class AuthorProfileActivity extends AppCompatActivity {
                 btnFollow.setText("Unfollow");
                 btnFollow.setBackgroundResource(R.drawable.bg_btn_unfollow);
                 updateFollowersCount(1);
+                sendFollowNotification();
             }).addOnFailureListener(e -> btnFollow.setEnabled(true));
         }
+    }
+
+    private void sendFollowNotification() {
+        if (currentUserId == null || authorUid == null) return;
+
+        fStore.collection("Users").document(currentUserId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                String senderName = doc.getString("full_name");
+                String senderImage = doc.getString("profile_pic");
+
+                Map<String, Object> notification = new HashMap<>();
+                notification.put("senderId", currentUserId);
+                notification.put("senderName", senderName != null ? senderName : "Someone");
+                notification.put("senderImage", senderImage != null ? senderImage : "");
+                notification.put("title", "New Follower");
+                notification.put("message", (senderName != null ? senderName : "Someone") + " started following you");
+                notification.put("type", "follow");
+                notification.put("timestamp", FieldValue.serverTimestamp());
+                notification.put("read", false);
+
+                fStore.collection("Notifications").document(authorUid)
+                        .collection("UserNotifications").add(notification);
+            }
+        });
     }
 
     private void updateFollowersCount(int change) {

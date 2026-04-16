@@ -15,12 +15,17 @@ import androidx.recyclerview.widget.LinearLayoutManager; // 🌟 Horizontal Scro
 import com.bumptech.glide.Glide;
 import android.util.Base64;
 import android.widget.ImageView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity {
 
     private RecyclerView rvHomeDiscover, rvHomeAuthors;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ListenerRegistration badgeListener;
+    private int activeTasks = 0;
 
     // 🌟 बदलाव 1: यहाँ DiscoveryAdapter की जगह DashboardAdapter कर दिया
     private DashboardAdapter dashboardAdapter;
@@ -53,6 +58,8 @@ public class DashboardActivity extends AppCompatActivity {
         rvHomeDiscover.setAdapter(dashboardAdapter);
 
         rvHomeAuthors = findViewById(R.id.rvHomeAuthors);
+        rvHomeAuthors.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvHomeAuthors.setHasFixedSize(true);
         authorList = new ArrayList<>();
         authorAdapter = new AuthorHomeAdapter(this, authorList);
         rvHomeAuthors.setAdapter(authorAdapter);
@@ -93,84 +100,81 @@ public class DashboardActivity extends AppCompatActivity {
             }
         }
 
-        // 1. Niche Discover wale Icon ka connection (Old direct reference)
-        View navDiscover = findViewById(R.id.navDiscover);
-        if (navDiscover != null) {
-            navDiscover.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, DiscoverActivity.class)));
-        }
-
-        // 2. View All wale Text ka connection
-        TextView tvViewAllDiscover = findViewById(R.id.tvViewAllDiscover);
-        if (tvViewAllDiscover != null) {
-            tvViewAllDiscover.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, DiscoverActivity.class)));
-        }
-
-        // 3. Find Friends wale Banner ka connection
-        View btnFindFriendsBanner = findViewById(R.id.btnFindFriendsBanner);
-        if (btnFindFriendsBanner != null) {
-            btnFindFriendsBanner.setOnClickListener(v -> {
-                Intent intent = new Intent(DashboardActivity.this, FindFriendsActivity.class);
-                startActivity(intent);
-            });
-        }
-
-        // ==========================================
-        // 👉 Top Authors के 'View All' का कनेक्शन 👈
-        // ==========================================
-        android.widget.TextView tvViewAllAuthors = findViewById(R.id.tvViewAllAuthors);
-        if (tvViewAllAuthors != null) {
-            tvViewAllAuthors.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    android.content.Intent intent = new android.content.Intent(DashboardActivity.this, TopAuthorsActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
-
-        // ==========================================
-        // 🔍 Top Search Icon का कनेक्शन
-        // ==========================================
-        android.widget.ImageView iconSearch = findViewById(R.id.ivSearch);
-
-        if (iconSearch != null) {
-            iconSearch.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    android.content.Intent intent = new android.content.Intent(DashboardActivity.this, SearchActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
-
-        // ==========================================
-        // 👉 Notification आइकन का कनेक्शन 🔔 👈
-        // ==========================================
-                android.widget.ImageView ivNotification = findViewById(R.id.ivBell);
-        if (ivNotification != null) {
-            ivNotification.setOnClickListener(new android.view.View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View v) {
-                    Intent intent = new Intent(DashboardActivity.this, MainHomeActivity.class);
-                    intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, MainHomeActivity.TAB_NOTIFICATIONS);
-                    startActivity(intent);
-                }
-            });
-        }
+        // All navigation click listeners are now consolidated in setupBottomNavigation()
 
         // Quick Play logic moved to setupBottomNavigation()
 
         // --- Bottom Navigation Setup ---
         setupBottomNavigation();
+
+        // --- SwipeRefreshLayout Setup ---
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeResources(R.color.purple_500);
+            swipeRefreshLayout.setOnRefreshListener(() -> refreshDashboard());
+        }
+
+        // --- Initial Load ---
+        refreshDashboard();
+    }
+
+    private void refreshDashboard() {
+        if (swipeRefreshLayout != null && !swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
+        
+        activeTasks = 2; // fetchDiscoveries and fetchTopAuthors
+        fetchDiscoveries();
+        fetchTopAuthors();
+        setupNotificationBadge(); 
+    }
+
+    private synchronized void checkRefreshFinished() {
+        activeTasks--;
+        if (activeTasks <= 0 && swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private void setupNotificationBadge() {
+        if (badgeListener != null) {
+            badgeListener.remove();
+        }
+
+        View viewBellBadge = findViewById(R.id.viewBellBadge);
+        if (viewBellBadge == null) return;
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null) {
+            viewBellBadge.setVisibility(View.GONE);
+            return;
+        }
+
+        String uid = mAuth.getCurrentUser().getUid();
+        // Use a snapshot listener that stays active
+        badgeListener = fStore.collection("Notifications").document(uid)
+                .collection("UserNotifications")
+                .whereEqualTo("read", false)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) return;
+                    if (value != null) {
+                        viewBellBadge.setVisibility(value.isEmpty() ? View.GONE : View.VISIBLE);
+                    }
+                });
     }
 
     private void setupBottomNavigation() {
+        // --- Core Navigation Items ---
         findViewById(R.id.navHome).setOnClickListener(v -> {
             // Already on Home
         });
 
         findViewById(R.id.navDiscover).setOnClickListener(v -> {
             startActivity(new Intent(DashboardActivity.this, DiscoverActivity.class));
+        });
+
+        findViewById(R.id.navCreate).setOnClickListener(v -> {
+            startActivity(new Intent(DashboardActivity.this, AddDiscoveryActivity.class));
         });
 
         findViewById(R.id.navLeaderboard).setOnClickListener(v -> {
@@ -181,9 +185,29 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(new Intent(DashboardActivity.this, ProfileActivity.class));
         });
 
-        findViewById(R.id.ivCenterLogo).setOnClickListener(v -> {
-            Intent intent = new Intent(DashboardActivity.this, QuizActivity.class);
-            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
+        // --- Additional Dashboard Actions ---
+        View btnFindFriendsBanner = findViewById(R.id.btnFindFriendsBanner);
+        if (btnFindFriendsBanner != null) {
+            btnFindFriendsBanner.setOnClickListener(v -> 
+                startActivity(new Intent(DashboardActivity.this, FindFriendsActivity.class))
+            );
+        }
+
+        findViewById(R.id.tvViewAllDiscover).setOnClickListener(v -> 
+            startActivity(new Intent(DashboardActivity.this, DiscoverActivity.class))
+        );
+
+        findViewById(R.id.tvViewAllAuthors).setOnClickListener(v -> 
+            startActivity(new Intent(DashboardActivity.this, TopAuthorsActivity.class))
+        );
+
+        findViewById(R.id.ivSearch).setOnClickListener(v -> 
+            startActivity(new Intent(DashboardActivity.this, SearchActivity.class))
+        );
+
+        findViewById(R.id.ivBell).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, MainHomeActivity.class);
+            intent.putExtra("EXTRA_OPEN_TAB", "TAB_NOTIFICATIONS"); // Simplified reference
             startActivity(intent);
         });
     }
@@ -191,8 +215,15 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fetchDiscoveries();
-        fetchTopAuthors();
+        refreshDashboard();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (badgeListener != null) {
+            badgeListener.remove();
+        }
     }
 
     private void fetchDiscoveries() {
@@ -209,9 +240,11 @@ public class DashboardActivity extends AppCompatActivity {
                     }
                     // 🌟 बदलाव 4: यहाँ भी dashboardAdapter कर दिया है
                     dashboardAdapter.notifyDataSetChanged();
+                    checkRefreshFinished();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error fetching discoveries: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    checkRefreshFinished();
                 });
     }
 
@@ -228,9 +261,11 @@ public class DashboardActivity extends AppCompatActivity {
                         authorList.add(author);
                     }
                     authorAdapter.notifyDataSetChanged();
+                    checkRefreshFinished();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error fetching authors: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    checkRefreshFinished();
                 });
     }
 }
