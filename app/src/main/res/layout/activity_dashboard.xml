@@ -5,13 +5,144 @@
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
 
+    <!-- Define the anchor view (bottomNavBar) before the views that depend on its ID -->
+    <LinearLayout
+        android:id="@+id/bottomNavBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?android:attr/colorBackground"
+        android:elevation="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="12dp"
+        android:paddingBottom="24dp">
+
+        <LinearLayout
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_home"
+                app:tint="?android:attr/textColorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Home"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navDiscover"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_discover"
+                app:tint="?android:attr/textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Discover"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navCreate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_create"
+                app:tint="?android:attr/textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Create"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navLeaderboard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_rank"
+                app:tint="?android:attr/textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Rank"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_profile"
+                app:tint="?android:attr/textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Profile"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottomNavBar">
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/dashboardNestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
@@ -78,7 +209,6 @@
                             android:visibility="gone" />
                     </FrameLayout>
 
-
                     <ImageView
                         android:id="@+id/ivSearch"
                         android:layout_width="28dp"
@@ -88,14 +218,14 @@
                         android:layout_toStartOf="@id/flBell"
                         android:src="@drawable/ic_search_purple"
                         app:tint="?android:attr/textColorPrimary" />
-
                 </RelativeLayout>
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
                     android:layout_marginBottom="40dp"
-                    app:cardBackgroundColor="#6C5CE7" app:cardCornerRadius="24dp"
+                    app:cardBackgroundColor="#6C5CE7"
+                    app:cardCornerRadius="24dp"
                     app:cardElevation="0dp">
 
                     <RelativeLayout
@@ -127,12 +257,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Play quiz together\nwith your friends now!"
+                                android:text="Play quiz together&#10;with your friends now!"
                                 android:textColor="#FFFFFF"
                                 android:textSize="22sp"
                                 android:textStyle="bold" />
 
                             <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnFindFriendsBanner"
                                 android:layout_width="wrap_content"
                                 android:layout_height="36dp"
                                 android:layout_marginTop="12dp"
@@ -140,11 +271,9 @@
                                 android:paddingStart="16dp"
                                 android:paddingEnd="16dp"
                                 android:text="Find Friends"
-                                android:id="@+id/btnFindFriendsBanner"
                                 android:textAllCaps="false"
                                 android:textColor="#6C5CE7"
                                 android:textStyle="bold" />
-
                         </LinearLayout>
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
@@ -154,17 +283,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp">
 
-                    <com.google.android.material.imageview.ShapeableImageView
+                    <ImageView
                         android:id="@+id/ivHeaderProfilePic"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_user_placeholder"
-                        app:shapeAppearanceOverlay="@style/CircleImageViewShape"
-                        app:strokeColor="?android:attr/textColorSecondary"
-                        app:strokeWidth="1dp" />
+                        android:src="@drawable/ic_user_placeholder" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -173,7 +299,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_toEndOf="@id/ivHeaderProfilePic"
                         android:orientation="vertical">
-                        
+
                         <TextView
                             android:id="@+id/tvUserGreeting"
                             android:layout_width="wrap_content"
@@ -206,8 +332,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="40dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                    android:nestedScrollingEnabled="false" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -236,133 +361,10 @@
                     android:id="@+id/rvHomeAuthors"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
-    <LinearLayout
-        android:id="@+id/bottomNavBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="?android:attr/colorBackground"
-        android:elevation="12dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="24dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:id="@+id/navHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_home"
-                app:tint="?android:attr/textColorPrimary" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Home"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/navDiscover"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_discover"
-                app:tint="?android:attr/textColorSecondary" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Discover"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/navCreate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_create"
-                app:tint="?android:attr/textColorSecondary" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Create"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:id="@+id/navLeaderboard"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_rank"
-                app:tint="?android:attr/textColorSecondary" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Rank"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:id="@+id/navProfile"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_profile"
-                app:tint="?android:attr/textColorSecondary" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Profile"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-    </LinearLayout>
 
 </RelativeLayout>

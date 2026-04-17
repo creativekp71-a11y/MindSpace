@@ -13,6 +13,7 @@ firebaseFirestore = "25.1.1"
 firebaseStorage = "21.0.1" 
 glide = "4.16.0"
 imageCropper = "4.6.0"
+swiperefreshlayout = "1.1.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,6 +29,7 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage", v
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 image-cropper = { group = "com.vanniktech", name = "android-image-cropper", version.ref = "imageCropper" }
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

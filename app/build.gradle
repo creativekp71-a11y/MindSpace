@@ -61,6 +61,6 @@ dependencies {
     // Shimmer Skeleton Loader
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
-    // SwipeRefreshLayout
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    // SwipeRefreshLayout: Standard AndroidX component for pull-to-refresh
+    implementation libs.swiperefreshlayout
 }
