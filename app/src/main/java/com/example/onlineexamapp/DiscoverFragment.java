@@ -35,8 +35,6 @@ public class DiscoverFragment extends Fragment {
     
     private CardView cvSearch;
     private EditText etSearch;
-    private View viewChatBadge;
-    private com.google.firebase.firestore.ListenerRegistration chatBadgeListener;
     private ChipGroup chipGroup;
     private String currentCategory = "All";
     private String currentQuery = "";
@@ -59,8 +57,7 @@ public class DiscoverFragment extends Fragment {
         etSearch = view.findViewById(R.id.etSearchDiscover);
         chipGroup = view.findViewById(R.id.chipGroupCategories);
         ImageView ivCloseSearch = view.findViewById(R.id.ivCloseSearch);
-        ImageView ivChat = view.findViewById(R.id.ivChat);
-        viewChatBadge = view.findViewById(R.id.viewChatBadge);
+        ImageView ivSearchToggle = view.findViewById(R.id.ivSearch);
         ImageView ivBack = view.findViewById(R.id.ivBack);
 
         if (ivBack != null) {
@@ -78,22 +75,19 @@ public class DiscoverFragment extends Fragment {
             });
         }
 
-        if (ivChat != null) {
-            ivChat.setOnClickListener(v -> {
-                if (getActivity() != null) {
-                    startActivity(new android.content.Intent(getActivity(), MessagesListActivity.class));
-                }
-            });
-        }
-
-        setupChatBadge();
+        ivSearchToggle.setOnClickListener(v -> {
+            cvSearch.setVisibility(View.VISIBLE);
+            etSearch.requestFocus();
+            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+            if (imm != null) imm.showSoftInput(etSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+        });
 
         ivCloseSearch.setOnClickListener(v -> {
-            // No longer hiding search bar completely, just clearing as instructed
+            cvSearch.setVisibility(View.GONE);
             etSearch.setText("");
             currentQuery = "";
             applyFilter();
-            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
             if (imm != null) imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         });
 
@@ -167,46 +161,6 @@ public class DiscoverFragment extends Fragment {
             shimmerDiscover.stopShimmer();
             shimmerDiscover.setVisibility(View.GONE);
             rvDiscoverAll.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void setupChatBadge() {
-        String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
-        if (uid == null) return;
-
-        chatBadgeListener = fStore.collection("Conversations")
-                .whereArrayContains("participants", uid)
-                .addSnapshotListener((value, error) -> {
-                    if (error != null || !isAdded()) return;
-
-                    boolean hasUnread = false;
-                    if (value != null) {
-                        for (com.google.firebase.firestore.DocumentSnapshot doc : value) {
-                            java.util.Map<String, Object> unreadMap = (java.util.Map<String, Object>) doc.get("unreadCount");
-                            if (unreadMap != null && unreadMap.containsKey(uid)) {
-                                Object countObj = unreadMap.get(uid);
-                                long count = 0;
-                                if (countObj instanceof Number) {
-                                    count = ((Number) countObj).longValue();
-                                }
-                                if (count > 0) {
-                                    hasUnread = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (viewChatBadge != null) {
-                            viewChatBadge.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
-                        }
-                    }
-                });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (chatBadgeListener != null) {
-            chatBadgeListener.remove();
         }
     }
 }

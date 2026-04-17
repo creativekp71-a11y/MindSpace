@@ -19,37 +19,60 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapter.ConversationViewHolder> {
+public class MessagesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int TYPE_CONVERSATION = 0;
+    private static final int TYPE_FRIEND = 1;
 
     private final Context context;
-    private final List<ConversationModel> conversationList;
+    private final List<Object> displayList;
     private final String currentUserId;
     private final FirebaseFirestore fStore;
 
-    public MessagesListAdapter(Context context, List<ConversationModel> conversationList) {
+    public MessagesListAdapter(Context context, List<Object> displayList) {
         this.context = context;
-        this.conversationList = conversationList;
+        this.displayList = displayList;
         this.currentUserId = FirebaseAuth.getInstance().getUid();
         this.fStore = FirebaseFirestore.getInstance();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (displayList.get(position) instanceof ConversationModel) {
+            return TYPE_CONVERSATION;
+        } else {
+            return TYPE_FRIEND;
+        }
+    }
+
     @NonNull
     @Override
-    public ConversationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_conversation, parent, false);
         return new ConversationViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ConversationViewHolder holder, int position) {
-        ConversationModel model = conversationList.get(position);
-        
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        ConversationViewHolder convHolder = (ConversationViewHolder) holder;
+        Object item = displayList.get(position);
+
+        if (getItemViewType(position) == TYPE_CONVERSATION) {
+            bindConversation((ConversationModel) item, convHolder);
+        } else {
+            bindFriend((UserModel) item, convHolder);
+        }
+    }
+
+    private void bindConversation(ConversationModel model, ConversationViewHolder holder) {
         String otherUserId = "";
         for (String participant : model.getParticipants()) {
             if (!participant.equals(currentUserId)) {
@@ -58,8 +81,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
             }
         }
 
-        // Load other user details
-        loadOtherUserDetails(otherUserId, holder);
+        loadOtherUserDetails(otherUserId, holder, false);
 
         holder.tvLastMessage.setText(model.getLastMessage());
         holder.tvTime.setText(formatTimestamp(model.getLastTimestamp()));
@@ -96,7 +118,44 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         });
     }
 
-    private void loadOtherUserDetails(String otherUserId, ConversationViewHolder holder) {
+    private void bindFriend(UserModel user, ConversationViewHolder holder) {
+        holder.tvName.setText(user.getFull_name());
+        holder.tvLastMessage.setText("Mutual Friend");
+        holder.tvLastMessage.setTextColor(context.getResources().getColor(R.color.purple_500));
+        holder.tvLastMessage.setTypeface(null, Typeface.ITALIC);
+        holder.tvTime.setText("");
+        holder.viewUnreadDot.setVisibility(View.GONE);
+
+        String profilePic = user.getProfile_pic();
+        if (profilePic != null && !profilePic.isEmpty()) {
+            try {
+                byte[] bytes = Base64.decode(profilePic, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.imgProfile.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                holder.imgProfile.setImageResource(R.drawable.ic_user_placeholder);
+            }
+        } else {
+            holder.imgProfile.setImageResource(R.drawable.ic_user_placeholder);
+        }
+
+        holder.itemView.setOnClickListener(v -> {
+            // Generate composite ID for new chat
+            List<String> ids = new ArrayList<>();
+            ids.add(currentUserId);
+            ids.add(user.getId());
+            Collections.sort(ids);
+            String chatId = ids.get(0) + "_" + ids.get(1);
+
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra("chatId", chatId);
+            intent.putExtra("receiverId", user.getId());
+            intent.putExtra("receiverName", user.getFull_name());
+            context.startActivity(intent);
+        });
+    }
+
+    private void loadOtherUserDetails(String otherUserId, ConversationViewHolder holder, boolean isFriend) {
         fStore.collection("Users").document(otherUserId).get().addOnSuccessListener(doc -> {
             if (doc.exists()) {
                 String fullName = doc.getString("full_name");
@@ -147,7 +206,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
 
     @Override
     public int getItemCount() {
-        return conversationList.size();
+        return displayList.size();
     }
 
     static class ConversationViewHolder extends RecyclerView.ViewHolder {

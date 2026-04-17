@@ -20,9 +20,12 @@ import java.util.List;
 public class MessagesListActivity extends AppCompatActivity {
 
     private RecyclerView rvMessagesList;
-    private LinearLayout layoutEmptyChats;
+    private LinearLayout layoutEmptyChats, layoutNoResults;
+    private android.widget.EditText etSearch;
     private MessagesListAdapter adapter;
     private List<ConversationModel> conversationList;
+    private List<UserModel> mutualFriends = new ArrayList<>();
+    private List<Object> displayList = new ArrayList<>();
     
     private FirebaseFirestore fStore;
     private FirebaseAuth mAuth;
@@ -40,22 +43,119 @@ public class MessagesListActivity extends AppCompatActivity {
     }
 
     private void initUI() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-        toolbar.setNavigationOnClickListener(v -> finish());
-
+        findViewById(R.id.ivBack).setOnClickListener(v -> finish());
         rvMessagesList = findViewById(R.id.rvMessagesList);
         layoutEmptyChats = findViewById(R.id.layoutEmptyChats);
+        layoutNoResults = findViewById(R.id.layoutNoResults);
+        etSearch = findViewById(R.id.etSearch);
 
         rvMessagesList.setLayoutManager(new LinearLayoutManager(this));
         conversationList = new ArrayList<>();
-        adapter = new MessagesListAdapter(this, conversationList);
+        adapter = new MessagesListAdapter(this, displayList);
         rvMessagesList.setAdapter(adapter);
 
+        setupSearch();
         loadConversations();
+        loadMutualFriends();
+    }
+
+    private void setupSearch() {
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter(s.toString());
+            }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
+    }
+
+    private void filter(String query) {
+        if (query.trim().isEmpty()) {
+            displayList.clear();
+            displayList.addAll(conversationList);
+            adapter.notifyDataSetChanged();
+            updateEmptyState();
+            layoutNoResults.setVisibility(View.GONE);
+            return;
+        }
+
+        String lowerQuery = query.toLowerCase().trim();
+        List<Object> filtered = new ArrayList<>();
+
+        // 1. Filter existing conversations
+        // We'll trust the adapter's cached names if possible, but here we might need to filter by participants we've resolved.
+        // For simplicity, we compare with model's internal data or resolved names if we added them to Model.
+        // Actually, let's keep it simple: filter existing conversation list by resolved names.
+        // (Wait, Conversations don't store participant names. I resolved them in Adapter).
+        // I'll need to improve the Model or resolve them here.
+        
+        // For now, let's filter conversations by chatId as a placeholder or by participants if they match the query.
+        // Better: Search mutualFriends first, and find matching conversations for those friends.
+        
+        for (UserModel user : mutualFriends) {
+            if (user.getFull_name() != null && user.getFull_name().toLowerCase().contains(lowerQuery) || 
+                (user.getUsername() != null && user.getUsername().toLowerCase().contains(lowerQuery))) {
+                
+                // Check if we already have a conversation with this friend
+                boolean hasConv = false;
+                for (ConversationModel conv : conversationList) {
+                    if (conv.getParticipants().contains(user.getId())) {
+                        if (!filtered.contains(conv)) filtered.add(conv);
+                        hasConv = true;
+                        break;
+                    }
+                }
+                
+                if (!hasConv) {
+                    filtered.add(user); // Add as "Friend Result"
+                }
+            }
+        }
+
+        displayList.clear();
+        displayList.addAll(filtered);
+        adapter.notifyDataSetChanged();
+
+        rvMessagesList.setVisibility(displayList.isEmpty() ? View.GONE : View.VISIBLE);
+        layoutNoResults.setVisibility(displayList.isEmpty() ? View.VISIBLE : View.GONE);
+        layoutEmptyChats.setVisibility(View.GONE);
+    }
+
+    private void loadMutualFriends() {
+        String uid = mAuth.getCurrentUser().getUid();
+        
+        // Fetch people I follow
+        fStore.collection("Following").document(uid)
+                .collection("UserFollowing")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot) {
+                        String followedUid = doc.getId();
+                        checkIfMutual(followedUid);
+                    }
+                });
+    }
+
+    private void checkIfMutual(String followedUid) {
+        String myUid = mAuth.getCurrentUser().getUid();
+        fStore.collection("Following").document(followedUid)
+                .collection("UserFollowing").document(myUid)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        // It's a mutual follow! Load user details.
+                        fStore.collection("Users").document(followedUid).get()
+                                .addOnSuccessListener(userDoc -> {
+                                    if (userDoc.exists()) {
+                                        UserModel user = userDoc.toObject(UserModel.class);
+                                        user.setId(userDoc.getId());
+                                        if (!mutualFriends.contains(user)) {
+                                            mutualFriends.add(user);
+                                        }
+                                    }
+                                });
+                    }
+                });
     }
 
     private void loadConversations() {
@@ -79,12 +179,15 @@ public class MessagesListActivity extends AppCompatActivity {
                                 conversationList.add(model);
                             }
                         }
-                        adapter.notifyDataSetChanged();
                         
-                        // Sort locally to handle missing timestamps gracefully
-                        sortConversations();
-
-                        updateEmptyState();
+                        // Default view is conversations
+                        if (etSearch.getText().toString().trim().isEmpty()) {
+                            displayList.clear();
+                            displayList.addAll(conversationList);
+                            adapter.notifyDataSetChanged();
+                            sortConversations();
+                            updateEmptyState();
+                        }
                     }
                 });
     }
@@ -105,7 +208,12 @@ public class MessagesListActivity extends AppCompatActivity {
 
             return Long.compare(m2, m1); // Descending
         });
-        adapter.notifyDataSetChanged();
+        
+        if (etSearch.getText().toString().trim().isEmpty()) {
+            displayList.clear();
+            displayList.addAll(conversationList);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private long getMillis(Object timestamp) {
@@ -120,12 +228,15 @@ public class MessagesListActivity extends AppCompatActivity {
     }
 
     private void updateEmptyState() {
-        if (conversationList.isEmpty()) {
-            layoutEmptyChats.setVisibility(View.VISIBLE);
-            rvMessagesList.setVisibility(View.GONE);
-        } else {
-            layoutEmptyChats.setVisibility(View.GONE);
-            rvMessagesList.setVisibility(View.VISIBLE);
+        if (etSearch.getText().toString().trim().isEmpty()) {
+            if (conversationList.isEmpty()) {
+                layoutEmptyChats.setVisibility(View.VISIBLE);
+                rvMessagesList.setVisibility(View.GONE);
+            } else {
+                layoutEmptyChats.setVisibility(View.GONE);
+                rvMessagesList.setVisibility(View.VISIBLE);
+            }
+            layoutNoResults.setVisibility(View.GONE);
         }
     }
 

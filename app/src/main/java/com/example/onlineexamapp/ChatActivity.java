@@ -42,7 +42,8 @@ public class ChatActivity extends AppCompatActivity {
     private EditText etMessage;
     private ImageView ivSend;
     private CircleImageView imgHeader;
-    private TextView tvHeaderName;
+    private TextView tvHeaderName, tvHeaderUsername;
+    private View layoutHeaderInfo;
 
     private ChatAdapter adapter;
     private List<ChatMessageModel> messageList;
@@ -86,6 +87,9 @@ public class ChatActivity extends AppCompatActivity {
 
         imgHeader = findViewById(R.id.imgHeaderProfile);
         tvHeaderName = findViewById(R.id.tvHeaderName);
+        tvHeaderUsername = findViewById(R.id.tvHeaderUsername);
+        layoutHeaderInfo = findViewById(R.id.layoutHeaderInfo);
+        
         rvChat = findViewById(R.id.rvChat);
         etMessage = findViewById(R.id.etMessage);
         ivSend = findViewById(R.id.ivSend);
@@ -93,18 +97,50 @@ public class ChatActivity extends AppCompatActivity {
         tvHeaderName.setText(receiverName != null ? receiverName : "Chat");
         loadReceiverDetails();
 
+        layoutHeaderInfo.setOnClickListener(v -> openReceiverProfile());
+        imgHeader.setOnClickListener(v -> openReceiverProfile());
+
         rvChat.setLayoutManager(new LinearLayoutManager(this));
         messageList = new ArrayList<>();
         adapter = new ChatAdapter(this, messageList);
         rvChat.setAdapter(adapter);
 
+        // Hide keyboard when tapping/scrolling the chat list
+        rvChat.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                hideKeyboard();
+            }
+            return false;
+        });
+
         ivSend.setOnClickListener(v -> sendMessage());
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
     }
 
     private void loadReceiverDetails() {
         fStore.collection("Users").document(receiverId).get().addOnSuccessListener(doc -> {
             if (doc.exists()) {
+                String fullName = doc.getString("full_name");
+                String username = doc.getString("username");
                 String profilePic = doc.getString("profile_pic");
+                
+                if (fullName != null) tvHeaderName.setText(fullName);
+                if (username != null) {
+                    tvHeaderUsername.setVisibility(View.VISIBLE);
+                    tvHeaderUsername.setText("@" + username);
+                } else {
+                    tvHeaderUsername.setVisibility(View.GONE);
+                }
+
                 if (profilePic != null && !profilePic.isEmpty()) {
                     try {
                         byte[] bytes = Base64.decode(profilePic, Base64.DEFAULT);
@@ -114,6 +150,12 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void openReceiverProfile() {
+        android.content.Intent intent = new android.content.Intent(this, AuthorProfileActivity.class);
+        intent.putExtra("authorUid", receiverId);
+        startActivity(intent);
     }
 
     private void loadMessages() {
