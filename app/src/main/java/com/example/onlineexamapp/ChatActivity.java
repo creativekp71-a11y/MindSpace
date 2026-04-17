@@ -1,0 +1,235 @@
+package com.example.onlineexamapp;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Base64;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.WriteBatch;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class ChatActivity extends AppCompatActivity {
+
+    private String chatId, receiverId, receiverName;
+    private String currentUserId;
+    
+    private RecyclerView rvChat;
+    private EditText etMessage;
+    private ImageView ivSend;
+    private CircleImageView imgHeader;
+    private TextView tvHeaderName;
+
+    private ChatAdapter adapter;
+    private List<ChatMessageModel> messageList;
+    
+    private FirebaseFirestore fStore;
+    private FirebaseAuth mAuth;
+    private ListenerRegistration messagesListener;
+    private ListenerRegistration followListener1, followListener2;
+    private boolean followsMe = false, iFollowThem = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat);
+
+        chatId = getIntent().getStringExtra("chatId");
+        receiverId = getIntent().getStringExtra("receiverId");
+        receiverName = getIntent().getStringExtra("receiverName");
+
+        fStore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        currentUserId = mAuth.getUid();
+
+        if (chatId == null || receiverId == null) {
+            finish();
+            return;
+        }
+
+        initUI();
+        loadMessages();
+        setupFollowListeners();
+    }
+
+    private void initUI() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+        toolbar.setNavigationOnClickListener(v -> finish());
+
+        imgHeader = findViewById(R.id.imgHeaderProfile);
+        tvHeaderName = findViewById(R.id.tvHeaderName);
+        rvChat = findViewById(R.id.rvChat);
+        etMessage = findViewById(R.id.etMessage);
+        ivSend = findViewById(R.id.ivSend);
+
+        tvHeaderName.setText(receiverName != null ? receiverName : "Chat");
+        loadReceiverDetails();
+
+        rvChat.setLayoutManager(new LinearLayoutManager(this));
+        messageList = new ArrayList<>();
+        adapter = new ChatAdapter(this, messageList);
+        rvChat.setAdapter(adapter);
+
+        ivSend.setOnClickListener(v -> sendMessage());
+    }
+
+    private void loadReceiverDetails() {
+        fStore.collection("Users").document(receiverId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                String profilePic = doc.getString("profile_pic");
+                if (profilePic != null && !profilePic.isEmpty()) {
+                    try {
+                        byte[] bytes = Base64.decode(profilePic, Base64.DEFAULT);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        imgHeader.setImageBitmap(bitmap);
+                    } catch (Exception ignored) {}
+                }
+            }
+        });
+    }
+
+    private void loadMessages() {
+        messagesListener = fStore.collection("Messages")
+                .whereEqualTo("chatId", chatId)
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) return;
+                    if (value != null) {
+                        messageList.clear();
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : value) {
+                            ChatMessageModel model = doc.toObject(ChatMessageModel.class);
+                            if (model != null) {
+                                messageList.add(model);
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+                        if (adapter.getItemCount() > 0) {
+                            rvChat.scrollToPosition(adapter.getItemCount() - 1);
+                        }
+                        markAsRead(); // Live read-sync
+                    }
+                });
+    }
+
+    private void setupFollowListeners() {
+        // I follow them
+        followListener1 = fStore.collection("Following").document(currentUserId)
+                .collection("UserFollowing").document(receiverId)
+                .addSnapshotListener((doc, e) -> {
+                    iFollowThem = (doc != null && doc.exists());
+                    updateLockedUI();
+                });
+
+        // They follow me
+        followListener2 = fStore.collection("Following").document(receiverId)
+                .collection("UserFollowing").document(currentUserId)
+                .addSnapshotListener((doc, e) -> {
+                    followsMe = (doc != null && doc.exists());
+                    updateLockedUI();
+                });
+    }
+
+    private void updateLockedUI() {
+        View layoutInput = findViewById(R.id.layoutInput);
+        View tvLockedChat = findViewById(R.id.tvLockedChat);
+        
+        if (iFollowThem && followsMe) {
+            layoutInput.setVisibility(View.VISIBLE);
+            tvLockedChat.setVisibility(View.GONE);
+        } else {
+            layoutInput.setVisibility(View.GONE);
+            tvLockedChat.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void markAsRead() {
+        DocumentReference conversationRef = fStore.collection("Conversations").document(chatId);
+        conversationRef.update("unreadCount." + currentUserId, 0);
+    }
+
+    private void sendMessage() {
+        String text = etMessage.getText().toString().trim();
+        if (TextUtils.isEmpty(text)) return;
+
+        etMessage.setText("");
+
+        DocumentReference msgRef = fStore.collection("Messages").document();
+        String messageId = msgRef.getId();
+
+        Map<String, Object> messageData = new HashMap<>();
+        messageData.put("messageId", messageId);
+        messageData.put("chatId", chatId);
+        messageData.put("senderId", currentUserId);
+        messageData.put("receiverId", receiverId);
+        messageData.put("messageText", text);
+        messageData.put("timestamp", FieldValue.serverTimestamp());
+
+        // Use batch to ensure conversation update and message creation happen together
+        WriteBatch batch = fStore.batch();
+        batch.set(msgRef, messageData);
+
+        DocumentReference chatRef = fStore.collection("Conversations").document(chatId);
+        
+        // Initialize conversation if it doesn't exist
+        Map<String, Object> chatUpdate = new HashMap<>();
+        chatUpdate.put("lastMessage", text);
+        chatUpdate.put("lastTimestamp", FieldValue.serverTimestamp());
+        chatUpdate.put("unreadCount." + receiverId, FieldValue.increment(1));
+        chatUpdate.put("participants", Arrays.asList(currentUserId, receiverId));
+        chatUpdate.put("chatId", chatId);
+
+        batch.set(chatRef, chatUpdate, com.google.firebase.firestore.SetOptions.merge());
+
+        batch.commit().addOnFailureListener(e -> {
+            Toast.makeText(this, "Failed to send message", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        markAsRead();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (messagesListener != null) {
+            messagesListener.remove();
+        }
+        if (followListener1 != null) {
+            followListener1.remove();
+        }
+        if (followListener2 != null) {
+            followListener2.remove();
+        }
+    }
+}

@@ -62,19 +62,52 @@
                             android:src="@drawable/ic_user_placeholder" />
                     </androidx.cardview.widget.CardView>
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnAuthorFollow"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_alignBottom="@id/cvAuthorAvatar"
                         android:layout_marginBottom="4dp"
-                        android:background="@drawable/bg_btn_follow"
-                        android:paddingHorizontal="24dp"
-                        android:text="Follow"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnAuthorMessage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_btn_follow"
+                            android:backgroundTint="#2D2D2D"
+                            android:paddingHorizontal="16dp"
+                            android:text="Message"
+                            android:textAllCaps="false"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnAuthorFollow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_btn_follow"
+                            android:paddingHorizontal="24dp"
+                            android:text="Follow"
+                            android:textAllCaps="false"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvMessagePermissionHint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/cvAuthorAvatar"
+                        android:layout_marginTop="8dp"
+                        android:text="Follow each other to message"
+                        android:textColor="#6C5CE7"
+                        android:textSize="12sp"
+                        android:textStyle="italic"
+                        android:visibility="gone" />
                 </RelativeLayout>
             </RelativeLayout>
 

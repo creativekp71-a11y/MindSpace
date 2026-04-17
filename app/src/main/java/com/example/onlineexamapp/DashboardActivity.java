@@ -21,6 +21,7 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -40,6 +41,7 @@ public class DashboardActivity extends AppCompatActivity {
     private ImageView ivHeaderProfile;
 
     private ListenerRegistration badgeListener;
+    private ListenerRegistration chatBadgeListener;
     private int activeTasks = 0;
     private boolean isRefreshing = false;
     private boolean isFirstLoad = true;
@@ -124,14 +126,14 @@ public class DashboardActivity extends AppCompatActivity {
                     startActivity(new Intent(DashboardActivity.this, SearchActivity.class)));
         }
 
-        View ivBell = findViewById(R.id.ivBell);
-        if (ivBell != null) {
-            ivBell.setOnClickListener(v -> {
-                Intent intent = new Intent(DashboardActivity.this, MainHomeActivity.class);
-                intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, MainHomeActivity.TAB_NOTIFICATIONS);
-                startActivity(intent);
+        View ivChat = findViewById(R.id.ivChat);
+        if (ivChat != null) {
+            ivChat.setOnClickListener(v -> {
+                startActivity(new Intent(DashboardActivity.this, MessagesListActivity.class));
             });
         }
+
+        setupChatBadge();
     }
 
     private void setupBottomNavigation() {
@@ -333,6 +335,43 @@ public class DashboardActivity extends AppCompatActivity {
                 });
     }
 
+    private void setupChatBadge() {
+        if (chatBadgeListener != null) {
+            chatBadgeListener.remove();
+        }
+
+        View viewChatBadge = findViewById(R.id.viewChatBadge);
+        if (viewChatBadge == null) return;
+
+        if (mAuth.getCurrentUser() == null) {
+            viewChatBadge.setVisibility(View.GONE);
+            return;
+        }
+
+        String uid = mAuth.getCurrentUser().getUid();
+
+        chatBadgeListener = fStore.collection("Conversations")
+                .whereArrayContains("participants", uid)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) return;
+
+                    boolean hasUnread = false;
+                    if (value != null) {
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : value) {
+                            Map<String, Object> unreadMap = (Map<String, Object>) doc.get("unreadCount");
+                            if (unreadMap != null && unreadMap.containsKey(uid)) {
+                                Long count = (Long) unreadMap.get(uid);
+                                if (count != null && count > 0) {
+                                    hasUnread = true;
+                                    break;
+                                }
+                            }
+                        }
+                        viewChatBadge.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
+                    }
+                });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -351,6 +390,10 @@ public class DashboardActivity extends AppCompatActivity {
             // For subsequent returns (like coming back from Notifications), refresh directly
             refreshDashboard();
         }
+
+        // Refresh badge listeners on resume to ensure update
+        setupNotificationBadge();
+        setupChatBadge();
     }
 
     @Override
@@ -358,6 +401,9 @@ public class DashboardActivity extends AppCompatActivity {
         super.onDestroy();
         if (badgeListener != null) {
             badgeListener.remove();
+        }
+        if (chatBadgeListener != null) {
+            chatBadgeListener.remove();
         }
     }
 }

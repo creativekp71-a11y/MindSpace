@@ -1,5 +1,6 @@
 package com.example.onlineexamapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -35,7 +36,8 @@ public class AuthorProfileActivity extends AppCompatActivity {
     private ImageView ivCover, ivAvatar;
     private TextView tvFullName, tvUsername, tvBio;
     private TextView tvFollowers, tvFollowing, tvDiscoveries, tvPoints, tvRank;
-    private AppCompatButton btnFollow;
+    private TextView tvMessageHint;
+    private AppCompatButton btnFollow, btnMessage;
     private RecyclerView rvDiscoveries;
     private DiscoveryAdapter adapter;
     private List<DiscoveryActivityModel> discoveryList;
@@ -64,6 +66,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
         }
 
         btnFollow.setOnClickListener(v -> toggleFollow());
+        btnMessage.setOnClickListener(v -> openChat());
     }
 
     private void initUI() {
@@ -86,6 +89,8 @@ public class AuthorProfileActivity extends AppCompatActivity {
         tvPoints = findViewById(R.id.tvAuthorPoints);
         tvRank = findViewById(R.id.tvAuthorRank);
         btnFollow = findViewById(R.id.btnAuthorFollow);
+        btnMessage = findViewById(R.id.btnAuthorMessage);
+        tvMessageHint = findViewById(R.id.tvMessagePermissionHint);
 
         rvDiscoveries = findViewById(R.id.rvAuthorDiscoveries);
         rvDiscoveries.setLayoutManager(new LinearLayoutManager(this));
@@ -184,11 +189,54 @@ public class AuthorProfileActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         btnFollow.setText("Unfollow");
                         btnFollow.setBackgroundResource(R.drawable.bg_btn_unfollow);
+                        // Once we know we follow them, check if they follow us back for messaging
+                        checkMutualFollowStatus();
                     } else {
                         btnFollow.setText("Follow");
                         btnFollow.setBackgroundResource(R.drawable.bg_btn_follow);
+                        btnMessage.setVisibility(View.GONE);
+                        tvMessageHint.setVisibility(View.VISIBLE);
                     }
                 });
+    }
+
+    private void checkMutualFollowStatus() {
+        if (authorUid.equals(currentUserId)) {
+            btnMessage.setVisibility(View.GONE);
+            tvMessageHint.setVisibility(View.GONE);
+            return;
+        }
+
+        // They follow us check
+        fStore.collection("Following").document(authorUid)
+                .collection("UserFollowing").document(currentUserId)
+                .get().addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        btnMessage.setVisibility(View.VISIBLE);
+                        tvMessageHint.setVisibility(View.GONE);
+                    } else {
+                        btnMessage.setVisibility(View.GONE);
+                        tvMessageHint.setVisibility(View.VISIBLE);
+                    }
+                }).addOnFailureListener(e -> {
+                    btnMessage.setVisibility(View.GONE);
+                    tvMessageHint.setVisibility(View.VISIBLE);
+                });
+    }
+
+    private void openChat() {
+        String chatId;
+        if (currentUserId.compareTo(authorUid) < 0) {
+            chatId = currentUserId + "_" + authorUid;
+        } else {
+            chatId = authorUid + "_" + currentUserId;
+        }
+
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("chatId", chatId);
+        intent.putExtra("receiverId", authorUid);
+        intent.putExtra("receiverName", tvFullName.getText().toString());
+        startActivity(intent);
     }
 
     private void toggleFollow() {
@@ -219,6 +267,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
                 btnFollow.setEnabled(true);
                 btnFollow.setText("Follow");
                 btnFollow.setBackgroundResource(R.drawable.bg_btn_follow);
+                checkFollowStatus(); // Reactive update
                 updateFollowersCount(-1);
             }).addOnFailureListener(e -> btnFollow.setEnabled(true));
         } else {
@@ -234,6 +283,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
                 btnFollow.setEnabled(true);
                 btnFollow.setText("Unfollow");
                 btnFollow.setBackgroundResource(R.drawable.bg_btn_unfollow);
+                checkFollowStatus(); // Reactive update
                 updateFollowersCount(1);
                 sendFollowNotification();
             }).addOnFailureListener(e -> btnFollow.setEnabled(true));
