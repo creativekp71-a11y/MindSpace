@@ -64,10 +64,14 @@ public class MessagesListAdapter extends RecyclerView.Adapter<MessagesListAdapte
         holder.tvLastMessage.setText(model.getLastMessage());
         holder.tvTime.setText(formatTimestamp(model.getLastTimestamp()));
 
-        Map<String, Integer> unreadMap = model.getUnreadCount();
+        Map<String, Object> unreadMap = model.getUnreadCount();
         if (unreadMap != null && unreadMap.containsKey(currentUserId)) {
-            Integer count = unreadMap.get(currentUserId);
-            if (count != null && count > 0) {
+            Object countObj = unreadMap.get(currentUserId);
+            long count = 0;
+            if (countObj instanceof Number) {
+                count = ((Number) countObj).longValue();
+            }
+            if (count > 0) {
                 holder.viewUnreadDot.setVisibility(View.VISIBLE);
                 holder.tvName.setTypeface(null, Typeface.BOLD);
                 holder.tvLastMessage.setTypeface(null, Typeface.BOLD);

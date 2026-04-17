@@ -38,14 +38,30 @@
                 android:textStyle="bold"
                 android:layout_centerInParent="true"/>
 
-            <ImageView
-                android:id="@+id/ivSearch"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+            <FrameLayout
+                android:id="@+id/flChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_nav_search"
-                app:tint="#FFFFFF"/>
+                android:layout_centerVertical="true">
+
+                <ImageView
+                    android:id="@+id/ivChat"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_chat_plane"
+                    app:tint="#FFFFFF" />
+
+                <View
+                    android:id="@+id/viewChatBadge"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/bg_unread_badge"
+                    android:visibility="gone" />
+            </FrameLayout>
         </RelativeLayout>
     </LinearLayout>
 
@@ -63,7 +79,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"

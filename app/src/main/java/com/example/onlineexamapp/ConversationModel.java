@@ -8,13 +8,13 @@ public class ConversationModel {
     private List<String> participants;
     private String lastMessage;
     private Object lastTimestamp; // Using Object to handle both Long and ServerTimestamp
-    private Map<String, Integer> unreadCount;
+    private Map<String, Object> unreadCount;
 
     public ConversationModel() {
         // Required for Firestore
     }
 
-    public ConversationModel(String chatId, List<String> participants, String lastMessage, Object lastTimestamp, Map<String, Integer> unreadCount) {
+    public ConversationModel(String chatId, List<String> participants, String lastMessage, Object lastTimestamp, Map<String, Object> unreadCount) {
         this.chatId = chatId;
         this.participants = participants;
         this.lastMessage = lastMessage;
@@ -34,6 +34,6 @@ public class ConversationModel {
     public Object getLastTimestamp() { return lastTimestamp; }
     public void setLastTimestamp(Object lastTimestamp) { this.lastTimestamp = lastTimestamp; }
 
-    public Map<String, Integer> getUnreadCount() { return unreadCount; }
-    public void setUnreadCount(Map<String, Integer> unreadCount) { this.unreadCount = unreadCount; }
+    public Map<String, Object> getUnreadCount() { return unreadCount; }
+    public void setUnreadCount(Map<String, Object> unreadCount) { this.unreadCount = unreadCount; }
 }

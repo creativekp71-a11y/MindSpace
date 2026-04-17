@@ -120,11 +120,7 @@ public class DashboardActivity extends AppCompatActivity {
                     startActivity(new Intent(DashboardActivity.this, TopAuthorsActivity.class)));
         }
 
-        View ivSearch = findViewById(R.id.ivSearch);
-        if (ivSearch != null) {
-            ivSearch.setOnClickListener(v ->
-                    startActivity(new Intent(DashboardActivity.this, SearchActivity.class)));
-        }
+
 
         View ivChat = findViewById(R.id.ivChat);
         if (ivChat != null) {
@@ -360,8 +356,12 @@ public class DashboardActivity extends AppCompatActivity {
                         for (com.google.firebase.firestore.DocumentSnapshot doc : value) {
                             Map<String, Object> unreadMap = (Map<String, Object>) doc.get("unreadCount");
                             if (unreadMap != null && unreadMap.containsKey(uid)) {
-                                Long count = (Long) unreadMap.get(uid);
-                                if (count != null && count > 0) {
+                                Object countObj = unreadMap.get(uid);
+                                long count = 0;
+                                if (countObj instanceof Number) {
+                                    count = ((Number) countObj).longValue();
+                                }
+                                if (count > 0) {
                                     hasUnread = true;
                                     break;
                                 }

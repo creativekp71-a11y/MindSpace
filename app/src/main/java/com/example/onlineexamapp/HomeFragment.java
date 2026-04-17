@@ -40,6 +40,8 @@ public class HomeFragment extends Fragment {
     private View llHomeDynamicContent;
     private boolean isDiscoveriesFetched = false;
     private boolean isAuthorsFetched = false;
+    private View viewChatBadge;
+    private com.google.firebase.firestore.ListenerRegistration chatBadgeListener;
 
     @Nullable
     @Override
@@ -58,6 +60,7 @@ public class HomeFragment extends Fragment {
         shimmerHome = view.findViewById(R.id.shimmer_home);
         svHomeContent = view.findViewById(R.id.svHomeContent);
         llHomeDynamicContent = view.findViewById(R.id.llHomeDynamicContent);
+        viewChatBadge = view.findViewById(R.id.viewChatBadge);
 
         // Start Shimmer
         shimmerHome.startShimmer();
@@ -69,6 +72,7 @@ public class HomeFragment extends Fragment {
         loadUserData();
         fetchDiscoveries();
         fetchTopAuthors();
+        setupChatBadge();
 
         return view;
     }
@@ -103,7 +107,7 @@ public class HomeFragment extends Fragment {
         View tvViewAllDiscover = view.findViewById(R.id.tvViewAllDiscover);
         View tvViewAllAuthors = view.findViewById(R.id.tvViewAllAuthors);
         View btnFindFriendsBanner = view.findViewById(R.id.btnFindFriendsBanner);
-        View ivSearch = view.findViewById(R.id.ivSearch);
+        View ivChat = view.findViewById(R.id.ivChat);
         View ivBell = view.findViewById(R.id.ivBell);
 
         if (tvViewAllDiscover != null) {
@@ -134,10 +138,10 @@ public class HomeFragment extends Fragment {
             });
         }
 
-        if (ivSearch != null) {
-            ivSearch.setOnClickListener(v -> {
+        if (ivChat != null) {
+            ivChat.setOnClickListener(v -> {
                 if (getActivity() != null) {
-                    startActivity(new Intent(getActivity(), SearchActivity.class));
+                    startActivity(new Intent(getActivity(), MessagesListActivity.class));
                 }
             });
         }
@@ -256,5 +260,45 @@ public class HomeFragment extends Fragment {
                     isAuthorsFetched = true;
                     checkLoadingComplete();
                 });
+    }
+
+    private void setupChatBadge() {
+        String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+
+        chatBadgeListener = fStore.collection("Conversations")
+                .whereArrayContains("participants", uid)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null || !isAdded()) return;
+
+                    boolean hasUnread = false;
+                    if (value != null) {
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : value) {
+                            java.util.Map<String, Object> unreadMap = (java.util.Map<String, Object>) doc.get("unreadCount");
+                            if (unreadMap != null && unreadMap.containsKey(uid)) {
+                                Object countObj = unreadMap.get(uid);
+                                long count = 0;
+                                if (countObj instanceof Number) {
+                                    count = ((Number) countObj).longValue();
+                                }
+                                if (count > 0) {
+                                    hasUnread = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (viewChatBadge != null) {
+                            viewChatBadge.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (chatBadgeListener != null) {
+            chatBadgeListener.remove();
+        }
     }
 }

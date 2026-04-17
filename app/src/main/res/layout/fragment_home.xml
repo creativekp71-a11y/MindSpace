@@ -62,15 +62,31 @@
                         android:src="@drawable/ic_notification"
                         app:tint="?android:attr/textColorPrimary" />
 
-                    <ImageView
-                        android:id="@+id/ivSearch"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                    <FrameLayout
+                        android:id="@+id/flChat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="16dp"
-                        android:layout_toStartOf="@id/ivBell"
-                        android:src="@drawable/ic_search_purple"
-                        app:tint="?android:attr/textColorPrimary" />
+                        android:layout_toStartOf="@id/ivBell">
+
+                        <ImageView
+                            android:id="@+id/ivChat"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_chat_plane"
+                            app:tint="?android:attr/textColorPrimary" />
+
+                        <View
+                            android:id="@+id/viewChatBadge"
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:background="@drawable/bg_unread_badge"
+                            android:visibility="gone" />
+                    </FrameLayout>
                 </RelativeLayout>
 
                 <androidx.cardview.widget.CardView
