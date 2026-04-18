@@ -14,8 +14,8 @@ import androidx.core.content.ContextCompat;
 
 public final class AppNotificationHelper {
 
-    public static final String CHANNEL_ID = "mindspace_updates";
-    private static final String CHANNEL_NAME = "MindSpace updates";
+    public static final String CHANNEL_ID = "mindspace_urgent_updates";
+    private static final String CHANNEL_NAME = "MindSpace Alerts";
     private static final String CHANNEL_DESCRIPTION = "Notifications for new posts and activity updates.";
 
     private AppNotificationHelper() {
@@ -35,7 +35,7 @@ public final class AppNotificationHelper {
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
         );
         channel.setDescription(CHANNEL_DESCRIPTION);
         notificationManager.createNotificationChannel(channel);
