@@ -282,8 +282,35 @@ public class ChatActivity extends AppCompatActivity {
 
         batch.set(chatRef, chatUpdate, com.google.firebase.firestore.SetOptions.merge());
 
-        batch.commit().addOnFailureListener(e -> {
+        batch.commit().addOnSuccessListener(aVoid -> {
+            sendPushNotification(text);
+        }).addOnFailureListener(e -> {
             Toast.makeText(this, "Failed to send message", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void sendPushNotification(String text) {
+        if (currentUserId == null || receiverId == null) return;
+
+        fStore.collection("Users").document(currentUserId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                String senderName = doc.getString("full_name");
+                String senderImage = doc.getString("profile_pic");
+
+                Map<String, Object> notification = new HashMap<>();
+                notification.put("senderId", currentUserId);
+                notification.put("senderName", senderName != null ? senderName : "Someone");
+                notification.put("senderImage", senderImage != null ? senderImage : "");
+                notification.put("title", senderName != null ? senderName : "New Message");
+                notification.put("message", text);
+                notification.put("type", "message");
+                notification.put("chatId", chatId);
+                notification.put("timestamp", FieldValue.serverTimestamp());
+                notification.put("read", false);
+
+                fStore.collection("Notifications").document(receiverId)
+                        .collection("UserNotifications").add(notification);
+            }
         });
     }
 

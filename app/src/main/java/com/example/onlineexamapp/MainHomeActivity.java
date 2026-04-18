@@ -204,15 +204,31 @@ public class MainHomeActivity extends AppCompatActivity {
 
                         String title = change.getDocument().getString("title");
                         String message = change.getDocument().getString("message");
+                        String type = change.getDocument().getString("type");
+                        String chatId = change.getDocument().getString("chatId");
+                        String senderId = change.getDocument().getString("senderId");
+                        String senderName = change.getDocument().getString("senderName");
 
-                        AppNotificationHelper.showNotification(
-                                this,
-                                notificationId.hashCode(),
-                                title == null || title.trim().isEmpty() ? "MindSpace" : title,
-                                message == null || message.trim().isEmpty()
-                                        ? "You have a new notification."
-                                        : message
-                        );
+                        if ("message".equals(type) && chatId != null) {
+                            AppNotificationHelper.showChatNotification(
+                                    this,
+                                    notificationId.hashCode(),
+                                    title == null || title.trim().isEmpty() ? "New Message" : title,
+                                    message == null ? "" : message,
+                                    chatId,
+                                    senderId,
+                                    senderName
+                            );
+                        } else {
+                            AppNotificationHelper.showNotification(
+                                    this,
+                                    notificationId.hashCode(),
+                                    title == null || title.trim().isEmpty() ? "MindSpace" : title,
+                                    message == null || message.trim().isEmpty()
+                                            ? "You have a new notification."
+                                            : message
+                            );
+                        }
                     }
                 });
     }
