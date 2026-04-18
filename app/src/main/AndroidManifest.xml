@@ -99,6 +99,9 @@
             android:name="com.canhub.cropper.CropImageActivity"
             android:theme="@style/Theme.Cropper" />
 
+        <activity android:name=".AdminDashboardActivity" />
+        <activity android:name=".AdminManageUsersActivity" />
+
     </application>
 
 </manifest>

@@ -139,6 +139,14 @@ public class SignInActivity extends AppCompatActivity {
             return;
         }
 
+        // Admin Check
+        if (email.equals("admin@mindspace.com") && password.equals("admin123")) {
+            persistRememberedEmail(email);
+            startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
+            finish();
+            return;
+        }
+
         btnSignIn.setEnabled(false);
         btnSignIn.setText("Signing in...");
 
