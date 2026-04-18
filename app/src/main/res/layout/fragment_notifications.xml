@@ -7,48 +7,33 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 
+    <!-- Header (Aligned with Rankings style) -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:background="?android:attr/colorBackground"
-        android:paddingStart="20dp"
-        android:paddingTop="40dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="20dp">
+        android:paddingHorizontal="16dp"
+        android:elevation="4dp">
 
         <ImageView
             android:id="@+id/ivBackNotifications"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:padding="4dp"
             android:src="@drawable/ic_back_purple"
             app:tint="?android:attr/textColorPrimary"
             android:contentDescription="Back" />
 
-        <LinearLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/ivBackNotifications"
-            android:layout_marginStart="14dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Notifications"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Stay updated with your latest activity"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="12sp" />
-        </LinearLayout>
+            android:layout_centerInParent="true"
+            android:text="Notifications"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvMarkAllRead"
@@ -56,12 +41,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:text="Mark all as read"
+            android:text="Clear All"
             android:textColor="#6C5CE7"
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:visibility="gone" />
     </RelativeLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNotifications"
