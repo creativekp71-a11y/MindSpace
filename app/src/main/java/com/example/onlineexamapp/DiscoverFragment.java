@@ -20,6 +20,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class DiscoverFragment extends Fragment {
     private List<DiscoveryActivityModel> filteredList = new ArrayList<>();
     private FirebaseFirestore fStore;
     private ShimmerFrameLayout shimmerDiscover;
+    private SwipeRefreshLayout swipeRefresh;
     
     private CardView cvSearch;
     private EditText etSearch;
@@ -46,11 +48,16 @@ public class DiscoverFragment extends Fragment {
 
         fStore = FirebaseFirestore.getInstance();
         shimmerDiscover = view.findViewById(R.id.shimmer_discover);
-        // llDiscoverContent removed, using rvDiscoverAll for visibility toggle
+        swipeRefresh = view.findViewById(R.id.swipeRefreshDiscover);
 
         // Start Shimmer
         if (shimmerDiscover != null) {
             shimmerDiscover.startShimmer();
+        }
+
+        if (swipeRefresh != null) {
+            swipeRefresh.setOnRefreshListener(this::fetchDiscoveries);
+            swipeRefresh.setColorSchemeResources(R.color.purple_500);
         }
 
         cvSearch = view.findViewById(R.id.cvSearchContainer);
@@ -58,22 +65,6 @@ public class DiscoverFragment extends Fragment {
         chipGroup = view.findViewById(R.id.chipGroupCategories);
         ImageView ivCloseSearch = view.findViewById(R.id.ivCloseSearch);
         ImageView ivSearchToggle = view.findViewById(R.id.ivSearch);
-        ImageView ivBack = view.findViewById(R.id.ivBack);
-
-        if (ivBack != null) {
-            ivBack.setOnClickListener(v -> {
-                if (getActivity() != null) {
-                    // Navigate to Home tab in Bottom Navigation
-                    View navHome = getActivity().findViewById(R.id.navHome);
-                    if (navHome != null) {
-                        navHome.performClick();
-                    } else {
-                        // Fallback if not in MainHomeActivity
-                        getActivity().onBackPressed();
-                    }
-                }
-            });
-        }
 
         ivSearchToggle.setOnClickListener(v -> {
             cvSearch.setVisibility(View.VISIBLE);
@@ -129,8 +120,15 @@ public class DiscoverFragment extends Fragment {
                         allDiscoveries.add(model);
                     }
                     applyFilter();
+
+                    if (swipeRefresh != null) {
+                        swipeRefresh.setRefreshing(false);
+                    }
                 })
                 .addOnFailureListener(e -> {
+                    if (swipeRefresh != null) {
+                        swipeRefresh.setRefreshing(false);
+                    }
                     if (getContext() != null) Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }

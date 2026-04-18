@@ -11,21 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="8dp"
         android:layout_above="@id/bottomNavBar">
 
-        <!-- Header (Fixed at top) -->
+        <!-- Header (Consolidated Style) -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:layout_height="60dp"
+            android:paddingHorizontal="16dp"
             android:background="?android:attr/colorBackground"
-            android:elevation="2dp">
+            android:elevation="4dp">
             
             <ImageView
                 android:id="@+id/ivBackAddDiscovery"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_centerVertical="true"
                 android:src="@drawable/ic_back"
                 android:padding="4dp"
                 app:tint="?android:attr/textColorPrimary" />
@@ -37,6 +37,7 @@
                 android:text="Add Discovery Activity"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:layout_centerVertical="true"
                 android:layout_toEndOf="@id/ivBackAddDiscovery"
                 android:layout_marginStart="16dp"
                 android:textColor="?android:attr/textColorPrimary" />

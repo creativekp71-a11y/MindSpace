@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,8 @@ public class RankFragment extends Fragment {
     private LeaderboardAdapter adapter;
     private List<UserModel> userList;
     private FirebaseFirestore fStore;
+    private ShimmerFrameLayout shimmerLeaderboard;
+    private SwipeRefreshLayout swipeRefresh;
 
     @Nullable
     @Override
@@ -31,6 +35,19 @@ public class RankFragment extends Fragment {
 
         fStore = FirebaseFirestore.getInstance();
         rvLeaderboard = view.findViewById(R.id.rvLeaderboard);
+        shimmerLeaderboard = view.findViewById(R.id.shimmer_leaderboard);
+        swipeRefresh = view.findViewById(R.id.swipeRefreshLeaderboard);
+        
+        // Start Shimmer
+        if (shimmerLeaderboard != null) {
+            shimmerLeaderboard.startShimmer();
+        }
+
+        if (swipeRefresh != null) {
+            swipeRefresh.setOnRefreshListener(this::fetchLeaderboardData);
+            swipeRefresh.setColorSchemeResources(R.color.purple_500);
+        }
+
         userList = new ArrayList<>();
         
         rvLeaderboard.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -55,9 +72,27 @@ public class RankFragment extends Fragment {
                         userList.add(user);
                     }
                     adapter.notifyDataSetChanged();
+
+                    // Stop Shimmer and show content
+                    if (isAdded() && shimmerLeaderboard != null) {
+                        shimmerLeaderboard.stopShimmer();
+                        shimmerLeaderboard.setVisibility(View.GONE);
+                        rvLeaderboard.setVisibility(View.VISIBLE);
+                    }
+
+                    if (swipeRefresh != null) {
+                        swipeRefresh.setRefreshing(false);
+                    }
                 })
                 .addOnFailureListener(e -> {
                     Log.e("LeaderboardError", "Error fetching rankings: " + e.getMessage());
+                    if (isAdded() && shimmerLeaderboard != null) {
+                        shimmerLeaderboard.stopShimmer();
+                        shimmerLeaderboard.setVisibility(View.GONE);
+                    }
+                    if (swipeRefresh != null) {
+                        swipeRefresh.setRefreshing(false);
+                    }
                     if (getContext() != null) Toast.makeText(getContext(), "Failed to load rankings!", Toast.LENGTH_SHORT).show();
                 });
     }

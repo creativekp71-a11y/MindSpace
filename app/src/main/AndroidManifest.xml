@@ -72,13 +72,8 @@
 
         <activity android:name=".ContactSearchActivity" />
 
-        <activity android:name=".DiscoverActivity" />
-
         <activity android:name=".TopAuthorsActivity" />
 
-        <activity android:name=".LeaderboardActivity" />
-
-        <activity android:name=".ProfileActivity" />
 
         <activity android:name=".EditProfileActivity" />
 

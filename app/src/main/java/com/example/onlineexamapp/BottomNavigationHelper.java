@@ -32,7 +32,9 @@ public class BottomNavigationHelper {
         if (navDiscover != null) {
             navDiscover.setOnClickListener(v -> {
                 if (currentNavId != R.id.navDiscover) {
-                    navigateTo(activity, DiscoverActivity.class);
+                    Intent intent = new Intent(activity, MainHomeActivity.class);
+                    intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, "DISCOVER");
+                    navigateTo(activity, intent);
                 }
             });
         }
@@ -40,7 +42,8 @@ public class BottomNavigationHelper {
         if (navCreate != null) {
             navCreate.setOnClickListener(v -> {
                 if (currentNavId != R.id.navCreate) {
-                    navigateTo(activity, AddDiscoveryActivity.class);
+                    Intent intent = new Intent(activity, AddDiscoveryActivity.class);
+                    navigateTo(activity, intent);
                 }
             });
         }
@@ -48,7 +51,9 @@ public class BottomNavigationHelper {
         if (navLeaderboard != null) {
             navLeaderboard.setOnClickListener(v -> {
                 if (currentNavId != R.id.navLeaderboard) {
-                    navigateTo(activity, LeaderboardActivity.class);
+                    Intent intent = new Intent(activity, MainHomeActivity.class);
+                    intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, "RANK");
+                    navigateTo(activity, intent);
                 }
             });
         }
@@ -56,7 +61,9 @@ public class BottomNavigationHelper {
         if (navProfile != null) {
             navProfile.setOnClickListener(v -> {
                 if (currentNavId != R.id.navProfile) {
-                    navigateTo(activity, ProfileActivity.class);
+                    Intent intent = new Intent(activity, MainHomeActivity.class);
+                    intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, "PROFILE");
+                    navigateTo(activity, intent);
                 }
             });
         }

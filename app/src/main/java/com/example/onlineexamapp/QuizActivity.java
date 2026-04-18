@@ -263,7 +263,8 @@ public class QuizActivity extends AppCompatActivity {
                 dialog.dismiss();
 
                 android.content.Intent intent =
-                        new android.content.Intent(QuizActivity.this, DiscoverActivity.class);
+                        new android.content.Intent(QuizActivity.this, MainHomeActivity.class);
+                intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, "DISCOVER");
                 intent.addFlags(
                         android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                 android.content.Intent.FLAG_ACTIVITY_NEW_TASK

@@ -7,47 +7,33 @@
     android:background="?android:attr/colorBackground">
 
     <!-- Purple Header Container (Unifies with Status Bar) -->
-    <LinearLayout
+    <!-- Header (Aligned with Rankings style) -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#6C5CE7"
-        android:paddingTop="54dp"
-        android:paddingBottom="24dp"
-        android:paddingHorizontal="20dp"
-        android:elevation="8dp">
-        
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_height="60dp"
+        android:background="?android:attr/colorBackground"
+        android:paddingHorizontal="16dp"
+        android:fitsSystemWindows="false"
+        android:elevation="4dp">
 
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_back"
-                app:tint="#FFFFFF"
-                android:visibility="visible"/> 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Discover ✨"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Discover"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:layout_centerInParent="true"/>
-
-            <ImageView
-                android:id="@+id/ivSearch"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_nav_search"
-                app:tint="#FFFFFF"/>
-        </RelativeLayout>
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/ivSearch"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_nav_search"
+            app:tint="?android:attr/textColorPrimary" />
+    </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -163,24 +149,30 @@
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
 
-            <FrameLayout
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshDiscover"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.facebook.shimmer.ShimmerFrameLayout
-                    android:id="@+id/shimmer_discover"
-                    style="@style/ShimmerStyle"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="visible">
-                    <include layout="@layout/shimmer_discover_skeleton" />
-                </com.facebook.shimmer.ShimmerFrameLayout>
+                    android:layout_height="match_parent">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone" />
-            </FrameLayout>
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer_discover"
+                        style="@style/ShimmerStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="visible">
+                        <include layout="@layout/shimmer_discover_skeleton" />
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </LinearLayout>
 </LinearLayout>
