@@ -56,8 +56,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatMessageModel model = messageList.get(position);
+        boolean isLastMessage = (position == messageList.size() - 1);
+
         if (holder instanceof SentMessageViewHolder) {
-            ((SentMessageViewHolder) holder).bind(model);
+            ((SentMessageViewHolder) holder).bind(model, isLastMessage);
         } else {
             ((ReceivedMessageViewHolder) holder).bind(model);
         }
@@ -68,49 +70,39 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return messageList.size();
     }
 
-    private String formatTime(Object timestamp) {
-        if (timestamp == null) return "";
-        Date date = null;
-        if (timestamp instanceof Timestamp) {
-            date = ((Timestamp) timestamp).toDate();
-        } else if (timestamp instanceof Long) {
-            date = new Date((Long) timestamp);
-        } else if (timestamp instanceof Date) {
-            date = (Date) timestamp;
-        }
-
-        if (date == null) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-        return sdf.format(date);
-    }
-
     class SentMessageViewHolder extends RecyclerView.ViewHolder {
-        TextView tvMessage, tvTime;
+        TextView tvMessage, tvStatus;
 
         public SentMessageViewHolder(@NonNull View itemView) {
             super(itemView);
             tvMessage = itemView.findViewById(R.id.tvMessage);
-            tvTime = itemView.findViewById(R.id.tvTime);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
         }
 
-        void bind(ChatMessageModel model) {
+        void bind(ChatMessageModel model, boolean isLastMessage) {
             tvMessage.setText(model.getMessageText());
-            tvTime.setText(formatTime(model.getTimestamp()));
+            
+            // Only show "Seen" status for the absolute latest message sent by current user
+            if (isLastMessage && model.isSeen()) {
+                tvStatus.setVisibility(View.VISIBLE);
+                tvStatus.setText("Seen");
+            } else {
+                tvStatus.setVisibility(View.GONE);
+            }
         }
     }
 
     class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
-        TextView tvMessage, tvTime;
+        TextView tvMessage;
 
         public ReceivedMessageViewHolder(@NonNull View itemView) {
             super(itemView);
             tvMessage = itemView.findViewById(R.id.tvMessage);
-            tvTime = itemView.findViewById(R.id.tvTime);
         }
 
         void bind(ChatMessageModel model) {
             tvMessage.setText(model.getMessageText());
-            tvTime.setText(formatTime(model.getTimestamp()));
+            // Timestamps are hidden for received messages as per cleaner Instagram style
         }
     }
 }

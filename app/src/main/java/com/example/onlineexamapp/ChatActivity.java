@@ -229,6 +229,22 @@ public class ChatActivity extends AppCompatActivity {
     private void markAsRead() {
         DocumentReference conversationRef = fStore.collection("Conversations").document(chatId);
         conversationRef.update("unreadCount." + currentUserId, 0);
+
+        // Update seen status for all messages sent to current user in this chat
+        fStore.collection("Messages")
+                .whereEqualTo("chatId", chatId)
+                .whereEqualTo("receiverId", currentUserId)
+                .whereEqualTo("seen", false)
+                .get()
+                .addOnSuccessListener(value -> {
+                    if (value != null && !value.isEmpty()) {
+                        WriteBatch batch = fStore.batch();
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : value) {
+                            batch.update(doc.getReference(), "seen", true);
+                        }
+                        batch.commit();
+                    }
+                });
     }
 
     private void sendMessage() {
@@ -247,6 +263,7 @@ public class ChatActivity extends AppCompatActivity {
         messageData.put("receiverId", receiverId);
         messageData.put("messageText", text);
         messageData.put("timestamp", FieldValue.serverTimestamp());
+        messageData.put("seen", false);
 
         // Use batch to ensure conversation update and message creation happen together
         WriteBatch batch = fStore.batch();

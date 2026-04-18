@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
-    android:fitsSystemWindows="true"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    android:isScrollContainer="true">
+    android:fitsSystemWindows="true">
 
     <!-- Header -->
     <androidx.appcompat.widget.Toolbar
@@ -18,7 +15,8 @@
         android:paddingTop="18dp"
         android:background="?android:attr/colorBackground"
         app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="?attr/colorControlNormal">
+        app:navigationIconTint="?android:attr/textColorPrimary"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/layoutHeaderInfo"
@@ -64,87 +62,96 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/toolbar"
-        android:background="?android:attr/listDivider" />
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <!-- Chat Messages -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/layoutInput"
-        android:layout_below="@id/divider"
+        android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingVertical="8dp" />
+        android:paddingVertical="8dp"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintBottom_toTopOf="@id/bottom_container" />
 
-    <!-- Modern Premium Input Area (Lifting it for Shadow Visibility) -->
-    <LinearLayout
-        android:id="@+id/layoutInput"
+    <!-- Bottom Areas Container -->
+    <FrameLayout
+        android:id="@+id/bottom_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="20dp"
-        android:paddingTop="8dp"
-        android:clipChildren="false"
-        android:clipToPadding="false">
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
+        <!-- Modern Premium Input Area -->
+        <LinearLayout
+            android:id="@+id/layoutInput"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:cardBackgroundColor="@color/chat_input_bg"
-            app:cardCornerRadius="25dp"
-            app:cardElevation="6dp"
-            app:cardUseCompatPadding="false">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="20dp"
+            android:paddingTop="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:visibility="visible">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="8dp">
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/chat_input_bg"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="false">
 
-                <EditText
-                    android:id="@+id/etMessage"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:hint="Message..."
-                    android:minHeight="48dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textColorHint="#AAAAAA"
-                    android:textSize="15sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="8dp">
 
-                <ImageView
-                    android:id="@+id/ivSend"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="4dp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_chat_plane"
-                    app:tint="#6C5CE7" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
+                    <EditText
+                        android:id="@+id/etMessage"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:hint="Message..."
+                        android:minHeight="48dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textColorHint="#AAAAAA"
+                        android:textSize="15sp" />
 
-    <TextView
-        android:id="@+id/tvLockedChat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#1A6C5CE7"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="Follow each other to message"
-        android:textColor="#6C5CE7"
-        android:textSize="14sp"
-        android:textStyle="bold|italic"
-        android:visibility="gone" />
+                    <ImageView
+                        android:id="@+id/ivSend"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_chat_plane"
+                        app:tint="#6C5CE7" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tvLockedChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#1A6C5CE7"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="Follow each other to message"
+            android:textColor="#6C5CE7"
+            android:textSize="14sp"
+            android:textStyle="bold|italic"
+            android:visibility="gone" />
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
