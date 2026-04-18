@@ -26,6 +26,7 @@ public class MessagesListActivity extends AppCompatActivity {
     private List<ConversationModel> conversationList;
     private List<UserModel> connectedUsers = new ArrayList<>();
     private java.util.Set<String> connectedUserIds = new java.util.HashSet<>();
+    private java.util.Map<String, String> userNames = new java.util.HashMap<>();
     private List<Object> displayList = new ArrayList<>();
     
     private FirebaseFirestore fStore;
@@ -93,24 +94,40 @@ public class MessagesListActivity extends AppCompatActivity {
         // For now, let's filter conversations by chatId as a placeholder or by participants if they match the query.
         // Better: Search mutualFriends first, and find matching conversations for those friends.
         
+        for (ConversationModel conv : conversationList) {
+            String otherUserId = "";
+            for (String p : conv.getParticipants()) {
+                if (!p.equals(mAuth.getUid())) {
+                    otherUserId = p;
+                    break;
+                }
+            }
+            
+            String name = userNames.containsKey(otherUserId) ? userNames.get(otherUserId).toLowerCase() : "";
+            if (name.contains(lowerQuery)) {
+                if (!filtered.contains(conv)) filtered.add(conv);
+            }
+        }
+
         for (UserModel user : connectedUsers) {
             String fullName = user.getFull_name() != null ? user.getFull_name().toLowerCase() : "";
             String username = user.getUsername() != null ? user.getUsername().toLowerCase() : "";
 
             if (fullName.contains(lowerQuery) || username.contains(lowerQuery)) {
-                
-                // Check if we already have a conversation with this connected user
-                boolean hasConv = false;
-                for (ConversationModel conv : conversationList) {
-                    if (conv.getParticipants() != null && conv.getParticipants().contains(user.getId())) {
-                        if (!filtered.contains(conv)) filtered.add(conv);
-                        hasConv = true;
-                        break;
+                // Check if we already added a conversation for this user above
+                boolean alreadyAdded = false;
+                for (Object obj : filtered) {
+                    if (obj instanceof ConversationModel) {
+                        ConversationModel c = (ConversationModel) obj;
+                        if (c.getParticipants().contains(user.getId())) {
+                            alreadyAdded = true;
+                            break;
+                        }
                     }
                 }
                 
-                if (!hasConv) {
-                    if (!filtered.contains(user)) filtered.add(user); // Add as "Start Chat" result
+                if (!alreadyAdded) {
+                    if (!filtered.contains(user)) filtered.add(user);
                 }
             }
         }
@@ -166,6 +183,8 @@ public class MessagesListActivity extends AppCompatActivity {
                         UserModel user = userDoc.toObject(UserModel.class);
                         if (user != null) {
                             user.setId(userDoc.getId());
+                            userNames.put(user.getId(), user.getFull_name()); 
+                            
                             // Add if not already present (double check)
                             boolean exists = false;
                             for (UserModel u : connectedUsers) {
@@ -176,6 +195,11 @@ public class MessagesListActivity extends AppCompatActivity {
                             }
                             if (!exists) {
                                 connectedUsers.add(user);
+                            }
+                            
+                            // If user was typing, re-filter to show new results
+                            if (!etSearch.getText().toString().isEmpty()) {
+                                filter(etSearch.getText().toString());
                             }
                         }
                     }
@@ -201,6 +225,13 @@ public class MessagesListActivity extends AppCompatActivity {
                             ConversationModel model = doc.toObject(ConversationModel.class);
                             if (model != null) {
                                 conversationList.add(model);
+                                
+                                // Resolved names for conversations
+                                for (String p : model.getParticipants()) {
+                                    if (!p.equals(uid) && !userNames.containsKey(p)) {
+                                        loadUserDetails(p); // Load and cache name
+                                    }
+                                }
                             }
                         }
                         

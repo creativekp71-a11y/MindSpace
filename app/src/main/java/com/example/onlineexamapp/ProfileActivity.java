@@ -367,29 +367,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        findViewById(R.id.navHome).setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, DashboardActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.navDiscover).setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, DiscoverActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.navLeaderboard).setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, LeaderboardActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.navProfile).setOnClickListener(v -> {
-            // Already here
-        });
-
-        findViewById(R.id.ivCenterLogo).setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, QuizActivity.class);
-            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
-            startActivity(intent);
-        });
+        BottomNavigationHelper.setupBottomNavigation(this, R.id.navProfile);
     }
 }

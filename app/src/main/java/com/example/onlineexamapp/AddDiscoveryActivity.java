@@ -438,27 +438,6 @@ public class AddDiscoveryActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        ImageView ivCreate = findViewById(R.id.ivNavCreate);
-        TextView tvCreate = findViewById(R.id.tvNavCreate);
-
-        // Highlight Create tab
-        int activeColor = 0xFF6C5CE7;
-        ivCreate.setColorFilter(activeColor);
-        tvCreate.setTextColor(activeColor);
-        tvCreate.setTypeface(null, android.graphics.Typeface.BOLD);
-
-        // Setup listeners for other tabs
-        findViewById(R.id.navHome).setOnClickListener(v -> navigateToMain("HOME"));
-        findViewById(R.id.navDiscover).setOnClickListener(v -> navigateToMain("DISCOVER"));
-        findViewById(R.id.navLeaderboard).setOnClickListener(v -> navigateToMain("RANK"));
-        findViewById(R.id.navProfile).setOnClickListener(v -> navigateToMain("PROFILE"));
-    }
-
-    private void navigateToMain(String tab) {
-        Intent intent = new Intent(this, MainHomeActivity.class);
-        intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, tab);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
-        finish();
+        BottomNavigationHelper.setupBottomNavigation(this, R.id.navCreate);
     }
 }

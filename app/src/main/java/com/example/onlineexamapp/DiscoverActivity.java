@@ -141,30 +141,7 @@ public class DiscoverActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        findViewById(R.id.navHome).setOnClickListener(v -> {
-            startActivity(new Intent(DiscoverActivity.this, DashboardActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.navDiscover).setOnClickListener(v -> {
-            // Already here
-        });
-
-        findViewById(R.id.navLeaderboard).setOnClickListener(v -> {
-            startActivity(new Intent(DiscoverActivity.this, LeaderboardActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.navProfile).setOnClickListener(v -> {
-            startActivity(new Intent(DiscoverActivity.this, ProfileActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.ivCenterLogo).setOnClickListener(v -> {
-            Intent intent = new Intent(DiscoverActivity.this, QuizActivity.class);
-            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
-            startActivity(intent);
-        });
+        BottomNavigationHelper.setupBottomNavigation(this, R.id.navDiscover);
     }
 
     @Override

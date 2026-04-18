@@ -52,30 +52,7 @@ public class LeaderboardActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        findViewById(R.id.navHome).setOnClickListener(v -> {
-            startActivity(new android.content.Intent(LeaderboardActivity.this, DashboardActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.navDiscover).setOnClickListener(v -> {
-            startActivity(new android.content.Intent(LeaderboardActivity.this, DiscoverActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.navLeaderboard).setOnClickListener(v -> {
-            // Already here
-        });
-
-        findViewById(R.id.navProfile).setOnClickListener(v -> {
-            startActivity(new android.content.Intent(LeaderboardActivity.this, ProfileActivity.class));
-            finish();
-        });
-
-        findViewById(R.id.ivCenterLogo).setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(LeaderboardActivity.this, QuizActivity.class);
-            intent.putExtra("QUIZ_CATEGORY", "Quick Play");
-            startActivity(intent);
-        });
+        BottomNavigationHelper.setupBottomNavigation(this, R.id.navLeaderboard);
     }
 
     private void fetchLeaderboardData() {

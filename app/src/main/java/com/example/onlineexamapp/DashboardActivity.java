@@ -138,37 +138,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        View navHome = findViewById(R.id.navHome);
-        View navDiscover = findViewById(R.id.navDiscover);
-        View navCreate = findViewById(R.id.navCreate);
-        View navLeaderboard = findViewById(R.id.navLeaderboard);
-        View navProfile = findViewById(R.id.navProfile);
-
-        if (navHome != null) {
-            navHome.setOnClickListener(v -> {
-                // Already on Home
-            });
-        }
-
-        if (navDiscover != null) {
-            navDiscover.setOnClickListener(v ->
-                    startActivity(new Intent(DashboardActivity.this, DiscoverActivity.class)));
-        }
-
-        if (navCreate != null) {
-            navCreate.setOnClickListener(v ->
-                    startActivity(new Intent(DashboardActivity.this, AddDiscoveryActivity.class)));
-        }
-
-        if (navLeaderboard != null) {
-            navLeaderboard.setOnClickListener(v ->
-                    startActivity(new Intent(DashboardActivity.this, LeaderboardActivity.class)));
-        }
-
-        if (navProfile != null) {
-            navProfile.setOnClickListener(v ->
-                    startActivity(new Intent(DashboardActivity.this, ProfileActivity.class)));
-        }
+        BottomNavigationHelper.setupBottomNavigation(this, R.id.navHome);
     }
 
     private void setupSwipeRefresh() {
@@ -183,15 +153,21 @@ public class DashboardActivity extends AppCompatActivity {
         isRefreshing = true;
 
         if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.post(() -> {
-                if (swipeRefreshLayout != null) {
-                    swipeRefreshLayout.setRefreshing(true);
-                }
-            });
+            swipeRefreshLayout.setRefreshing(true);
         }
 
         // Reset tasks counter (User profile, Discoveries, Top Authors)
         activeTasks = 3;
+
+        // Security timeout to ensure refresh indicator hides even if network fails silently
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.postDelayed(() -> {
+                if (isRefreshing) {
+                    isRefreshing = false;
+                    if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+                }
+            }, 5000); // 5 second timeout
+        }
 
         fetchUserProfile();
         fetchDiscoveries();
@@ -201,14 +177,12 @@ public class DashboardActivity extends AppCompatActivity {
     private synchronized void checkRefreshFinished() {
         activeTasks--;
 
-        if (activeTasks <= 0 && swipeRefreshLayout != null) {
+        if (activeTasks <= 0) {
             activeTasks = 0; // Prevent negative values
             isRefreshing = false;
-            swipeRefreshLayout.post(() -> {
-                if (swipeRefreshLayout != null) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            });
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(false));
+            }
         }
     }
 
