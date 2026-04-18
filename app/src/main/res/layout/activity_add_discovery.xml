@@ -34,13 +34,11 @@
                 android:id="@+id/tvAddDiscoveryHeaderTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Discovery Activity"
+                android:text="Add Discovery"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/ivBackAddDiscovery"
-                android:layout_marginStart="16dp"
-                android:textColor="?android:attr/textColorPrimary" />
+                android:layout_centerInParent="true"
+                android:textColor="?android:attr/textColorPrimary"/>
         </RelativeLayout>
 
         <androidx.core.widget.NestedScrollView
