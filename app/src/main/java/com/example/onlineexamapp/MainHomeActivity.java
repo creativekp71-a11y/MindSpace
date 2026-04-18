@@ -154,12 +154,18 @@ public class MainHomeActivity extends AppCompatActivity {
         // Highlight active tab
         updateNavUI(tag);
 
+        View bottomNavBar = findViewById(R.id.bottomNavBar);
+        if (bottomNavBar != null) {
+            bottomNavBar.setVisibility(TAB_NOTIFICATIONS.equals(tag) ? View.GONE : View.VISIBLE);
+        }
+
         // Swap Fragment
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.fragment_container, fragment, tag);
         ft.commit();
     }
+
 
     public void loadHomeFragment() {
         loadFragment(new HomeFragment(), "HOME");
@@ -240,6 +246,10 @@ public class MainHomeActivity extends AppCompatActivity {
                                     senderId,
                                     senderName
                             );
+                            
+                            // Immediately remove message notification from backend after triggering local push
+                            change.getDocument().getReference().delete();
+                            
                         } else if (("follow".equals(type) || "unfollow".equals(type)) && senderId != null) {
                             AppNotificationHelper.showFollowNotification(
                                     this,

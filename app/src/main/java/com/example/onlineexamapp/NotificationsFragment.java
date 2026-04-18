@@ -68,6 +68,8 @@ public class NotificationsFragment extends Fragment {
 
         rvNotifications.setLayoutManager(new LinearLayoutManager(getContext()));
         rvNotifications.setHasFixedSize(true);
+        // Disable default animator to prevent flickering on data reload
+        rvNotifications.setItemAnimator(null);
         rvNotifications.setAdapter(adapter);
         tvMarkAllRead.setOnClickListener(v -> markAllAsRead());
 
@@ -84,6 +86,19 @@ public class NotificationsFragment extends Fragment {
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
                     if (error != null || value == null) return;
+
+                    boolean hasSocialChanges = false;
+                    for (com.google.firebase.firestore.DocumentChange change : value.getDocumentChanges()) {
+                        String type = change.getDocument().getString("type");
+                        if (!"message".equalsIgnoreCase(type)) {
+                            hasSocialChanges = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasSocialChanges && !notifList.isEmpty()) {
+                        return;
+                    }
 
                     notifList.clear();
                     for (QueryDocumentSnapshot doc : value) {
