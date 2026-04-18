@@ -49,9 +49,11 @@ public class NotificationsFragment extends Fragment {
         // 🔙 Back Button
         ImageView ivBack = view.findViewById(R.id.ivBackNotifications);
         ivBack.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), DashboardActivity.class);
-            startActivity(intent);
-            requireActivity().finish();
+            if (getActivity() instanceof MainHomeActivity) {
+                ((MainHomeActivity) getActivity()).loadHomeFragment();
+            } else {
+                requireActivity().onBackPressed();
+            }
         });
 
         notifList = new ArrayList<>();

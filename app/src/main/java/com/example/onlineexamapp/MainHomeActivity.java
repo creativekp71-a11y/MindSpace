@@ -129,7 +129,7 @@ public class MainHomeActivity extends AppCompatActivity {
         }
     }
 
-    private void loadFragment(Fragment fragment, String tag) {
+    public void loadFragment(Fragment fragment, String tag) {
         // Highlight active tab
         updateNavUI(tag);
 
@@ -138,6 +138,10 @@ public class MainHomeActivity extends AppCompatActivity {
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.fragment_container, fragment, tag);
         ft.commit();
+    }
+
+    public void loadHomeFragment() {
+        loadFragment(new HomeFragment(), "HOME");
     }
 
     public void openNotifications() {

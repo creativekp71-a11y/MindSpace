@@ -24,6 +24,9 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 
 public class HomeFragment extends Fragment {
 
@@ -41,6 +44,8 @@ public class HomeFragment extends Fragment {
     private boolean isDiscoveriesFetched = false;
     private boolean isAuthorsFetched = false;
     private View viewChatBadge;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean isRefreshing = false;
     private com.google.firebase.firestore.ListenerRegistration chatBadgeListener;
 
     @Nullable
@@ -61,6 +66,9 @@ public class HomeFragment extends Fragment {
         svHomeContent = view.findViewById(R.id.svHomeContent);
         llHomeDynamicContent = view.findViewById(R.id.llHomeDynamicContent);
         viewChatBadge = view.findViewById(R.id.viewChatBadge);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        setupSwipeRefresh();
 
         // Start Shimmer
         shimmerHome.startShimmer();
@@ -69,9 +77,7 @@ public class HomeFragment extends Fragment {
         setupAuthorsRecycler();
         setupClickListeners(view);
 
-        loadUserData();
-        fetchDiscoveries();
-        fetchTopAuthors();
+        refreshHome();
         setupChatBadge();
 
         return view;
@@ -166,11 +172,45 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void loadUserData() {
-        String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null || fStore == null) return;
+    private void setupSwipeRefresh() {
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeResources(R.color.purple_500);
+            swipeRefreshLayout.setOnRefreshListener(this::refreshHome);
+        }
+    }
 
-        fStore.collection("Users")
+    private void refreshHome() {
+        if (isRefreshing) return;
+        isRefreshing = true;
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.post(() -> {
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(true);
+            });
+        }
+
+        // Parallel execution like in DashboardActivity
+        List<Task<?>> tasks = new ArrayList<>();
+        tasks.add(fetchUserDataTask());
+        tasks.add(fetchDiscoveriesTask());
+        tasks.add(fetchTopAuthorsTask());
+
+        Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
+            isRefreshing = false;
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.postDelayed(() -> {
+                    if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+                }, 500);
+            }
+            checkLoadingComplete();
+        });
+    }
+
+    private Task<com.google.firebase.firestore.DocumentSnapshot> fetchUserDataTask() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null || fStore == null) return Tasks.forResult(null);
+
+        return fStore.collection("Users")
                 .document(uid)
                 .get()
                 .addOnSuccessListener(doc -> {
@@ -198,10 +238,10 @@ public class HomeFragment extends Fragment {
                 });
     }
 
-    private void fetchDiscoveries() {
-        if (fStore == null || dashboardAdapter == null || discoveryList == null) return;
+    private Task<com.google.firebase.firestore.QuerySnapshot> fetchDiscoveriesTask() {
+        if (fStore == null || dashboardAdapter == null || discoveryList == null) return Tasks.forResult(null);
 
-        fStore.collection("DiscoveryActivities")
+        return fStore.collection("DiscoveryActivities")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(10)
                 .get()
@@ -236,10 +276,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void fetchTopAuthors() {
-        if (fStore == null || authorAdapter == null || authorList == null) return;
+    private Task<com.google.firebase.firestore.QuerySnapshot> fetchTopAuthorsTask() {
+        if (fStore == null || authorAdapter == null || authorList == null) return Tasks.forResult(null);
 
-        fStore.collection("Users")
+        return fStore.collection("Users")
                 .whereEqualTo("isAuthor", true)
                 .limit(10)
                 .get()

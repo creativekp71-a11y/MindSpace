@@ -22,7 +22,9 @@ public class BottomNavigationHelper {
         if (navHome != null) {
             navHome.setOnClickListener(v -> {
                 if (currentNavId != R.id.navHome) {
-                    navigateTo(activity, DashboardActivity.class);
+                    Intent intent = new Intent(activity, MainHomeActivity.class);
+                    intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, "HOME");
+                    navigateTo(activity, intent);
                 }
             });
         }
@@ -87,11 +89,14 @@ public class BottomNavigationHelper {
     }
 
     private static void navigateTo(Activity activity, Class<?> targetClass) {
-        Intent intent = new Intent(activity, targetClass);
+        navigateTo(activity, new Intent(activity, targetClass));
+    }
+
+    private static void navigateTo(Activity activity, Intent intent) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        if (!(activity instanceof DashboardActivity)) {
+        if (!(activity instanceof MainHomeActivity)) {
             activity.finish();
         }
     }
