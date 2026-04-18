@@ -4,16 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="?android:attr/colorBackground">
 
-    <!-- Purple Header Container (Unifies with Status Bar) -->
     <!-- Header (Aligned with Rankings style) -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="?android:attr/colorBackground"
         android:paddingHorizontal="16dp"
-        android:fitsSystemWindows="false"
         android:elevation="4dp">
 
         <TextView
