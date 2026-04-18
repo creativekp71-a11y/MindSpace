@@ -134,7 +134,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
             Toast.makeText(context, "Follow failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
-
     private void sendFollowNotification(String targetUid) {
         db.collection("Users").document(currentUserId).get().addOnSuccessListener(doc -> {
             if (doc.exists()) {
@@ -148,6 +147,28 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
                 notification.put("title", "New Follower");
                 notification.put("message", (senderName != null ? senderName : "Someone") + " started following you");
                 notification.put("type", "follow");
+                notification.put("timestamp", FieldValue.serverTimestamp());
+                notification.put("read", false);
+
+                db.collection("Notifications").document(targetUid)
+                        .collection("UserNotifications").add(notification);
+            }
+        });
+    }
+
+    private void sendUnfollowNotification(String targetUid) {
+        db.collection("Users").document(currentUserId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                String senderName = doc.getString("full_name");
+                String senderImage = doc.getString("profile_pic");
+
+                Map<String, Object> notification = new HashMap<>();
+                notification.put("senderId", currentUserId);
+                notification.put("senderName", senderName != null ? senderName : "Someone");
+                notification.put("senderImage", senderImage != null ? senderImage : "");
+                notification.put("title", "Unfollowed");
+                notification.put("message", (senderName != null ? senderName : "Someone") + " stopped following you");
+                notification.put("type", "unfollow");
                 notification.put("timestamp", FieldValue.serverTimestamp());
                 notification.put("read", false);
 
@@ -178,6 +199,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
             model.setFollowed(false);
             setButtonState(holder.btnFollow, false);
             holder.btnFollow.setEnabled(true);
+            sendUnfollowNotification(targetUid);
         }).addOnFailureListener(e -> {
             holder.btnFollow.setEnabled(true);
             Toast.makeText(context, "Unfollow failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();

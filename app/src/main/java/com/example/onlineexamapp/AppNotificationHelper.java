@@ -56,7 +56,49 @@ public final class AppNotificationHelper {
             String title,
             String message
     ) {
-        showChatNotification(context, notificationId, title, message, null, null, null);
+        showFollowNotification(context, notificationId, title, message, null);
+    }
+
+    public static void showFollowNotification(
+            Context context,
+            int notificationId,
+            String title,
+            String message,
+            String targetUserId
+    ) {
+        ensureChannel(context);
+        if (!hasPermission(context)) {
+            return;
+        }
+
+        Intent intent;
+        if (targetUserId != null) {
+            intent = new Intent(context, AuthorProfileActivity.class);
+            intent.putExtra("authorUid", targetUserId);
+        } else {
+            intent = new Intent(context, MainHomeActivity.class);
+        }
+        
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                notificationId,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
+
+        NotificationManagerCompat.from(context).notify(notificationId, builder.build());
     }
 
     public static void showChatNotification(

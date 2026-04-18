@@ -219,6 +219,14 @@ public class MainHomeActivity extends AppCompatActivity {
                                     senderId,
                                     senderName
                             );
+                        } else if (("follow".equals(type) || "unfollow".equals(type)) && senderId != null) {
+                            AppNotificationHelper.showFollowNotification(
+                                    this,
+                                    notificationId.hashCode(),
+                                    title == null || title.trim().isEmpty() ? "Social Update" : title,
+                                    message == null ? "" : message,
+                                    senderId
+                            );
                         } else {
                             AppNotificationHelper.showNotification(
                                     this,

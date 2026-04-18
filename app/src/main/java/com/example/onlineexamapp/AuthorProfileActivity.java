@@ -269,6 +269,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
                 btnFollow.setBackgroundResource(R.drawable.bg_btn_follow);
                 checkFollowStatus(); // Reactive update
                 updateFollowersCount(-1);
+                sendUnfollowNotification();
             }).addOnFailureListener(e -> btnFollow.setEnabled(true));
         } else {
             Map<String, Object> data = new HashMap<>();
@@ -305,6 +306,30 @@ public class AuthorProfileActivity extends AppCompatActivity {
                 notification.put("title", "New Follower");
                 notification.put("message", (senderName != null ? senderName : "Someone") + " started following you");
                 notification.put("type", "follow");
+                notification.put("timestamp", FieldValue.serverTimestamp());
+                notification.put("read", false);
+
+                fStore.collection("Notifications").document(authorUid)
+                        .collection("UserNotifications").add(notification);
+            }
+        });
+    }
+
+    private void sendUnfollowNotification() {
+        if (currentUserId == null || authorUid == null) return;
+
+        fStore.collection("Users").document(currentUserId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                String senderName = doc.getString("full_name");
+                String senderImage = doc.getString("profile_pic");
+
+                Map<String, Object> notification = new HashMap<>();
+                notification.put("senderId", currentUserId);
+                notification.put("senderName", senderName != null ? senderName : "Someone");
+                notification.put("senderImage", senderImage != null ? senderImage : "");
+                notification.put("title", "Unfollowed");
+                notification.put("message", (senderName != null ? senderName : "Someone") + " stopped following you");
+                notification.put("type", "unfollow");
                 notification.put("timestamp", FieldValue.serverTimestamp());
                 notification.put("read", false);
 
