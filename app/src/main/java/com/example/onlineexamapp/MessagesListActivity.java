@@ -24,7 +24,8 @@ public class MessagesListActivity extends AppCompatActivity {
     private android.widget.EditText etSearch;
     private MessagesListAdapter adapter;
     private List<ConversationModel> conversationList;
-    private List<UserModel> mutualFriends = new ArrayList<>();
+    private List<UserModel> connectedUsers = new ArrayList<>();
+    private java.util.Set<String> connectedUserIds = new java.util.HashSet<>();
     private List<Object> displayList = new ArrayList<>();
     
     private FirebaseFirestore fStore;
@@ -56,7 +57,7 @@ public class MessagesListActivity extends AppCompatActivity {
 
         setupSearch();
         loadConversations();
-        loadMutualFriends();
+        loadConnectedUsers();
     }
 
     private void setupSearch() {
@@ -92,14 +93,16 @@ public class MessagesListActivity extends AppCompatActivity {
         // For now, let's filter conversations by chatId as a placeholder or by participants if they match the query.
         // Better: Search mutualFriends first, and find matching conversations for those friends.
         
-        for (UserModel user : mutualFriends) {
-            if (user.getFull_name() != null && user.getFull_name().toLowerCase().contains(lowerQuery) || 
-                (user.getUsername() != null && user.getUsername().toLowerCase().contains(lowerQuery))) {
+        for (UserModel user : connectedUsers) {
+            String fullName = user.getFull_name() != null ? user.getFull_name().toLowerCase() : "";
+            String username = user.getUsername() != null ? user.getUsername().toLowerCase() : "";
+
+            if (fullName.contains(lowerQuery) || username.contains(lowerQuery)) {
                 
-                // Check if we already have a conversation with this friend
+                // Check if we already have a conversation with this connected user
                 boolean hasConv = false;
                 for (ConversationModel conv : conversationList) {
-                    if (conv.getParticipants().contains(user.getId())) {
+                    if (conv.getParticipants() != null && conv.getParticipants().contains(user.getId())) {
                         if (!filtered.contains(conv)) filtered.add(conv);
                         hasConv = true;
                         break;
@@ -107,7 +110,7 @@ public class MessagesListActivity extends AppCompatActivity {
                 }
                 
                 if (!hasConv) {
-                    filtered.add(user); // Add as "Friend Result"
+                    if (!filtered.contains(user)) filtered.add(user); // Add as "Start Chat" result
                 }
             }
         }
@@ -121,39 +124,60 @@ public class MessagesListActivity extends AppCompatActivity {
         layoutEmptyChats.setVisibility(View.GONE);
     }
 
-    private void loadMutualFriends() {
+    private void loadConnectedUsers() {
+        if (mAuth.getCurrentUser() == null) return;
         String uid = mAuth.getCurrentUser().getUid();
         
-        // Fetch people I follow
+        // Clear previous state to avoid duplicates on reload
+        connectedUserIds.clear();
+        connectedUsers.clear();
+
+        // 1. Fetch people I follow
         fStore.collection("Following").document(uid)
                 .collection("UserFollowing")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot) {
                         String followedUid = doc.getId();
-                        checkIfMutual(followedUid);
+                        if (connectedUserIds.add(followedUid)) {
+                            loadUserDetails(followedUid);
+                        }
+                    }
+                });
+
+        // 2. Fetch people who follow me
+        fStore.collection("Followers").document(uid)
+                .collection("UserFollowers")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot) {
+                        String followerUid = doc.getId();
+                        if (connectedUserIds.add(followerUid)) {
+                            loadUserDetails(followerUid);
+                        }
                     }
                 });
     }
 
-    private void checkIfMutual(String followedUid) {
-        String myUid = mAuth.getCurrentUser().getUid();
-        fStore.collection("Following").document(followedUid)
-                .collection("UserFollowing").document(myUid)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        // It's a mutual follow! Load user details.
-                        fStore.collection("Users").document(followedUid).get()
-                                .addOnSuccessListener(userDoc -> {
-                                    if (userDoc.exists()) {
-                                        UserModel user = userDoc.toObject(UserModel.class);
-                                        user.setId(userDoc.getId());
-                                        if (!mutualFriends.contains(user)) {
-                                            mutualFriends.add(user);
-                                        }
-                                    }
-                                });
+    private void loadUserDetails(String userId) {
+        fStore.collection("Users").document(userId).get()
+                .addOnSuccessListener(userDoc -> {
+                    if (userDoc.exists()) {
+                        UserModel user = userDoc.toObject(UserModel.class);
+                        if (user != null) {
+                            user.setId(userDoc.getId());
+                            // Add if not already present (double check)
+                            boolean exists = false;
+                            for (UserModel u : connectedUsers) {
+                                if (u.getId().equals(user.getId())) {
+                                    exists = true;
+                                    break;
+                                }
+                            }
+                            if (!exists) {
+                                connectedUsers.add(user);
+                            }
+                        }
                     }
                 });
     }

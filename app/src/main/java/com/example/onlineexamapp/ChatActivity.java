@@ -161,7 +161,6 @@ public class ChatActivity extends AppCompatActivity {
     private void loadMessages() {
         messagesListener = fStore.collection("Messages")
                 .whereEqualTo("chatId", chatId)
-                .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, error) -> {
                     if (error != null) return;
                     if (value != null) {
@@ -172,6 +171,21 @@ public class ChatActivity extends AppCompatActivity {
                                 messageList.add(model);
                             }
                         }
+
+                        // Manual sort to handle null timestamps (pending messages)
+                        java.util.Collections.sort(messageList, (m1, m2) -> {
+                            Object t1 = m1.getTimestamp();
+                            Object t2 = m2.getTimestamp();
+                            
+                            if (t1 == null && t2 == null) return 0;
+                            if (t1 == null) return 1; // Pending messages at the bottom
+                            if (t2 == null) return -1;
+                            
+                            com.google.firebase.Timestamp ts1 = (com.google.firebase.Timestamp) t1;
+                            com.google.firebase.Timestamp ts2 = (com.google.firebase.Timestamp) t2;
+                            return ts1.compareTo(ts2);
+                        });
+
                         adapter.notifyDataSetChanged();
                         if (adapter.getItemCount() > 0) {
                             rvChat.scrollToPosition(adapter.getItemCount() - 1);
@@ -244,6 +258,7 @@ public class ChatActivity extends AppCompatActivity {
         Map<String, Object> chatUpdate = new HashMap<>();
         chatUpdate.put("lastMessage", text);
         chatUpdate.put("lastTimestamp", FieldValue.serverTimestamp());
+        chatUpdate.put("lastSenderId", currentUserId);
         chatUpdate.put("unreadCount." + receiverId, FieldValue.increment(1));
         chatUpdate.put("participants", Arrays.asList(currentUserId, receiverId));
         chatUpdate.put("chatId", chatId);

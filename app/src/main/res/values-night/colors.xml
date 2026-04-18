@@ -7,4 +7,10 @@
     <!-- Shimmer Colors (Dark Mode) -->
     <color name="shimmer_color">#3B3B3D</color>
     <color name="shimmer_base_color">#2C2C2E</color>
+
+    <!-- Chat and Messages Appearance (Dark Mode) -->
+    <color name="chat_search_bg">#2A2A2A</color>
+    <color name="chat_input_bg">#2A2A2A</color>
+    <color name="received_bubble_bg">#333333</color>
+    <color name="received_text_color">#FFFFFF</color>
 </resources>

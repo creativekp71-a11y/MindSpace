@@ -120,7 +120,7 @@ public class MessagesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void bindFriend(UserModel user, ConversationViewHolder holder) {
         holder.tvName.setText(user.getFull_name());
-        holder.tvLastMessage.setText("Mutual Friend");
+        holder.tvLastMessage.setText("Connected User");
         holder.tvLastMessage.setTextColor(context.getResources().getColor(R.color.purple_500));
         holder.tvLastMessage.setTypeface(null, Typeface.ITALIC);
         holder.tvTime.setText("");

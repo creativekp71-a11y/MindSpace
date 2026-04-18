@@ -16,7 +16,7 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
         android:text="Received message text"
-        android:textColor="?android:attr/textColorPrimary"
+        android:textColor="@color/received_text_color"
         android:textSize="15sp" />
 
     <TextView

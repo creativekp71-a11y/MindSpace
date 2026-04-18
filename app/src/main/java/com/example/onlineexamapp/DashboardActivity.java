@@ -42,6 +42,9 @@ public class DashboardActivity extends AppCompatActivity {
 
     private ListenerRegistration badgeListener;
     private ListenerRegistration chatBadgeListener;
+    private ListenerRegistration messagesListener;
+    private long appStartTime;
+    private java.util.Set<String> notifiedMessageIds = new java.util.HashSet<>();
     private int activeTasks = 0;
     private boolean isRefreshing = false;
     private boolean isFirstLoad = true;
@@ -60,6 +63,8 @@ public class DashboardActivity extends AppCompatActivity {
         setupBottomNavigation();
         setupSwipeRefresh();
         setupNotificationBadge();
+        appStartTime = System.currentTimeMillis();
+        setupMessageNotifications();
     }
 
     private void initViews() {
@@ -372,6 +377,53 @@ public class DashboardActivity extends AppCompatActivity {
                 });
     }
 
+    private void setupMessageNotifications() {
+        if (mAuth.getCurrentUser() == null) return;
+        String uid = mAuth.getCurrentUser().getUid();
+
+        if (messagesListener != null) messagesListener.remove();
+
+        // Listen for new messages where I am the receiver
+        messagesListener = fStore.collection("Messages")
+                .whereEqualTo("receiverId", uid)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null || value == null) return;
+
+                    for (com.google.firebase.firestore.DocumentChange dc : value.getDocumentChanges()) {
+                        if (dc.getType() == com.google.firebase.firestore.DocumentChange.Type.ADDED) {
+                            com.google.firebase.firestore.DocumentSnapshot doc = dc.getDocument();
+                            ChatMessageModel message = doc.toObject(ChatMessageModel.class);
+                            
+                            if (message != null && !notifiedMessageIds.contains(doc.getId())) {
+                                // Only notify for messages arrived after app start
+                                com.google.firebase.Timestamp ts = (com.google.firebase.Timestamp) doc.get("timestamp");
+                                if (ts != null && ts.toDate().getTime() > appStartTime) {
+                                    notifiedMessageIds.add(doc.getId());
+                                    showNewMessageNotification(message);
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void showNewMessageNotification(ChatMessageModel message) {
+        // Fetch sender name to show in notification
+        fStore.collection("Users").document(message.getSenderId()).get()
+                .addOnSuccessListener(doc -> {
+                    String senderName = doc.exists() ? doc.getString("full_name") : "New Message";
+                    AppNotificationHelper.showChatNotification(
+                            this,
+                            message.getChatId().hashCode(),
+                            senderName,
+                            message.getMessageText(),
+                            message.getChatId(),
+                            message.getSenderId(),
+                            senderName
+                    );
+                });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -394,6 +446,7 @@ public class DashboardActivity extends AppCompatActivity {
         // Refresh badge listeners on resume to ensure update
         setupNotificationBadge();
         setupChatBadge();
+        setupMessageNotifications();
     }
 
     @Override
@@ -404,6 +457,9 @@ public class DashboardActivity extends AppCompatActivity {
         }
         if (chatBadgeListener != null) {
             chatBadgeListener.remove();
+        }
+        if (messagesListener != null) {
+            messagesListener.remove();
         }
     }
 }

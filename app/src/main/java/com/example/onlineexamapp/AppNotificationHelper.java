@@ -56,13 +56,35 @@ public final class AppNotificationHelper {
             String title,
             String message
     ) {
+        showChatNotification(context, notificationId, title, message, null, null, null);
+    }
+
+    public static void showChatNotification(
+            Context context,
+            int notificationId,
+            String title,
+            String message,
+            String chatId,
+            String senderId,
+            String senderName
+    ) {
         ensureChannel(context);
         if (!hasPermission(context)) {
             return;
         }
 
-        Intent intent = new Intent(context, MainHomeActivity.class);
-        intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, MainHomeActivity.TAB_NOTIFICATIONS);
+        Intent intent;
+        if (chatId != null && senderId != null) {
+            intent = new Intent(context, ChatActivity.class);
+            intent.putExtra("chatId", chatId);
+            intent.putExtra("receiverId", senderId);
+            intent.putExtra("receiverName", senderName != null ? senderName : title);
+        } else {
+            // Default to Notifications screen
+            // Assuming MainHomeActivity handles EXTRA_OPEN_TAB or simply opens Dashboard
+            intent = new Intent(context, DashboardActivity.class);
+        }
+        
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -77,7 +99,8 @@ public final class AppNotificationHelper {
                 .setContentTitle(title)
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH) // Set to High for popups
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
 

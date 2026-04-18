@@ -95,9 +95,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:cardBackgroundColor="#2A2A2A"
+            app:cardBackgroundColor="@color/chat_input_bg"
             app:cardCornerRadius="25dp"
-            app:cardElevation="8dp"
+            app:cardElevation="6dp"
             app:cardUseCompatPadding="false">
 
             <LinearLayout
@@ -116,7 +116,7 @@
                     android:background="@android:color/transparent"
                     android:hint="Message..."
                     android:minHeight="48dp"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textColorHint="#AAAAAA"
                     android:textSize="15sp" />
 
