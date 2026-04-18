@@ -24,16 +24,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/colorBackground"
-                app:elevation="0dp">
+                app:elevation="4dp">
 
-                <!-- Header Content -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:paddingBottom="10dp"
-                    android:paddingHorizontal="20dp"
-                    app:layout_scrollFlags="scroll|enterAlways">
+                    android:paddingHorizontal="20dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"

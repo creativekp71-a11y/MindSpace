@@ -22,6 +22,10 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -45,7 +49,6 @@ public class DashboardActivity extends AppCompatActivity {
     private ListenerRegistration messagesListener;
     private long appStartTime;
     private java.util.Set<String> notifiedMessageIds = new java.util.HashSet<>();
-    private int activeTasks = 0;
     private boolean isRefreshing = false;
     private boolean isFirstLoad = true;
 
@@ -134,6 +137,15 @@ public class DashboardActivity extends AppCompatActivity {
             });
         }
 
+        View ivBell = findViewById(R.id.ivBell);
+        if (ivBell != null) {
+            ivBell.setOnClickListener(v -> {
+                Intent intent = new Intent(DashboardActivity.this, MainHomeActivity.class);
+                intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, MainHomeActivity.TAB_NOTIFICATIONS);
+                startActivity(intent);
+            });
+        }
+
         setupChatBadge();
     }
 
@@ -153,48 +165,47 @@ public class DashboardActivity extends AppCompatActivity {
         isRefreshing = true;
 
         if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setRefreshing(true);
+            // Production Tip: Using .post() ensures the indicator shows up correctly 
+            // even if the view is still measuring during the first launch.
+            swipeRefreshLayout.post(() -> {
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(true);
+            });
         }
 
-        // Reset tasks counter (User profile, Discoveries, Top Authors)
-        activeTasks = 3;
+        // Professional Production-Level Refresh Logic:
+        // Combine all Firestore tasks into a single completion listener
+        List<Task<?>> tasks = new ArrayList<>();
+        tasks.add(fetchUserProfile());
+        tasks.add(fetchDiscoveries());
+        tasks.add(fetchTopAuthors());
 
-        // Security timeout to ensure refresh indicator hides even if network fails silently
+        Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
+            isRefreshing = false;
+            if (swipeRefreshLayout != null) {
+                // Smooth hide with slight delay for better UX
+                swipeRefreshLayout.postDelayed(() -> {
+                    if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+                }, 500);
+            }
+        });
+
+        // Safety backup to force hide after 10 seconds in extreme network cases
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.postDelayed(() -> {
                 if (isRefreshing) {
                     isRefreshing = false;
                     if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 }
-            }, 5000); // 5 second timeout
-        }
-
-        fetchUserProfile();
-        fetchDiscoveries();
-        fetchTopAuthors();
-    }
-
-    private synchronized void checkRefreshFinished() {
-        activeTasks--;
-
-        if (activeTasks <= 0) {
-            activeTasks = 0; // Prevent negative values
-            isRefreshing = false;
-            if (swipeRefreshLayout != null) {
-                swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(false));
-            }
+            }, 10000);
         }
     }
 
-    private void fetchUserProfile() {
-        if (mAuth.getCurrentUser() == null) {
-            checkRefreshFinished();
-            return;
-        }
+    private Task<DocumentSnapshot> fetchUserProfile() {
+        if (mAuth.getCurrentUser() == null) return Tasks.forResult(null);
 
         String uid = mAuth.getCurrentUser().getUid();
 
-        fStore.collection("Users")
+        return fStore.collection("Users")
                 .document(uid)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -224,14 +235,11 @@ public class DashboardActivity extends AppCompatActivity {
                             }
                         }
                     }
-
-                    checkRefreshFinished();
-                })
-                .addOnFailureListener(e -> checkRefreshFinished());
+                });
     }
 
-    private void fetchDiscoveries() {
-        fStore.collection("DiscoveryActivities")
+    private Task<QuerySnapshot> fetchDiscoveries() {
+        return fStore.collection("DiscoveryActivities")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(10)
                 .get()
@@ -247,17 +255,14 @@ public class DashboardActivity extends AppCompatActivity {
                     if (dashboardAdapter != null) {
                         dashboardAdapter.notifyDataSetChanged();
                     }
-
-                    checkRefreshFinished();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error fetching discoveries: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    checkRefreshFinished();
+                    Toast.makeText(this, "Error fetching discoveries", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    private void fetchTopAuthors() {
-        fStore.collection("Users")
+    private Task<QuerySnapshot> fetchTopAuthors() {
+        return fStore.collection("Users")
                 .whereEqualTo("isAuthor", true)
                 .limit(10)
                 .get()
@@ -273,12 +278,9 @@ public class DashboardActivity extends AppCompatActivity {
                     if (authorAdapter != null) {
                         authorAdapter.notifyDataSetChanged();
                     }
-
-                    checkRefreshFinished();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error fetching authors: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    checkRefreshFinished();
+                    Toast.makeText(this, "Error fetching authors", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -401,23 +403,20 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (isFirstLoad) {
-            // Respect the rule: don't call it immediately if it's the first time
-            // Wait for the SwipeRefreshLayout to be fully measured and ready
-            if (swipeRefreshLayout != null) {
-                swipeRefreshLayout.post(() -> {
-                    if (isFirstLoad) {
-                        isFirstLoad = false;
-                        refreshDashboard();
-                    }
-                });
-            }
-        } else {
-            // For subsequent returns (like coming back from Notifications), refresh directly
+        
+        // Use a clean state on resume. If not already refreshing, ensure indicator is off.
+        if (swipeRefreshLayout != null && !isRefreshing) {
+            swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayout.setEnabled(true);
+        }
+
+        // Only auto-refresh on first load or if the list was cleared
+        if (isFirstLoad || discoveryList.isEmpty()) {
+            isFirstLoad = false;
             refreshDashboard();
         }
 
-        // Refresh badge listeners on resume to ensure update
+        // Refresh badge listeners on resume
         setupNotificationBadge();
         setupChatBadge();
         setupMessageNotifications();
