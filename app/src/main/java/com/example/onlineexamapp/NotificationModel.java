@@ -11,6 +11,7 @@ public class NotificationModel {
     private String message;
     private String type; // e.g., "new_discovery"
     private String activityId;
+    private String chatId;
     private Timestamp timestamp;
     private boolean isRead;
 
@@ -43,4 +44,6 @@ public class NotificationModel {
     public Timestamp getTimestamp() { return timestamp; }
     public boolean isRead() { return isRead; }
     public void setRead(boolean read) { isRead = read; }
+    public String getChatId() { return chatId; }
+    public void setChatId(String chatId) { this.chatId = chatId; }
 }

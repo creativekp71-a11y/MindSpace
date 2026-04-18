@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -87,6 +88,26 @@ public class MainHomeActivity extends AppCompatActivity {
         handleIntent(getIntent(), savedInstanceState == null);
 
         askNotificationPermissionIfNeeded();
+        setupBackHandler();
+    }
+
+    private void setupBackHandler() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+
+                if (currentFragment != null && !"HOME".equals(currentFragment.getTag())) {
+                    // If not on Home tab, go back to Home
+                    loadHomeFragment();
+                } else {
+                    // If on Home tab, exit app
+                    setEnabled(false);
+                    MainHomeActivity.this.getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
     }
 
     @Override

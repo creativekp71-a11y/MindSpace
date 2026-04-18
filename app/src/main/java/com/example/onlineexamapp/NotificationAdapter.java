@@ -81,8 +81,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onNotifClick(model);
             
-            // Open sender profile if it's a follow notification
-            if (model.getSenderId() != null) {
+            if ("message".equalsIgnoreCase(model.getType()) && model.getChatId() != null) {
+                android.content.Intent intent = new android.content.Intent(context, ChatActivity.class);
+                intent.putExtra("chatId", model.getChatId());
+                intent.putExtra("receiverId", model.getSenderId()); // receiver is the sender of the message
+                intent.putExtra("receiverName", model.getSenderName());
+                context.startActivity(intent);
+            } else if (model.getSenderId() != null && "follow".equalsIgnoreCase(model.getType()) || "unfollow".equalsIgnoreCase(model.getType())) {
                 android.content.Intent intent = new android.content.Intent(context, AuthorProfileActivity.class);
                 intent.putExtra("authorUid", model.getSenderId());
                 context.startActivity(intent);

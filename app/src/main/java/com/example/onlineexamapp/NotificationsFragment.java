@@ -59,7 +59,9 @@ public class NotificationsFragment extends Fragment {
         notifList = new ArrayList<>();
 
         adapter = new NotificationAdapter(getContext(), notifList, currentUid, model -> {
-            if (!model.isRead()) {
+            if ("message".equalsIgnoreCase(model.getType())) {
+                deleteNotification(model.getId());
+            } else if (!model.isRead()) {
                 markAsRead(model.getId());
             }
         });
@@ -86,6 +88,12 @@ public class NotificationsFragment extends Fragment {
                     notifList.clear();
                     for (QueryDocumentSnapshot doc : value) {
                         NotificationModel model = doc.toObject(NotificationModel.class);
+                        
+                        // Only show social notifications, drop chat messages from this list
+                        if ("message".equalsIgnoreCase(model.getType())) {
+                            continue;
+                        }
+
                         model.setId(doc.getId());
                         notifList.add(model);
                     }
@@ -143,4 +151,11 @@ public class NotificationsFragment extends Fragment {
             batch.commit();
         }
     }
-}
+
+    private void deleteNotification(String notifId) {
+        if (currentUid == null || notifId == null) return;
+        fStore.collection("Notifications").document(currentUid)
+                .collection("UserNotifications").document(notifId)
+                .delete();
+    }
+}
