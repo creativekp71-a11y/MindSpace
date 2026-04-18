@@ -82,7 +82,7 @@ public final class AppNotificationHelper {
         } else {
             // Default to Notifications screen
             // Assuming MainHomeActivity handles EXTRA_OPEN_TAB or simply opens Dashboard
-            intent = new Intent(context, DashboardActivity.class);
+            intent = new Intent(context, MainHomeActivity.class);
         }
         
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);

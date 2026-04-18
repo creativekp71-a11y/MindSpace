@@ -61,7 +61,8 @@ public class DiscoverActivity extends AppCompatActivity {
         ImageView ivBack = findViewById(R.id.ivBack);
         if (ivBack != null) {
             ivBack.setOnClickListener(v -> {
-                Intent intent = new Intent(DiscoverActivity.this, DashboardActivity.class);
+                Intent intent = new Intent(DiscoverActivity.this, MainHomeActivity.class);
+                intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, "HOME");
                 startActivity(intent);
                 finish();
             });

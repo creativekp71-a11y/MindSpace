@@ -189,7 +189,7 @@ public class HomeFragment extends Fragment {
             });
         }
 
-        // Parallel execution like in DashboardActivity
+        // Parallel execution for optimal performance
         List<Task<?>> tasks = new ArrayList<>();
         tasks.add(fetchUserDataTask());
         tasks.add(fetchDiscoveriesTask());
