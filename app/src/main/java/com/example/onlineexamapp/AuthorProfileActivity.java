@@ -67,6 +67,27 @@ public class AuthorProfileActivity extends AppCompatActivity {
 
         btnFollow.setOnClickListener(v -> toggleFollow());
         btnMessage.setOnClickListener(v -> openChat());
+
+        // ✅ Social Stats Click listeners
+        findViewById(R.id.llAuthorFollowers).setOnClickListener(v -> {
+            Intent intent = new Intent(this, SocialListActivity.class);
+            intent.putExtra("userId", authorUid);
+            intent.putExtra("type", "followers");
+            startActivity(intent);
+        });
+
+        findViewById(R.id.llAuthorFollowing).setOnClickListener(v -> {
+            Intent intent = new Intent(this, SocialListActivity.class);
+            intent.putExtra("userId", authorUid);
+            intent.putExtra("type", "following");
+            startActivity(intent);
+        });
+
+        findViewById(R.id.llAuthorDiscoveries).setOnClickListener(v -> {
+            Intent intent = new Intent(this, UserDiscoveriesActivity.class);
+            intent.putExtra("userId", authorUid);
+            startActivity(intent);
+        });
     }
 
     private void initUI() {

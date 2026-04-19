@@ -40,7 +40,8 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         holder.tvUsername.setText("@" + user.getUsername());
 
         // Set Points
-        holder.tvPoints.setText(String.valueOf(user.getPoints() != null ? user.getPoints() : 0));
+        long pts = user.getPoints() != null ? user.getPoints() : 0;
+        holder.tvPoints.setText(String.valueOf(Math.max(0, pts)));
 
         // Load Profile Pic
         if (user.getProfile_pic() != null && !user.getProfile_pic().isEmpty()) {

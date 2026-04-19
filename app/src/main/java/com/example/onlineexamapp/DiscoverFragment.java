@@ -111,6 +111,7 @@ public class DiscoverFragment extends Fragment {
 
     private void fetchDiscoveries() {
         fStore.collection("DiscoveryActivities")
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     allDiscoveries.clear();

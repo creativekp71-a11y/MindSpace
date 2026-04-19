@@ -169,27 +169,7 @@
                 android:background="@drawable/bg_option"
                 android:layout_marginBottom="20dp" />
 
-            <TextView
-                android:id="@+id/tvSectionDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Description"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp" />
 
-            <EditText
-                android:id="@+id/etDiscoveryDescription"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:hint="Enter detailed description"
-                android:padding="16dp"
-                android:gravity="top"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textColorHint="?android:attr/textColorSecondary"
-                android:background="@drawable/bg_option"
-                android:layout_marginBottom="20dp" />
 
             <TextView
                 android:id="@+id/tvSectionCategory"

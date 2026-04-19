@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="40dp"
     android:background="?android:attr/colorBackground">
 
     <LinearLayout
@@ -12,7 +14,7 @@
         android:gravity="center_vertical"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:paddingTop="18dp"
+        android:paddingTop="0dp"
         android:paddingBottom="10dp">
 
         <ImageView
@@ -20,6 +22,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_back_purple"
+            app:tint="?android:attr/textColorPrimary"
             android:contentDescription="Back" />
 
         <TextView

@@ -23,12 +23,14 @@ public class AuthorAdapter extends RecyclerView.Adapter<AuthorAdapter.AuthorView
 
     private final Context context;
     private final List<Author> authorList;
+    private List<Author> filteredList; // New list for filtering
     private final FirebaseFirestore fStore;
     private final String currentUserId;
 
     public AuthorAdapter(Context context, List<Author> authorList) {
         this.context = context;
         this.authorList = authorList;
+        this.filteredList = new java.util.ArrayList<>(authorList); // Initialize
         this.fStore = FirebaseFirestore.getInstance();
         this.currentUserId = FirebaseAuth.getInstance().getUid();
     }
@@ -42,7 +44,7 @@ public class AuthorAdapter extends RecyclerView.Adapter<AuthorAdapter.AuthorView
 
     @Override
     public void onBindViewHolder(@NonNull AuthorViewHolder holder, int position) {
-        Author author = authorList.get(position);
+        Author author = filteredList.get(position);
         holder.tvName.setText(author.getFullName());
         holder.tvUsername.setText("@" + author.getUsername());
 
@@ -191,7 +193,33 @@ public class AuthorAdapter extends RecyclerView.Adapter<AuthorAdapter.AuthorView
 
     @Override
     public int getItemCount() {
-        return authorList.size();
+        return filteredList.size();
+    }
+
+    public void filter(String query) {
+        filteredList.clear();
+        if (query.isEmpty()) {
+            filteredList.addAll(authorList);
+        } else {
+            String filterPattern = query.toLowerCase().trim();
+            for (Author author : authorList) {
+                if (author.getFullName().toLowerCase().contains(filterPattern) ||
+                    author.getUsername().toLowerCase().contains(filterPattern)) {
+                    filteredList.add(author);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void updateList(List<Author> newList) {
+        if (newList != authorList) {
+            authorList.clear();
+            authorList.addAll(newList);
+        }
+        filteredList.clear();
+        filteredList.addAll(authorList);
+        notifyDataSetChanged();
     }
 
     static class AuthorViewHolder extends RecyclerView.ViewHolder {

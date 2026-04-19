@@ -2,9 +2,15 @@ package com.example.onlineexamapp;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.text.Editable;
+import android.text.TextWatcher;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -17,6 +23,7 @@ public class TopAuthorsActivity extends AppCompatActivity {
     private AuthorAdapter authorAdapter;
     private List<Author> authorList;
     private FirebaseFirestore fStore;
+    private View llEmptyState; // Added empty state view
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +32,7 @@ public class TopAuthorsActivity extends AppCompatActivity {
 
         fStore = FirebaseFirestore.getInstance();
         rvTopAuthors = findViewById(R.id.rvTopAuthors);
+        llEmptyState = findViewById(R.id.llEmptyState);
         authorList = new ArrayList<>();
         authorAdapter = new AuthorAdapter(this, authorList);
         rvTopAuthors.setAdapter(authorAdapter);
@@ -33,6 +41,38 @@ public class TopAuthorsActivity extends AppCompatActivity {
         ImageView ivBackAuthors = findViewById(R.id.ivBackAuthors);
         if (ivBackAuthors != null) {
             ivBackAuthors.setOnClickListener(v -> finish());
+        }
+
+        // Search Logic
+        ImageView ivSearchAuthors = findViewById(R.id.ivSearchAuthors);
+        CardView cvSearch = findViewById(R.id.cvSearchContainer);
+        EditText etSearch = findViewById(R.id.etSearchAuthors);
+        ImageView ivCloseSearch = findViewById(R.id.ivCloseSearch);
+
+        if (ivSearchAuthors != null && cvSearch != null && etSearch != null) {
+            ivSearchAuthors.setOnClickListener(v -> {
+                cvSearch.setVisibility(View.VISIBLE);
+                etSearch.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT);
+            });
+
+            ivCloseSearch.setOnClickListener(v -> {
+                cvSearch.setVisibility(View.GONE);
+                etSearch.setText("");
+                authorAdapter.filter("");
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+            });
+
+            etSearch.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    authorAdapter.filter(s.toString());
+                    updateEmptyState(authorAdapter.getItemCount() == 0);
+                }
+                @Override public void afterTextChanged(Editable s) {}
+            });
         }
 
         fetchAuthors();
@@ -53,14 +93,19 @@ public class TopAuthorsActivity extends AppCompatActivity {
                         author.setAuthor(true);
                         authorList.add(author);
                     }
-                    authorAdapter.notifyDataSetChanged();
-                    
-                    if (authorList.isEmpty()) {
-                        Toast.makeText(this, "No authors found", Toast.LENGTH_SHORT).show();
-                    }
+                    authorAdapter.updateList(authorList);
+                    updateEmptyState(authorList.isEmpty());
                 })
                 .addOnFailureListener(e -> {
+                    updateEmptyState(true);
                     Toast.makeText(this, "Error fetching authors: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void updateEmptyState(boolean isEmpty) {
+        if (llEmptyState != null) {
+            llEmptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+            rvTopAuthors.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        }
     }
 }

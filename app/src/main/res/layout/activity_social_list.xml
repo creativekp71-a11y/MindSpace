@@ -15,7 +15,7 @@
         android:elevation="2dp">
 
         <ImageView
-            android:id="@+id/ivBackFollowing"
+            android:id="@+id/ivBackSocial"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
@@ -24,32 +24,32 @@
             app:tint="?android:attr/textColorPrimary" />
 
         <TextView
-            android:id="@+id/tvFollowingTitle"
+            android:id="@+id/tvSocialTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/ivBackFollowing"
+            android:layout_toEndOf="@id/ivBackSocial"
             android:layout_marginStart="16dp"
-            android:text="Following"
+            android:text="Users"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFollowingList"
+        android:id="@+id/rvSocialList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="12dp"
         android:clipToPadding="false" />
 
     <TextView
-        android:id="@+id/tvNoFollowing"
+        android:id="@+id/tvNoData"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="You are not following anyone yet."
-        android:textColor="#B2BEC3"
+        android:text="No users found."
+        android:textColor="#888888"
         android:textSize="16sp"
         android:visibility="gone" />
 
