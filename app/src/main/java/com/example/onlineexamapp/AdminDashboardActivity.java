@@ -80,6 +80,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         View cardQuizzes = findViewById(R.id.cardTotalQuizzes);
         View cardMembers = findViewById(R.id.cardTotalMembers);
         View cardReports = findViewById(R.id.cardHealthReports);
+        View cardBroadcast = findViewById(R.id.cardBroadcast);
 
         if (ivLogout != null) {
             ivLogout.setOnClickListener(v -> {
@@ -113,6 +114,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         if (cardMembers != null) {
             cardMembers.setOnClickListener(v -> startActivity(new Intent(this, AdminManageUsersActivity.class)));
+        }
+
+        if (cardBroadcast != null) {
+            cardBroadcast.setOnClickListener(v -> startActivity(new Intent(this, AdminBroadcastActivity.class)));
         }
     }
 
