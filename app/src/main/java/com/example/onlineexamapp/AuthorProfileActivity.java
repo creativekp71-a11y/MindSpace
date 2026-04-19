@@ -143,8 +143,21 @@ public class AuthorProfileActivity extends AppCompatActivity {
                 tvBio.setText(bio != null && !bio.isEmpty() ? bio : "No bio available.");
                 tvFollowers.setText(String.valueOf(followers != null ? followers : 0));
                 tvFollowing.setText(String.valueOf(following != null ? following : 0));
-                tvPoints.setText(String.valueOf(points != null ? points : 0));
-                tvRank.setText(rank != null && !rank.isEmpty() ? rank : "N/A");
+                long safePoints = Math.max(0, points != null ? points : 0);
+                tvPoints.setText(String.valueOf(safePoints));
+                
+                // Fetch real-time rank based on points
+                if (points != null) {
+                    fStore.collection("Users")
+                            .whereGreaterThan("points", Math.max(0, points != null ? points : 0))
+                            .get()
+                            .addOnSuccessListener(snap -> {
+                                int r = snap.size() + 1;
+                                tvRank.setText(String.valueOf(r));
+                            });
+                } else {
+                    tvRank.setText("--");
+                }
 
                 if (profilePic != null && !profilePic.isEmpty()) {
                     try {

@@ -109,12 +109,30 @@
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="24dp">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Full Name" android:textColor="?android:attr/textColorSecondary" android:textSize="14sp" android:layout_marginBottom="8dp"/>
-                <EditText android:id="@+id/etEditName" android:layout_width="match_parent" android:layout_height="50dp" android:background="@drawable/bg_edittext_rounded" android:padding="12dp" android:textColor="?android:attr/textColorPrimary" android:inputType="textPersonName"/>
+                <EditText android:id="@+id/etEditName"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_edittext_button_style"
+                    android:backgroundTint="@null"
+                    android:paddingHorizontal="20dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/edit_profile_text_color"
+                    android:textColorHint="@color/edit_profile_hint_color"
+                    android:inputType="textPersonName"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="32dp">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Username" android:textColor="?android:attr/textColorSecondary" android:textSize="14sp" android:layout_marginBottom="8dp"/>
-                <EditText android:id="@+id/etEditUsername" android:layout_width="match_parent" android:layout_height="50dp" android:background="@drawable/bg_edittext_rounded" android:padding="12dp" android:textColor="?android:attr/textColorPrimary" android:inputType="text"/>
+                <EditText android:id="@+id/etEditUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_edittext_button_style"
+                    android:backgroundTint="@null"
+                    android:paddingHorizontal="20dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/edit_profile_text_color"
+                    android:textColorHint="@color/edit_profile_hint_color"
+                    android:inputType="text"/>
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton

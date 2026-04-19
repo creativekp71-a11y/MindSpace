@@ -64,6 +64,13 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         else if (position == 1) holder.tvRank.setTextColor(android.graphics.Color.parseColor("#C0C0C0")); // Silver
         else if (position == 2) holder.tvRank.setTextColor(android.graphics.Color.parseColor("#CD7F32")); // Bronze
         else holder.tvRank.setTextColor(android.graphics.Color.parseColor("#2F3640"));
+
+        // Click on item to open User Profile
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(context, AuthorProfileActivity.class);
+            intent.putExtra("authorUid", user.getId());
+            context.startActivity(intent);
+        });
     }
 
     @Override

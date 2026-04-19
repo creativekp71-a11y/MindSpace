@@ -102,7 +102,7 @@ public class SocialListActivity extends AppCompatActivity {
                     author.setFollowingCount(flCount != null ? flCount : 0);
 
                     userList.add(author);
-                    adapter.notifyDataSetChanged();
+                    adapter.updateList(userList);
                 }
             });
         }
