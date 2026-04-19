@@ -171,8 +171,11 @@ public class AuthorProfileActivity extends AppCompatActivity {
         adapter = new DiscoveryAdapter(this, discoveryList);
         rvDiscoveries.setAdapter(adapter);
 
-        // Hide follow button if viewing own profile
-        if (authorUid.equals(currentUserId)) {
+        // Stealth Admin: Hide follow button for admin account
+        android.content.SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
+        boolean isAdmin = prefs.getBoolean("is_admin_logged_in", false);
+        
+        if (isAdmin || authorUid.equals(currentUserId)) {
             btnFollow.setVisibility(View.GONE);
         }
     }

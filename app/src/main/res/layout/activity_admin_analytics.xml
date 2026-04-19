@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <!-- Premium Header -->
@@ -12,7 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_admin_header_premium"
-        android:padding="20dp">
+        android:paddingTop="48dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="20dp">
 
         <ImageView
             android:id="@+id/btnBack"
@@ -30,27 +32,9 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@id/btnBack"
-            android:text="Platform Pulse"
+            android:text="Platform Analytics"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <!-- Live Badge -->
-        <TextView
-            android:id="@+id/tvLiveStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/tvTitle"
-            android:layout_alignBottom="@id/tvTitle"
-            android:layout_marginStart="8dp"
-            android:layout_toEndOf="@id/tvTitle"
-            android:background="@drawable/bg_badge_admin"
-            android:backgroundTint="#4CAF50"
-            android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:text="LIVE"
-            android:textColor="@color/white"
-            android:textSize="9sp"
             android:textStyle="bold" />
     </RelativeLayout>
 

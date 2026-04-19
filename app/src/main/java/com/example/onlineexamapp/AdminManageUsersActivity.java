@@ -37,8 +37,11 @@ public class AdminManageUsersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_manage_users);
-        getWindow().setStatusBarColor(android.graphics.Color.parseColor("#6C5CE7"));
-        getWindow().getDecorView().setSystemUiVisibility(0); // White icons
+        // Immersive Status Bar Fix
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
 
         fStore = FirebaseFirestore.getInstance();
         rvUsers = findViewById(R.id.rvUsers);

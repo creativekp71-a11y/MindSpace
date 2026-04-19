@@ -29,14 +29,15 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
     private LinearLayout llTopQuizzes, llTopAuthors;
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshAnalytics;
     private ListenerRegistration attemptsListener, discoveriesListener;
-    private TextView tvLiveStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_analytics);
-        getWindow().setStatusBarColor(android.graphics.Color.parseColor("#6C5CE7"));
-        getWindow().getDecorView().setSystemUiVisibility(0); // White icons
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
 
         fStore = FirebaseFirestore.getInstance();
 
@@ -51,7 +52,6 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         llTopQuizzes = findViewById(R.id.llTopQuizzes);
         llTopAuthors = findViewById(R.id.llTopAuthors);
         swipeRefreshAnalytics = findViewById(R.id.swipeRefreshAnalytics);
-        tvLiveStatus = findViewById(R.id.tvLiveStatus);
 
         if (swipeRefreshAnalytics != null) {
             swipeRefreshAnalytics.setOnRefreshListener(this::loadAnalytics);

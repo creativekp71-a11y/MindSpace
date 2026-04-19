@@ -83,17 +83,26 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         }
 
         if (holder.btnFollow != null) {
-            setButtonState(holder.btnFollow, model.isFollowed());
+            // Stealth Admin: Disable following for admin accounts
+            android.content.SharedPreferences prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE);
+            boolean isAdmin = prefs.getBoolean("is_admin_logged_in", false);
+            
+            if (isAdmin) {
+                holder.btnFollow.setVisibility(View.GONE);
+            } else {
+                holder.btnFollow.setVisibility(View.VISIBLE);
+                setButtonState(holder.btnFollow, model.isFollowed());
 
-            holder.btnFollow.setOnClickListener(v -> {
-                holder.btnFollow.setEnabled(false);
+                holder.btnFollow.setOnClickListener(v -> {
+                    holder.btnFollow.setEnabled(false);
 
-                if (model.isFollowed()) {
-                    unfollowUser(model, holder);
-                } else {
-                    followUser(model, holder);
-                }
-            });
+                    if (model.isFollowed()) {
+                        unfollowUser(model, holder);
+                    } else {
+                        followUser(model, holder);
+                    }
+                });
+            }
         }
 
 
