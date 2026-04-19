@@ -188,7 +188,7 @@ public class SignInActivity extends AppCompatActivity {
                 }
             } else {
                 // Firebase Auth failed, check for Admin Backdoor Fallback
-                if (email.equals("admin@mindspace.com") && password.equals("admin123")) {
+                if (email.equals("admin@mindspace.com") && password.equals("admin@4113")) {
                     btnSignIn.setText("Initializing Admin...");
                     // Perform Anonymous Sign-In to get a real UID for Firestore rules
                     mAuth.signInAnonymously().addOnCompleteListener(anonTask -> {

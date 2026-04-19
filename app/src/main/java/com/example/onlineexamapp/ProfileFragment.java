@@ -27,6 +27,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseFirestore fStore;
     private TextView tvName, tvUsername, tvEmail, tvPoints, tvRank;
     private TextView tvFollowersCount, tvFollowingCount, tvDiscoveriesCount;
+    private TextView tvUserTotalPlays, tvUserAvgAccuracy;
     private ImageView ivProfilePic, ivCover;
     private ShimmerFrameLayout shimmerProfile;
     private CoordinatorLayout clProfileContent;
@@ -50,6 +51,8 @@ public class ProfileFragment extends Fragment {
         tvFollowersCount = view.findViewById(R.id.tvProfileFollowersCount);
         tvFollowingCount = view.findViewById(R.id.tvProfileFollowingCount);
         tvDiscoveriesCount = view.findViewById(R.id.tvProfileDiscoveriesCount);
+        tvUserTotalPlays = view.findViewById(R.id.tvUserTotalPlays);
+        tvUserAvgAccuracy = view.findViewById(R.id.tvUserAvgAccuracy);
 
         shimmerProfile = view.findViewById(R.id.shimmer_profile);
         clProfileContent = view.findViewById(R.id.clProfileContent);
@@ -160,6 +163,31 @@ public class ProfileFragment extends Fragment {
                             .addOnSuccessListener(snap -> {
                                 if (isAdded()) {
                                     tvDiscoveriesCount.setText(String.valueOf(snap.size()));
+                                }
+                            });
+
+                    // Fetch Quiz Stats (Personal Analytics)
+                    fStore.collection("QuizAttempts")
+                            .whereEqualTo("userId", uid)
+                            .get()
+                            .addOnSuccessListener(snap -> {
+                                if (isAdded() && !snap.isEmpty()) {
+                                    int totalPlays = snap.size();
+                                    int totalCorrect = 0;
+                                    int totalQuestions = 0;
+
+                                    for (com.google.firebase.firestore.DocumentSnapshot attrDoc : snap) {
+                                        Long score = attrDoc.getLong("score");
+                                        Long total = attrDoc.getLong("totalQuestions");
+                                        if (score != null) totalCorrect += score.intValue();
+                                        if (total != null) totalQuestions += total.intValue();
+                                    }
+
+                                    tvUserTotalPlays.setText(String.valueOf(totalPlays));
+                                    if (totalQuestions > 0) {
+                                        int accuracy = (int) (((double) totalCorrect / totalQuestions) * 100);
+                                        tvUserAvgAccuracy.setText(accuracy + "%");
+                                    }
                                 }
                             });
 

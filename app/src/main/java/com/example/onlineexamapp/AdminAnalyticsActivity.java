@@ -26,6 +26,7 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
     private FirebaseFirestore fStore;
     private TextView tvTotalPlays, tvAvgScore, tvUniquePlayers;
     private LinearLayout llTopQuizzes, llTopAuthors;
+    private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,28 +47,75 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         tvUniquePlayers = findViewById(R.id.tvUniquePlayers);
         llTopQuizzes = findViewById(R.id.llTopQuizzes);
         llTopAuthors = findViewById(R.id.llTopAuthors);
+        swipeRefreshAnalytics = findViewById(R.id.swipeRefreshAnalytics);
+
+        if (swipeRefreshAnalytics != null) {
+            swipeRefreshAnalytics.setOnRefreshListener(this::loadAnalytics);
+            swipeRefreshAnalytics.setColorSchemeColors(android.graphics.Color.parseColor("#6C5CE7"));
+        }
 
         loadAnalytics();
     }
 
     private void loadAnalytics() {
+        if (swipeRefreshAnalytics != null && !swipeRefreshAnalytics.isRefreshing()) {
+            swipeRefreshAnalytics.setRefreshing(true);
+        }
+
+        final int[] outstandingRequests = {2};
         // 1. Fetch Quiz Attempts for Engagement Metrics
         fStore.collection("QuizAttempts").get().addOnSuccessListener(querySnapshot -> {
-            List<QuizAttemptModel> attempts = querySnapshot.toObjects(QuizAttemptModel.class);
+            List<QuizAttemptModel> attempts = new ArrayList<>();
+            if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                    try {
+                        QuizAttemptModel model = doc.toObject(QuizAttemptModel.class);
+                        if (model != null) {
+                            attempts.add(model);
+                        } else {
+                            // Manual fallback if name mapping or fields are problematic
+                            String uid = doc.getString("userId");
+                            String qTitle = doc.getString("quizTitle");
+                            Long score = doc.getLong("score");
+                            Long total = doc.getLong("totalQuestions");
+                            if (uid != null && qTitle != null && score != null && total != null) {
+                                attempts.add(new QuizAttemptModel(uid, "User", "ID", qTitle, score.intValue(), total.intValue()));
+                            }
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("Analytics", "Error mapping doc: " + doc.getId(), e);
+                    }
+                }
+            }
             calculateEngagementStats(attempts);
-        }).addOnFailureListener(e -> Toast.makeText(this, "Failed to load attempts: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            decrementRequestCount(outstandingRequests);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Failed to load attempts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            decrementRequestCount(outstandingRequests);
+        });
 
         // 2. Fetch Discovery Activities for Top Authors
         fStore.collection("DiscoveryActivities").get().addOnSuccessListener(querySnapshot -> {
             calculateTopAuthors(querySnapshot.getDocuments());
+            decrementRequestCount(outstandingRequests);
+        }).addOnFailureListener(e -> {
+            decrementRequestCount(outstandingRequests);
         });
     }
 
+    private void decrementRequestCount(int[] count) {
+        count[0]--;
+        if (count[0] <= 0 && swipeRefreshAnalytics != null) {
+            swipeRefreshAnalytics.setRefreshing(false);
+        }
+    }
+
     private void calculateEngagementStats(List<QuizAttemptModel> attempts) {
-        if (attempts.isEmpty()) {
+        if (attempts == null || attempts.isEmpty()) {
             tvTotalPlays.setText("0");
             tvAvgScore.setText("0%");
             tvUniquePlayers.setText("0");
+            renderTopQuizzes(new HashMap<>()); // Ensure placeholders are cleared
             return;
         }
 

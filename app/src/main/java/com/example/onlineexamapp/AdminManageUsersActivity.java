@@ -35,6 +35,7 @@ public class AdminManageUsersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_manage_users);
         getWindow().setStatusBarColor(android.graphics.Color.parseColor("#6C5CE7"));
+        getWindow().getDecorView().setSystemUiVisibility(0); // White icons
 
         fStore = FirebaseFirestore.getInstance();
         rvUsers = findViewById(R.id.rvUsers);

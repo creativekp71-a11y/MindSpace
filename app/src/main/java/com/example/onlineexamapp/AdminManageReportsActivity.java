@@ -33,6 +33,8 @@ public class AdminManageReportsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_manage_reports);
+        getWindow().setStatusBarColor(android.graphics.Color.parseColor("#6C5CE7"));
+        getWindow().getDecorView().setSystemUiVisibility(0); // White icons
 
         fStore = FirebaseFirestore.getInstance();
         

@@ -350,19 +350,19 @@ public class QuizActivity extends AppCompatActivity {
         final String finalQuizId = quizId;
 
         com.google.firebase.firestore.FirebaseFirestore fStore = com.google.firebase.firestore.FirebaseFirestore.getInstance();
-        fStore.collection("Users").document(uid).get().addOnSuccessListener(userDoc -> {
-            String userName = userDoc.getString("full_name");
-            QuizAttemptModel attempt = new QuizAttemptModel(
-                    uid,
-                    userName != null ? userName : "Anonymous",
-                    finalQuizId,
-                    finalQuizTitle,
-                    correctAnswers,
-                    questionList.size()
-            );
+        
+        // Save immediately with basic info
+        QuizAttemptModel attempt = new QuizAttemptModel(
+                uid,
+                "User_" + uid.substring(0, Math.min(uid.length(), 4)), // Safe temporary name
+                finalQuizId,
+                finalQuizTitle,
+                correctAnswers,
+                questionList.size()
+        );
 
-            fStore.collection("QuizAttempts").add(attempt);
-        });
+        fStore.collection("QuizAttempts").add(attempt)
+                .addOnFailureListener(e -> android.util.Log.e("Analytics", "Failed to save attempt: " + e.getMessage()));
     }
 
     // ─── Vibration Helper ────────────────────────────────────────────────────
