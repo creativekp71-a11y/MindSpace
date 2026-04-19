@@ -42,8 +42,40 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public void onBindViewHolder(@NonNull NotifViewHolder holder, int position) {
         NotificationModel model = notifList.get(position);
         
-        // --- Instagram style message ---
+        // --- Handle Title and Admin Badge ---
+        boolean isBroadcast = "broadcast".equalsIgnoreCase(model.getType());
+        
+        if (holder.tvAdminBadge != null) {
+            holder.tvAdminBadge.setVisibility(isBroadcast ? View.VISIBLE : View.GONE);
+        }
+
+        if (holder.tvNotifTitle != null) {
+            if (isBroadcast || (model.getTitle() != null && !model.getTitle().isEmpty())) {
+                holder.tvNotifTitle.setVisibility(View.VISIBLE);
+                String displayTitle = model.getTitle();
+                if (isBroadcast) {
+                    displayTitle = "ADMIN ANNOUNCEMENT";
+                    if (model.getTitle() != null && !model.getTitle().isEmpty()) {
+                        displayTitle += ": " + model.getTitle();
+                    }
+                    holder.tvNotifTitle.setTextColor(context.getResources().getColor(android.R.color.holo_blue_dark));
+                } else {
+                    holder.tvNotifTitle.setTextColor(context.getResources().getColor(android.R.color.black));
+                }
+                holder.tvNotifTitle.setText(displayTitle);
+            } else {
+                holder.tvNotifTitle.setVisibility(View.GONE);
+            }
+        }
+
+        // --- Message ---
         holder.tvMessage.setText(getSafeText(model.getMessage(), "New notification"));
+        
+        // Broadcast specific styling
+        if (isBroadcast) {
+            holder.itemView.setAlpha(1.0f);
+            // Optional: highlight background
+        }
 
         if (model.getTimestamp() != null) {
             String timeAgo = (String) android.text.format.DateUtils.getRelativeTimeSpanString(
@@ -180,6 +212,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 return R.drawable.ic_nav_rank;
             case "profile":
                 return R.drawable.ic_nav_profile;
+            case "broadcast":
+                return R.drawable.ic_logout; // Using the rotated logout icon as an announcement glyph
             default:
                 return R.drawable.ic_notification;
         }
@@ -187,7 +221,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     class NotifViewHolder extends RecyclerView.ViewHolder {
         ImageView ivSender;
-        TextView tvMessage, tvTime;
+        TextView tvMessage, tvTime, tvNotifTitle, tvAdminBadge;
         androidx.appcompat.widget.AppCompatButton btnFollowBack;
 
         public NotifViewHolder(@NonNull View itemView) {
@@ -195,6 +229,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             ivSender = itemView.findViewById(R.id.ivNotifSender);
             tvMessage = itemView.findViewById(R.id.tvNotifMessage);
             tvTime = itemView.findViewById(R.id.tvNotifTime);
+            tvNotifTitle = itemView.findViewById(R.id.tvNotifTitle);
+            tvAdminBadge = itemView.findViewById(R.id.tvAdminBadge);
             btnFollowBack = itemView.findViewById(R.id.btnFollowBack);
         }
     }
