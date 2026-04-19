@@ -9,6 +9,7 @@ import android.os.Vibrator;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.media.MediaPlayer;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import java.util.ArrayList;
@@ -61,14 +62,44 @@ public class QuizActivity extends AppCompatActivity {
                 isAnswered = true;
                 resetOptions();
 
+                // Apply selected styling
                 v.setBackgroundResource(R.drawable.bg_option_selected);
-                selectedOption = ((TextView) v).getText().toString();
+                
+                // Dark Mode specific overrides
+                if (ThemeHelper.isDarkMode(QuizActivity.this)) {
+                    v.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#6C63FF")));
+                    ((TextView) v).setTextColor(android.graphics.Color.WHITE);
+                }
 
+                String fullSelectedText = ((TextView) v).getText().toString();
                 QuizQuestion currentQ = questionList.get(currentQuestionIndex);
 
-                if (selectedOption.equals(currentQ.getCorrectAnswer())) {
+                // Robust answer matching (strips prefixes like (A), A., etc.)
+                String cleanSelected = fullSelectedText.replaceAll("^[\\(\\[]?[A-D][\\.\\)\\:\\]]\\s*", "").trim();
+                String cleanCorrect = currentQ.getCorrectAnswer().replaceAll("^[\\(\\[]?[A-D][\\.\\)\\:\\]]\\s*", "").trim();
+
+                if (cleanSelected.equalsIgnoreCase(cleanCorrect)) {
+                    selectedOption = fullSelectedText; // retain for state if needed
                     correctAnswers++;
                     updatePoints(true);
+                    
+                    // Audio feedback logic
+                    SharedPreferences settings = getSharedPreferences("MindSpaceSettings", MODE_PRIVATE);
+                    boolean isQuizSoundEnabled = settings.getBoolean("quiz_sound", true);
+                    if (isQuizSoundEnabled) {
+                        try {
+                            MediaPlayer mediaPlayer = MediaPlayer.create(QuizActivity.this, R.raw.correct_sound);
+                            if (mediaPlayer != null) {
+                                mediaPlayer.start();
+                                mediaPlayer.setOnCompletionListener(mp -> {
+                                    mp.release();
+                                });
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     Toast.makeText(QuizActivity.this, "Right Answer! 🎉", Toast.LENGTH_SHORT).show();
                 } else {
                     wrongAnswers++;
@@ -229,10 +260,19 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void resetOptions() {
-        if (tvOption1 != null) tvOption1.setBackgroundResource(R.drawable.bg_quiz_option);
-        if (tvOption2 != null) tvOption2.setBackgroundResource(R.drawable.bg_quiz_option);
-        if (tvOption3 != null) tvOption3.setBackgroundResource(R.drawable.bg_quiz_option);
-        if (tvOption4 != null) tvOption4.setBackgroundResource(R.drawable.bg_quiz_option);
+        // Get the standard text color from theme attributes
+        android.util.TypedValue typedValue = new android.util.TypedValue();
+        getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+        int defaultTextColor = typedValue.data;
+        
+        TextView[] options = {tvOption1, tvOption2, tvOption3, tvOption4};
+        for (TextView tv : options) {
+            if (tv != null) {
+                tv.setBackgroundResource(R.drawable.bg_quiz_option);
+                tv.setBackgroundTintList(null); // Clear selection tint
+                tv.setTextColor(defaultTextColor);
+            }
+        }
         selectedOption = "";
     }
 
@@ -251,11 +291,18 @@ public class QuizActivity extends AppCompatActivity {
         android.widget.TextView tvTotalScore = dialog.findViewById(R.id.tvTotalScore);
         android.widget.TextView tvRightScore = dialog.findViewById(R.id.tvRightScore);
         android.widget.TextView tvWrongScore = dialog.findViewById(R.id.tvWrongScore);
+        android.widget.TextView tvPointsEarned = dialog.findViewById(R.id.tvPointsEarned);
+        android.widget.TextView tvPointsDeducted = dialog.findViewById(R.id.tvPointsDeducted);
         androidx.appcompat.widget.AppCompatButton btnTaskComplete = dialog.findViewById(R.id.btnTaskComplete);
 
-        tvTotalScore.setText("कुल सवाल: " + questionList.size());
-        tvRightScore.setText("सही जवाब: " + correctAnswers + " 😁👏✅");
-        tvWrongScore.setText("गलत जवाब: " + wrongAnswers + " ☹️❌");
+        int earned = correctAnswers * 5;
+        int deducted = wrongAnswers * 2;
+
+        tvTotalScore.setText("Total Questions: " + questionList.size());
+        tvRightScore.setText("Correct Answers: " + correctAnswers + " ✅");
+        tvWrongScore.setText("Wrong Answers: " + wrongAnswers + " ❌");
+        tvPointsEarned.setText("Points Earned: " + earned);
+        tvPointsDeducted.setText("Points Deducted: " + deducted);
 
         btnTaskComplete.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
@@ -302,13 +349,10 @@ public class QuizActivity extends AppCompatActivity {
 
     private void updatePoints(boolean isCorrect) {
         android.content.SharedPreferences prefs = getSharedPreferences("MindSpacePrefs", MODE_PRIVATE);
-        int currentPoints = prefs.getInt("total_points", 950);
+        int currentPoints = prefs.getInt("total_points", 0);
 
-        if (isCorrect) currentPoints += 10;
-        else {
-            currentPoints -= 5;
-            if (currentPoints < 0) currentPoints = 0;
-        }
+        int pointDelta = isCorrect ? 5 : -2;
+        currentPoints = Math.max(0, currentPoints + pointDelta);
 
         android.content.SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("total_points", currentPoints);
@@ -319,13 +363,19 @@ public class QuizActivity extends AppCompatActivity {
             String uid = auth.getCurrentUser().getUid();
             com.google.firebase.firestore.FirebaseFirestore fStore =
                     com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            com.google.firebase.firestore.DocumentReference userRef = fStore.collection("Users").document(uid);
 
-            long pointDelta = isCorrect ? 10 : -5;
-
-            fStore.collection("Users").document(uid)
-                    .update("points", com.google.firebase.firestore.FieldValue.increment(pointDelta))
-                    .addOnFailureListener(e ->
-                            android.util.Log.e("FirebasePoints", "Update failed: " + e.getMessage()));
+            fStore.runTransaction(transaction -> {
+                com.google.firebase.firestore.DocumentSnapshot snapshot = transaction.get(userRef);
+                long oldPoints = 0;
+                if (snapshot.exists() && snapshot.getLong("points") != null) {
+                    oldPoints = snapshot.getLong("points");
+                }
+                long newPoints = Math.max(0, oldPoints + (long) pointDelta);
+                transaction.update(userRef, "points", newPoints);
+                return null;
+            }).addOnFailureListener(e ->
+                    android.util.Log.e("FirebasePoints", "Transaction failed: " + e.getMessage()));
         }
     }
 

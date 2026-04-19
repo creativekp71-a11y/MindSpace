@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment {
     private View llHomeDynamicContent;
     private boolean isDiscoveriesFetched = false;
     private boolean isAuthorsFetched = false;
-    private View viewChatBadge;
+    private TextView tvChatBadge;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isRefreshing = false;
     private com.google.firebase.firestore.ListenerRegistration chatBadgeListener;
@@ -65,7 +65,7 @@ public class HomeFragment extends Fragment {
         shimmerHome = view.findViewById(R.id.shimmer_home);
         svHomeContent = view.findViewById(R.id.svHomeContent);
         llHomeDynamicContent = view.findViewById(R.id.llHomeDynamicContent);
-        viewChatBadge = view.findViewById(R.id.viewChatBadge);
+        tvChatBadge = view.findViewById(R.id.tvChatBadge);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
 
         setupSwipeRefresh();
@@ -304,32 +304,60 @@ public class HomeFragment extends Fragment {
 
     private void setupChatBadge() {
         String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
-        if (uid == null) return;
+        if (uid == null) {
+            android.util.Log.w("ChatBadge", "No current user for badge setup");
+            return;
+        }
 
+        android.util.Log.d("ChatBadge", "Setting up badge for UID: " + uid);
+
+        // Listen to all conversations where the user is a participant
         chatBadgeListener = fStore.collection("Conversations")
                 .whereArrayContains("participants", uid)
                 .addSnapshotListener((value, error) -> {
-                    if (error != null || !isAdded()) return;
+                    if (error != null) {
+                        android.util.Log.e("ChatBadge", "Error listening to chats: " + error.getMessage());
+                        return;
+                    }
 
-                    boolean hasUnread = false;
+                    int totalUnread = 0;
                     if (value != null) {
+                        android.util.Log.d("ChatBadge", "Found " + value.size() + " conversations");
                         for (com.google.firebase.firestore.DocumentSnapshot doc : value) {
-                            java.util.Map<String, Object> unreadMap = (java.util.Map<String, Object>) doc.get("unreadCount");
-                            if (unreadMap != null && unreadMap.containsKey(uid)) {
+                            Object unreadObj = doc.get("unreadCount");
+                            if (unreadObj instanceof java.util.Map) {
+                                java.util.Map<?, ?> unreadMap = (java.util.Map<?, ?>) unreadObj;
                                 Object countObj = unreadMap.get(uid);
-                                long count = 0;
                                 if (countObj instanceof Number) {
-                                    count = ((Number) countObj).longValue();
+                                    int count = ((Number) countObj).intValue();
+                                    android.util.Log.d("ChatBadge", "Chat " + doc.getId() + " has " + count + " unread for me");
+                                    totalUnread += count;
                                 }
-                                if (count > 0) {
-                                    hasUnread = true;
-                                    break;
-                                }
+                            } else {
+                                android.util.Log.w("ChatBadge", "unreadCount is not a map for doc: " + doc.getId());
                             }
                         }
-                        if (viewChatBadge != null) {
-                            viewChatBadge.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
+                        
+                        android.util.Log.d("ChatBadge", "Total unread calculated: " + totalUnread);
+                        
+                        // Final consistency check before UI update
+                        if (!isAdded()) return;
+                        
+                        if (tvChatBadge != null) {
+                            if (totalUnread > 0) {
+                                String display = totalUnread > 99 ? "99+" : String.valueOf(totalUnread);
+                                tvChatBadge.setText(display);
+                                tvChatBadge.setVisibility(View.VISIBLE);
+                                android.util.Log.d("ChatBadge", "Badge set to visible with text: " + display);
+                            } else {
+                                tvChatBadge.setVisibility(View.GONE);
+                                android.util.Log.d("ChatBadge", "Badge hidden");
+                            }
+                        } else {
+                            android.util.Log.e("ChatBadge", "tvChatBadge is null in setupChatBadge callback");
                         }
+                    } else {
+                        android.util.Log.w("ChatBadge", "SnapShot value is null");
                     }
                 });
     }

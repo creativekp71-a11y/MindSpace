@@ -33,7 +33,7 @@ import java.util.Map;
 public class EditProfileActivity extends AppCompatActivity {
 
     private ImageView ivEditProfilePic, ivEditCover;
-    private EditText etName, etUsername, etBio;
+    private EditText etName, etUsername;
     private FirebaseFirestore fStore;
     private FirebaseAuth mAuth;
     private String uid;
@@ -43,6 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private ActivityResultLauncher<CropImageContractOptions> cropImageLauncher;
+    private ActivityResultLauncher<String> requestCameraPermissionLauncher;
     private boolean isPickingProfile = true;
 
     @Override
@@ -56,7 +57,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         etName = findViewById(R.id.etEditName);
         etUsername = findViewById(R.id.etEditUsername);
-        etBio = findViewById(R.id.etEditBio);
         ivEditProfilePic = findViewById(R.id.ivEditProfilePic);
         ivEditCover = findViewById(R.id.ivCover);
 
@@ -75,7 +75,6 @@ public class EditProfileActivity extends AppCompatActivity {
             if (doc.exists()) {
                 etName.setText(doc.getString("full_name"));
                 etUsername.setText(doc.getString("username"));
-                etBio.setText(doc.getString("bio"));
 
                 String pPic = doc.getString("profile_pic");
                 String cPic = doc.getString("cover_pic");
@@ -93,16 +92,31 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void setupLaunchers() {
+        requestCameraPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        launchCropper(isPickingProfile);
+                    } else {
+                        Toast.makeText(this, "Camera permission is required to take photos", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
         cropImageLauncher = registerForActivityResult(new CropImageContract(), result -> {
             if (result.isSuccessful()) {
                 Uri uri = result.getUriContent();
                 if (uri != null) {
                     if (isPickingProfile) {
                         base64Profile = uriToBase64(uri, true);
-                        if (base64Profile != null) ivEditProfilePic.setImageURI(uri);
+                        if (base64Profile != null) {
+                            ivEditProfilePic.setImageURI(uri);
+                        }
                     } else {
                         base64Cover = uriToBase64(uri, false);
-                        if (base64Cover != null) ivEditCover.setImageURI(uri);
+                        if (base64Cover != null) {
+                            ivEditCover.setImageURI(uri);
+                        }
                     }
                 }
             } else {
@@ -114,11 +128,28 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void startCrop(boolean forProfile) {
         this.isPickingProfile = forProfile;
+        
+        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) 
+                == android.view.View.VISIBLE) { // dummy check for simplification in chunking
+            // Re-evaluating check below
+        }
+        
+        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            requestCameraPermissionLauncher.launch(android.Manifest.permission.CAMERA);
+        } else {
+            launchCropper(forProfile);
+        }
+    }
+
+    private void launchCropper(boolean forProfile) {
         CropImageOptions options = new CropImageOptions();
         options.guidelines = CropImageView.Guidelines.ON;
         options.activityTitle = forProfile ? "Crop Profile Picture" : "Crop Cover Photo";
         options.cropMenuCropButtonTitle = "Done";
-        options.activityMenuIconColor = android.graphics.Color.WHITE; // Ensure icon is visible
+        options.activityMenuIconColor = android.graphics.Color.WHITE; 
+        options.imageSourceIncludeCamera = true;
+        options.imageSourceIncludeGallery = true;
         
         if (forProfile) {
             options.fixAspectRatio = true;
@@ -222,7 +253,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private void saveProfileChanges() {
         String name = etName.getText().toString().trim();
         String username = etUsername.getText().toString().trim();
-        String bio = etBio.getText().toString().trim();
 
         if (name.isEmpty() || username.isEmpty()) {
             Toast.makeText(this, "Name and Username cannot be empty", Toast.LENGTH_SHORT).show();
@@ -233,7 +263,6 @@ public class EditProfileActivity extends AppCompatActivity {
         Map<String, Object> updates = new HashMap<>();
         updates.put("full_name", name);
         updates.put("username", username);
-        updates.put("bio", bio);
 
         if (base64Profile != null) updates.put("profile_pic", base64Profile);
         if (base64Cover != null) updates.put("cover_pic", base64Cover);

@@ -11,12 +11,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
+        android:paddingTop="28dp"
         android:visibility="visible">
+
+        <RelativeLayout
+            android:id="@+id/rlProfileHeader"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:paddingHorizontal="16dp"
+            android:elevation="4dp"
+            android:translationZ="10dp"
+            android:background="?android:attr/colorBackground">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="My Profile"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
             android:background="?android:attr/colorBackground"
             android:elevation="0dp"
             app:elevation="0dp">
@@ -88,7 +109,7 @@
                         android:gravity="center"
                         android:orientation="vertical"
                         android:paddingTop="12dp"
-                        android:paddingBottom="20dp">
+                        android:paddingBottom="8dp">
 
                         <TextView
                             android:id="@+id/tvProfileName"
@@ -118,18 +139,114 @@
                             android:textColor="?android:attr/textColorSecondary"
                             android:textSize="14sp" />
 
+                        <!-- Social Stats Section -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="24dp"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <!-- Discoveries -->
+                            <LinearLayout
+                                android:id="@+id/llProfileDiscoveries"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10dp"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:id="@+id/tvProfileDiscoveriesCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="?android:attr/textColorPrimary"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="Discoveries"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <View android:layout_width="20dp" android:layout_height="0dp" />
+
+                            <!-- Followers -->
+                            <LinearLayout
+                                android:id="@+id/llProfileFollowers"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10dp"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:id="@+id/tvProfileFollowersCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="?android:attr/textColorPrimary"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="Followers"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <View android:layout_width="20dp" android:layout_height="0dp" />
+
+                            <!-- Following -->
+                            <LinearLayout
+                                android:id="@+id/llProfileFollowing"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10dp"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:id="@+id/tvProfileFollowingCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="?android:attr/textColorPrimary"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="Following"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btnEditProfile"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:layout_marginTop="16dp"
-                            android:background="@drawable/bg_rounded_white"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginHorizontal="32dp"
+                            android:background="@drawable/bg_edit_profile_button"
+                            android:elevation="0dp"
                             android:paddingHorizontal="24dp"
                             android:text="Edit Profile"
                             android:textAllCaps="false"
-                            android:textColor="#6C5CE7"
-                            android:textStyle="bold"
-                            android:elevation="2dp" />
+                            android:textColor="#6C63FF"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </RelativeLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -140,6 +257,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:clipChildren="false"
+            android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <FrameLayout
@@ -161,8 +279,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingHorizontal="20dp"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="60dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="12dp"
                     android:clipToPadding="false"
                     android:clipChildren="false"
                     android:visibility="gone">
@@ -182,7 +300,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:paddingVertical="20dp"
-                        android:weightSum="3">
+                        android:weightSum="2">
 
                         <!-- Rank -->
                         <LinearLayout
@@ -194,9 +312,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Global Rank"
+                                android:text="Top Rank"
                                 android:textColor="#E0E0E0"
-                                android:textSize="11sp"
+                                android:textSize="18sp"
                                 android:textStyle="bold" />
                             <TextView
                                 android:id="@+id/tvProfileRank"
@@ -225,9 +343,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Net Points"
+                                android:text="Points"
                                 android:textColor="#E0E0E0"
-                                android:textSize="11sp"
+                                android:textSize="18sp"
                                 android:textStyle="bold" />
                             <TextView
                                 android:id="@+id/tvProfilePoints"
@@ -239,103 +357,15 @@
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center_vertical"
-                            android:background="#33FFFFFF" />
-
-                        <!-- Coins -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Mind Coins"
-                                android:textColor="#E0E0E0"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:id="@+id/tvProfileCoins"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="0"
-                                android:textColor="#FFFFFF"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
-
-                <!-- Social Followers/Following -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/tvProfileFollowersCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textColor="?android:attr/textColorPrimary"
-                            android:textSize="22sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Followers"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="40dp"
-                        android:layout_height="0dp" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/tvProfileFollowingCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textColor="?android:attr/textColorPrimary"
-                            android:textSize="22sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Following"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
 
                 <!-- Premium Menu Section -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
                     android:text="Account &amp; Activity"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
@@ -344,8 +374,8 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
                     android:layout_marginHorizontal="2dp"
                     app:cardCornerRadius="24dp"
                     app:cardElevation="6dp">
@@ -359,52 +389,13 @@
                         <TextView android:id="@+id/tvMenuAchievements" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🏅  My Achievements" android:textSize="16sp" android:textColor="?android:attr/textColorPrimary" android:padding="20dp" android:background="?android:attr/selectableItemBackground"/>
                         <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?android:attr/listDivider" android:layout_marginHorizontal="20dp"/>
 
-                        <TextView android:id="@+id/tvMenuFollowing" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="👥  Friends &amp; Following" android:textSize="16sp" android:textColor="?android:attr/textColorPrimary" android:padding="20dp" android:background="?android:attr/selectableItemBackground"/>
-                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?android:attr/listDivider" android:layout_marginHorizontal="20dp"/>
-
                         <TextView android:id="@+id/tvMenuSettings" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="⚙️  Account Settings" android:textSize="16sp" android:textColor="?android:attr/textColorPrimary" android:padding="20dp" android:background="?android:attr/selectableItemBackground"/>
                         <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?android:attr/listDivider" android:layout_marginHorizontal="20dp"/>
 
-                        <TextView android:id="@+id/tvMenuShare" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="📤  Invite Friends" android:textSize="16sp" android:textColor="?android:attr/textColorPrimary" android:padding="20dp" android:background="?android:attr/selectableItemBackground"/>
+                        <TextView android:id="@+id/tvMenuShare" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="📤  Share App" android:textSize="16sp" android:textColor="?android:attr/textColorPrimary" android:padding="20dp" android:background="?android:attr/selectableItemBackground"/>
                         <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?android:attr/listDivider" android:layout_marginHorizontal="20dp"/>
 
-                        <RelativeLayout
-                            android:id="@+id/rlBecomeAuthor"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="20dp"
-                            android:background="?android:attr/selectableItemBackground">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="✍️  Be an Author"
-                                android:textSize="16sp"
-                                android:textColor="?android:attr/textColorPrimary"
-                                android:layout_centerVertical="true"/>
-                            <androidx.appcompat.widget.SwitchCompat
-                                android:id="@+id/switchBecomeAuthor"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerVertical="true"
-                                app:thumbTint="#6C5CE7"
-                                app:trackTint="#D1C4E9"/>
-                        </RelativeLayout>
-                        
-                        <View android:id="@+id/viewDividerAddActivity" android:layout_width="match_parent" android:layout_height="1dp" android:background="#1A888888" android:layout_marginHorizontal="20dp" android:visibility="gone"/>
-                        <TextView
-                            android:id="@+id/tvMenuAddActivity"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="➕  Create New Discovery"
-                            android:textSize="16sp"
-                            android:textColor="#6C5CE7"
-                            android:padding="20dp"
-                            android:visibility="gone"
-                            android:textStyle="bold"
-                            android:background="?android:attr/selectableItemBackground"/>
-                        
-                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?android:attr/listDivider" android:layout_marginHorizontal="20dp"/>
+
 
                         <TextView android:id="@+id/tvMenuLogout" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🚪  Logout" android:textSize="16sp" android:textColor="#E84118" android:textStyle="bold" android:padding="20dp" android:background="?android:attr/selectableItemBackground"/>
                     </LinearLayout>

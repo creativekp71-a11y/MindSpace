@@ -31,6 +31,8 @@ public class AchievementsActivity extends AppCompatActivity {
     private TextView tvSilverStatus;
     private TextView tvGoldStatus;
     private TextView tvDiamondStatus;
+    private TextView tvBronzeTitle, tvBronzePoints, tvSilverTitle, tvSilverPoints, tvGoldTitle, tvGoldPoints, tvDiamondTitle, tvDiamondPoints;
+    private com.google.android.material.card.MaterialCardView cvBronzeCard, cvSilverCard, cvGoldCard, cvDiamondCard;
 
     private ProgressBar pbLevelProgress;
 
@@ -69,6 +71,20 @@ public class AchievementsActivity extends AppCompatActivity {
         shimmerAchievements = findViewById(R.id.shimmer_achievements);
         svAchievementsContent = findViewById(R.id.svAchievementsContent);
         llAchievementsDynamicContent = findViewById(R.id.llAchievementsDynamicContent);
+
+        cvBronzeCard = findViewById(R.id.cvBronzeCard);
+        cvSilverCard = findViewById(R.id.cvSilverCard);
+        cvGoldCard = findViewById(R.id.cvGoldCard);
+        cvDiamondCard = findViewById(R.id.cvDiamondCard);
+
+        tvBronzeTitle = findViewById(R.id.tvBronzeTitle);
+        tvBronzePoints = findViewById(R.id.tvBronzePoints);
+        tvSilverTitle = findViewById(R.id.tvSilverTitle);
+        tvSilverPoints = findViewById(R.id.tvSilverPoints);
+        tvGoldTitle = findViewById(R.id.tvGoldTitle);
+        tvGoldPoints = findViewById(R.id.tvGoldPoints);
+        tvDiamondTitle = findViewById(R.id.tvDiamondTitle);
+        tvDiamondPoints = findViewById(R.id.tvDiamondPoints);
 
         // Start Shimmer
         shimmerAchievements.startShimmer();
@@ -124,9 +140,28 @@ public class AchievementsActivity extends AppCompatActivity {
             showGold(points);
         }
         // Diamond: 200+
-        else {
-            showDiamond(points);
-        }
+        // Apply premium shiny effect to badge icon
+        applyPremiumBadgeEffect();
+    }
+
+    private void applyPremiumBadgeEffect() {
+        tvCurrentLevelIcon.post(() -> {
+            float width = tvCurrentLevelIcon.getWidth();
+            float height = tvCurrentLevelIcon.getHeight();
+            if (width > 0 && height > 0) {
+                // Natural rich bronze/gold gradient
+                android.graphics.Shader textShader = new android.graphics.LinearGradient(0, 0, 0, height,
+                        new int[]{
+                                Color.parseColor("#CD7F32"), // Rich Bronze
+                                Color.parseColor("#8B4513")  // Saturated Brown
+                        }, null, android.graphics.Shader.TileMode.CLAMP);
+                tvCurrentLevelIcon.getPaint().setShader(textShader);
+                
+                // Remove glow effect as requested
+                tvCurrentLevelIcon.setShadowLayer(0, 0, 0, 0); 
+                tvCurrentLevelIcon.invalidate();
+            }
+        });
     }
 
     private void showBronze(int points) {
@@ -141,7 +176,11 @@ public class AchievementsActivity extends AppCompatActivity {
         tvProgressMessage.setText("Almost there! Only " + remaining + " points needed for Silver! 🔥");
 
         tvBronzeStatus.setText("📍 Current");
-        tvBronzeStatus.setTextColor(Color.parseColor("#E17055"));
+        tvBronzeStatus.setTextColor(Color.WHITE);
+        tvBronzeTitle.setTextColor(Color.WHITE);
+        tvBronzePoints.setTextColor(Color.WHITE);
+        cvBronzeCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvBronzeCard.setAlpha(1.0f);
     }
 
     private void showSilver(int points) {
@@ -156,10 +195,18 @@ public class AchievementsActivity extends AppCompatActivity {
         tvProgressMessage.setText("Nice! Only " + remaining + " points needed for Gold! 🚀");
 
         tvBronzeStatus.setText("✅ Unlocked");
-        tvBronzeStatus.setTextColor(Color.parseColor("#27AE60"));
+        tvBronzeStatus.setTextColor(Color.WHITE);
+        tvBronzeTitle.setTextColor(Color.WHITE);
+        tvBronzePoints.setTextColor(Color.WHITE);
+        cvBronzeCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvBronzeCard.setAlpha(1.0f);
 
         tvSilverStatus.setText("📍 Current");
-        tvSilverStatus.setTextColor(Color.parseColor("#6C5CE7"));
+        tvSilverStatus.setTextColor(Color.WHITE);
+        tvSilverTitle.setTextColor(Color.WHITE);
+        tvSilverPoints.setTextColor(Color.WHITE);
+        cvSilverCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvSilverCard.setAlpha(1.0f);
     }
 
     private void showGold(int points) {
@@ -174,13 +221,25 @@ public class AchievementsActivity extends AppCompatActivity {
         tvProgressMessage.setText("Great job! Only " + remaining + " points needed for Diamond! ✨");
 
         tvBronzeStatus.setText("✅ Unlocked");
-        tvBronzeStatus.setTextColor(Color.parseColor("#27AE60"));
+        tvBronzeStatus.setTextColor(Color.WHITE);
+        tvBronzeTitle.setTextColor(Color.WHITE);
+        tvBronzePoints.setTextColor(Color.WHITE);
+        cvBronzeCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvBronzeCard.setAlpha(1.0f);
 
         tvSilverStatus.setText("✅ Unlocked");
-        tvSilverStatus.setTextColor(Color.parseColor("#27AE60"));
+        tvSilverStatus.setTextColor(Color.WHITE);
+        tvSilverTitle.setTextColor(Color.WHITE);
+        tvSilverPoints.setTextColor(Color.WHITE);
+        cvSilverCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvSilverCard.setAlpha(1.0f);
 
         tvGoldStatus.setText("📍 Current");
-        tvGoldStatus.setTextColor(Color.parseColor("#F39C12"));
+        tvGoldStatus.setTextColor(Color.WHITE);
+        tvGoldTitle.setTextColor(Color.WHITE);
+        tvGoldPoints.setTextColor(Color.WHITE);
+        cvGoldCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvGoldCard.setAlpha(1.0f);
     }
 
     private void showDiamond(int points) {
@@ -195,16 +254,32 @@ public class AchievementsActivity extends AppCompatActivity {
         tvProgressMessage.setText("Amazing! You reached Diamond Legend! 👑");
 
         tvBronzeStatus.setText("✅ Unlocked");
-        tvBronzeStatus.setTextColor(Color.parseColor("#27AE60"));
+        tvBronzeStatus.setTextColor(Color.WHITE);
+        tvBronzeTitle.setTextColor(Color.WHITE);
+        tvBronzePoints.setTextColor(Color.WHITE);
+        cvBronzeCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvBronzeCard.setAlpha(1.0f);
 
         tvSilverStatus.setText("✅ Unlocked");
-        tvSilverStatus.setTextColor(Color.parseColor("#27AE60"));
+        tvSilverStatus.setTextColor(Color.WHITE);
+        tvSilverTitle.setTextColor(Color.WHITE);
+        tvSilverPoints.setTextColor(Color.WHITE);
+        cvSilverCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvSilverCard.setAlpha(1.0f);
 
         tvGoldStatus.setText("✅ Unlocked");
-        tvGoldStatus.setTextColor(Color.parseColor("#27AE60"));
+        tvGoldStatus.setTextColor(Color.WHITE);
+        tvGoldTitle.setTextColor(Color.WHITE);
+        tvGoldPoints.setTextColor(Color.WHITE);
+        cvGoldCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvGoldCard.setAlpha(1.0f);
 
         tvDiamondStatus.setText("📍 Current");
-        tvDiamondStatus.setTextColor(Color.parseColor("#00A8FF"));
+        tvDiamondStatus.setTextColor(Color.WHITE);
+        tvDiamondTitle.setTextColor(Color.WHITE);
+        tvDiamondPoints.setTextColor(Color.WHITE);
+        cvDiamondCard.setCardBackgroundColor(Color.parseColor("#6C5CE7"));
+        cvDiamondCard.setAlpha(1.0f);
     }
 
     private void resetTierStatus() {
@@ -217,5 +292,26 @@ public class AchievementsActivity extends AppCompatActivity {
         tvSilverStatus.setTextColor(Color.parseColor("#A4B0BE"));
         tvGoldStatus.setTextColor(Color.parseColor("#A4B0BE"));
         tvDiamondStatus.setTextColor(Color.parseColor("#A4B0BE"));
+
+        tvBronzeTitle.setTextColor(Color.parseColor("#E17055"));
+        tvSilverTitle.setTextColor(Color.parseColor("#A4B0BE"));
+        tvGoldTitle.setTextColor(Color.parseColor("#A4B0BE"));
+        tvDiamondTitle.setTextColor(Color.parseColor("#A4B0BE"));
+
+        tvBronzePoints.setTextColor(Color.parseColor("#A4B0BE"));
+        tvSilverPoints.setTextColor(Color.parseColor("#A4B0BE"));
+        tvGoldPoints.setTextColor(Color.parseColor("#A4B0BE"));
+        tvDiamondPoints.setTextColor(Color.parseColor("#A4B0BE"));
+
+        int bgColor = getResources().getColor(R.color.card_background);
+        cvBronzeCard.setCardBackgroundColor(bgColor);
+        cvSilverCard.setCardBackgroundColor(bgColor);
+        cvGoldCard.setCardBackgroundColor(bgColor);
+        cvDiamondCard.setCardBackgroundColor(bgColor);
+
+        cvBronzeCard.setAlpha(0.6f);
+        cvSilverCard.setAlpha(0.6f);
+        cvGoldCard.setAlpha(0.6f);
+        cvDiamondCard.setAlpha(0.6f);
     }
 }

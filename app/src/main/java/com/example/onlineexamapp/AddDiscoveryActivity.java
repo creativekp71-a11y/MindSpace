@@ -36,7 +36,7 @@ import java.io.InputStream;
 
 public class AddDiscoveryActivity extends AppCompatActivity {
 
-    private EditText etTitle, etDescription, etCategory;
+    private EditText etTitle, etCategory;
     private TextView tvQuestionCount;
     private AppCompatButton btnAdd, btnAddQuestionDialog;
     private ImageView ivBack;
@@ -63,7 +63,6 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         questionList = new ArrayList<>();
 
         etTitle = findViewById(R.id.etDiscoveryTitle);
-        etDescription = findViewById(R.id.etDiscoveryDescription);
         etCategory = findViewById(R.id.etDiscoveryCategory);
         tvQuestionCount = findViewById(R.id.tvQuestionCount);
         btnAdd = findViewById(R.id.btnAddDiscovery);
@@ -76,9 +75,8 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         ivBack.setOnClickListener(v -> finish());
         
         // --- Master Switch Logic ---
-        switchAuthor.setChecked(false); // Default OFF
-        setAuthorMode(false); 
         switchAuthor.setOnCheckedChangeListener((buttonView, isChecked) -> setAuthorMode(isChecked));
+        checkAuthorStatus(); // Load from Firestore
 
         // --- RecyclerView Setup ---
         questionAdapter = new QuestionPreviewAdapter(questionList, new QuestionPreviewAdapter.OnQuestionActionListener() {
@@ -124,11 +122,10 @@ public class AddDiscoveryActivity extends AppCompatActivity {
 
         btnAdd.setOnClickListener(v -> {
             String title = etTitle.getText().toString().trim();
-            String desc = etDescription.getText().toString().trim();
             String cat = etCategory.getText().toString().trim();
-
-            if (TextUtils.isEmpty(title) || TextUtils.isEmpty(desc) || TextUtils.isEmpty(cat)) {
-                Toast.makeText(this, "Please fill Title, Description and Category", Toast.LENGTH_SHORT).show();
+            
+            if (TextUtils.isEmpty(title) || TextUtils.isEmpty(cat)) {
+                Toast.makeText(this, "Please fill Title and Category", Toast.LENGTH_SHORT).show();
                 return;
             }
             
@@ -137,11 +134,32 @@ public class AddDiscoveryActivity extends AppCompatActivity {
                 return;
             }
 
-            saveToFirestore(title, desc, cat);
+            saveToFirestore(title, cat);
         });
 
         // Setup Bottom Navigation
         setupBottomNavigation();
+    }
+
+    private void checkAuthorStatus() {
+        String uid = mAuth.getUid();
+        if (uid == null) return;
+
+        fStore.collection("Users").document(uid).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                Boolean isAuthor = doc.getBoolean("isAuthor");
+                if (isAuthor != null && isAuthor) {
+                    switchAuthor.setChecked(true);
+                    setAuthorMode(true);
+                } else {
+                    switchAuthor.setChecked(false);
+                    setAuthorMode(false);
+                }
+            } else {
+                switchAuthor.setChecked(false);
+                setAuthorMode(false);
+            }
+        });
     }
 
     private void fetchDiscoveryData() {
@@ -153,7 +171,6 @@ public class AddDiscoveryActivity extends AppCompatActivity {
                         if (model == null) return;
 
                         etTitle.setText(model.getTitle());
-                        etDescription.setText(model.getDescription());
                         etCategory.setText(model.getCategory());
                         coverBase64 = model.getCover_pic();
                         
@@ -196,7 +213,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         EditText etB = view.findViewById(R.id.etOptionB);
         EditText etC = view.findViewById(R.id.etOptionC);
         EditText etD = view.findViewById(R.id.etOptionD);
-        EditText etCorrect = view.findViewById(R.id.etCorrectAnswer);
+        android.widget.RadioGroup rgCorrect = view.findViewById(R.id.rgCorrectOption);
         TextView tvTitle = view.findViewById(R.id.tvBottomSheetTitle);
         AppCompatButton btnConfirm = view.findViewById(R.id.btnConfirmAddQuestion);
 
@@ -207,26 +224,40 @@ public class AddDiscoveryActivity extends AppCompatActivity {
             if (etB != null) etB.setText(existingQuestion.get("optionB"));
             if (etC != null) etC.setText(existingQuestion.get("optionC"));
             if (etD != null) etD.setText(existingQuestion.get("optionD"));
-            if (etCorrect != null) etCorrect.setText(existingQuestion.get("correctAnswer"));
+            
+            // Re-select proper radio button
+            String correctStr = existingQuestion.get("correctAnswer");
+            if (correctStr != null) {
+                if (correctStr.equalsIgnoreCase(existingQuestion.get("optionA"))) rgCorrect.check(R.id.rbOptionA);
+                else if (correctStr.equalsIgnoreCase(existingQuestion.get("optionB"))) rgCorrect.check(R.id.rbOptionB);
+                else if (correctStr.equalsIgnoreCase(existingQuestion.get("optionC"))) rgCorrect.check(R.id.rbOptionC);
+                else if (correctStr.equalsIgnoreCase(existingQuestion.get("optionD"))) rgCorrect.check(R.id.rbOptionD);
+            }
         }
 
         if (btnConfirm != null) {
             btnConfirm.setOnClickListener(v -> {
-                if (etQ == null || etA == null || etB == null || etC == null || etD == null || etCorrect == null) return;
+                if (etQ == null || etA == null || etB == null || etC == null || etD == null || rgCorrect == null) return;
 
                 String q = etQ.getText().toString().trim();
                 String a = etA.getText().toString().trim();
                 String b = etB.getText().toString().trim();
                 String c = etC.getText().toString().trim();
                 String d = etD.getText().toString().trim();
-                String correct = etCorrect.getText().toString().trim();
 
+                int checkedId = rgCorrect.getCheckedRadioButtonId();
                 if (TextUtils.isEmpty(q) || TextUtils.isEmpty(a) || TextUtils.isEmpty(b) ||
-                        TextUtils.isEmpty(c) || TextUtils.isEmpty(d) || TextUtils.isEmpty(correct)) {
+                        TextUtils.isEmpty(c) || TextUtils.isEmpty(d) || checkedId == -1) {
 
-                    Toast.makeText(this, "Fill all question details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Fill all details and select correct option", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                String correctText = "";
+                if (checkedId == R.id.rbOptionA) correctText = a;
+                else if (checkedId == R.id.rbOptionB) correctText = b;
+                else if (checkedId == R.id.rbOptionC) correctText = c;
+                else if (checkedId == R.id.rbOptionD) correctText = d;
 
                 Map<String, String> questionData = new HashMap<>();
                 questionData.put("question", q);
@@ -234,7 +265,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
                 questionData.put("optionB", b);
                 questionData.put("optionC", c);
                 questionData.put("optionD", d);
-                questionData.put("correctAnswer", correct);
+                questionData.put("correctAnswer", correctText);
 
                 if (position == -1) {
                     questionList.add(questionData);
@@ -318,7 +349,7 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         return inSampleSize;
     }
 
-    private void saveToFirestore(String title, String desc, String category) {
+    private void saveToFirestore(String title, String category) {
         if (mAuth.getCurrentUser() == null) {
             Toast.makeText(this, "You must be signed in to publish.", Toast.LENGTH_SHORT).show();
             return;
@@ -329,7 +360,6 @@ public class AddDiscoveryActivity extends AppCompatActivity {
 
         Map<String, Object> activityData = new HashMap<>();
         activityData.put("title", title);
-        activityData.put("description", desc);
         activityData.put("category", category);
         activityData.put("authorId", uid);
         activityData.put("cover_pic", coverBase64);
@@ -414,7 +444,6 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         // Enable/Disable interactive elements
         etTitle.setEnabled(enabled);
         etCategory.setEnabled(enabled);
-        etDescription.setEnabled(enabled);
         btnAdd.setEnabled(enabled);
         btnAddQuestionDialog.setEnabled(enabled);
         findViewById(R.id.btnChangeDiscoveryCover).setEnabled(enabled);
@@ -428,10 +457,8 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         findViewById(R.id.cardDiscoveryCover).setAlpha(alpha);
         rvQuestions.setAlpha(alpha);
 
-        etDescription.setAlpha(alpha);
         findViewById(R.id.tvSectionCover).setAlpha(alpha);
         findViewById(R.id.tvSectionTitle).setAlpha(alpha);
-        findViewById(R.id.tvSectionDescription).setAlpha(alpha); // This might be missing in layout
         findViewById(R.id.tvSectionCategory).setAlpha(alpha);
         findViewById(R.id.tvSectionQuestions).setAlpha(alpha);
         findViewById(R.id.tvQuestionCount).setAlpha(alpha);

@@ -25,10 +25,8 @@ public class ProfileFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore fStore;
-    private TextView tvName, tvUsername, tvEmail, tvPoints, tvCoins, tvRank, tvMenuAddActivity;
-    private TextView tvFollowersCount, tvFollowingCount;
-    private View viewDividerAddActivity;
-    private SwitchCompat switchBecomeAuthor;
+    private TextView tvName, tvUsername, tvEmail, tvPoints, tvRank;
+    private TextView tvFollowersCount, tvFollowingCount, tvDiscoveriesCount;
     private ImageView ivProfilePic, ivCover;
     private ShimmerFrameLayout shimmerProfile;
     private CoordinatorLayout clProfileContent;
@@ -46,14 +44,12 @@ public class ProfileFragment extends Fragment {
         tvUsername = view.findViewById(R.id.tvProfileUsername);
         tvEmail = view.findViewById(R.id.tvProfileEmail);
         tvPoints = view.findViewById(R.id.tvProfilePoints);
-        tvCoins = view.findViewById(R.id.tvProfileCoins);
         tvRank = view.findViewById(R.id.tvProfileRank);
         ivProfilePic = view.findViewById(R.id.ivProfilePic);
         ivCover = view.findViewById(R.id.ivCover);
         tvFollowersCount = view.findViewById(R.id.tvProfileFollowersCount);
         tvFollowingCount = view.findViewById(R.id.tvProfileFollowingCount);
-        tvMenuAddActivity = view.findViewById(R.id.tvMenuAddActivity);
-        viewDividerAddActivity = view.findViewById(R.id.viewDividerAddActivity);
+        tvDiscoveriesCount = view.findViewById(R.id.tvProfileDiscoveriesCount);
 
         shimmerProfile = view.findViewById(R.id.shimmer_profile);
         clProfileContent = view.findViewById(R.id.clProfileContent);
@@ -88,11 +84,6 @@ public class ProfileFragment extends Fragment {
             startActivity(new Intent(getActivity(), SignInActivity.class));
             requireActivity().finish();
         });
-
-        view.findViewById(R.id.tvMenuFollowing).setOnClickListener(v ->
-                startActivity(new Intent(getActivity(), FollowingListActivity.class)));
-
-        // ✅ My Achievements click added
         view.findViewById(R.id.tvMenuAchievements).setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), AchievementsActivity.class)));
 
@@ -111,24 +102,29 @@ public class ProfileFragment extends Fragment {
             startActivity(Intent.createChooser(shareIntent, "Invite via"));
         });
 
-        switchBecomeAuthor = view.findViewById(R.id.switchBecomeAuthor);
-        switchBecomeAuthor.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            updateAuthorStatus(isChecked);
+        // ✅ Profile Stats Click Actions
+        view.findViewById(R.id.llProfileDiscoveries).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), UserDiscoveriesActivity.class);
+            intent.putExtra("userId", mAuth.getUid());
+            startActivity(intent);
         });
 
-        tvMenuAddActivity.setOnClickListener(v ->
-                startActivity(new Intent(getActivity(), AddDiscoveryActivity.class)));
+        view.findViewById(R.id.llProfileFollowers).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), SocialListActivity.class);
+            intent.putExtra("userId", mAuth.getUid());
+            intent.putExtra("type", "followers");
+            startActivity(intent);
+        });
+
+        view.findViewById(R.id.llProfileFollowing).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), SocialListActivity.class);
+            intent.putExtra("userId", mAuth.getUid());
+            intent.putExtra("type", "following");
+            startActivity(intent);
+        });
     }
 
-    private void updateAuthorStatus(boolean isAuthor) {
-        String uid = mAuth.getUid();
-        if (uid != null) {
-            fStore.collection("Users").document(uid).update("isAuthor", isAuthor)
-                    .addOnSuccessListener(aVoid -> {
-                        // success
-                    });
-        }
-    }
+
 
     private void loadUserData() {
         String uid = mAuth.getUid();
@@ -138,19 +134,34 @@ public class ProfileFragment extends Fragment {
                     tvName.setText(doc.getString("full_name"));
                     tvUsername.setText("@" + doc.getString("username"));
                     tvEmail.setText(doc.getString("email"));
-                    tvPoints.setText(String.valueOf(doc.get("points") != null ? doc.get("points") : 0));
-                    tvCoins.setText(String.valueOf(doc.get("coins") != null ? doc.get("coins") : 0));
-                    tvRank.setText(doc.getString("rank") != null ? doc.getString("rank") : "--");
-
-                    Boolean isAuthor = doc.getBoolean("isAuthor");
-                    switchBecomeAuthor.setChecked(isAuthor != null && isAuthor);
-                    tvMenuAddActivity.setVisibility(isAuthor != null && isAuthor ? View.VISIBLE : View.GONE);
-                    viewDividerAddActivity.setVisibility(isAuthor != null && isAuthor ? View.VISIBLE : View.GONE);
+                    long points = doc.getLong("points") != null ? doc.getLong("points") : 0;
+                    tvPoints.setText(String.valueOf(Math.max(0, points)));
+                    
+                    // Fetch real-time rank based on points
+                    fStore.collection("Users")
+                            .whereGreaterThan("points", points)
+                            .get()
+                            .addOnSuccessListener(snap -> {
+                                if (isAdded()) {
+                                    int rank = snap.size() + 1;
+                                    tvRank.setText(String.valueOf(rank));
+                                }
+                            });
 
                     Long followers = doc.getLong("followersCount");
                     Long following = doc.getLong("followingCount");
                     tvFollowersCount.setText(String.valueOf(followers != null ? followers : 0));
                     tvFollowingCount.setText(String.valueOf(following != null ? following : 0));
+
+                    // Fetch Discoveries count
+                    fStore.collection("DiscoveryActivities")
+                            .whereEqualTo("authorId", uid)
+                            .get()
+                            .addOnSuccessListener(snap -> {
+                                if (isAdded()) {
+                                    tvDiscoveriesCount.setText(String.valueOf(snap.size()));
+                                }
+                            });
 
                     String profilePic = doc.getString("profile_pic");
                     String coverPic = doc.getString("cover_pic");

@@ -10,6 +10,7 @@
     <!-- Permissions for Image Selection -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- Permission for Vibration (wrong answer feedback) -->
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -101,7 +102,25 @@
 
         <activity android:name=".AdminDashboardActivity" />
         <activity android:name=".AdminManageUsersActivity" />
+        <activity android:name=".SocialListActivity" />
+        <activity android:name=".UserDiscoveriesActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
 
 </manifest>

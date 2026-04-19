@@ -16,13 +16,14 @@
         android:background="?android:attr/colorBackground"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="?android:attr/textColorPrimary"
+        app:contentInsetStartWithNavigation="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/layoutHeaderInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="start"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingVertical="4dp">

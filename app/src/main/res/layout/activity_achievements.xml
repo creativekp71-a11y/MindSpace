@@ -69,10 +69,11 @@
                     android:visibility="gone">
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvCurrentLevelCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="25dp"
-                    app:cardBackgroundColor="#2F3640"
+                    app:cardBackgroundColor="#6C5CE7"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="6dp"
                     app:strokeWidth="1dp"
@@ -89,8 +90,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="CURRENT LEVEL"
-                            android:textColor="#A4B0BE"
+                            android:textColor="#FFFFFF"
                             android:textSize="12sp"
+                            android:alpha="0.8"
                             android:letterSpacing="0.1" />
 
                         <TextView
@@ -127,7 +129,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="0 Points"
-                                    android:textColor="#E17055"
+                                    android:textColor="#FFFFFF"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -136,7 +138,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:text="50 (Silver)"
-                                    android:textColor="#A4B0BE" />
+                                    android:textColor="#FFFFFF" />
                             </RelativeLayout>
 
                             <ProgressBar
@@ -146,8 +148,8 @@
                                 android:layout_height="12dp"
                                 android:max="50"
                                 android:progress="0"
-                                android:progressTint="#E17055"
-                                android:backgroundTint="#576574" />
+                                android:progressTint="#FFFFFF"
+                                android:backgroundTint="#4DFFFFFF" />
 
                             <TextView
                                 android:id="@+id/tvProgressMessage"
@@ -171,6 +173,7 @@
                     android:textStyle="bold" />
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvBronzeCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -201,7 +204,8 @@
                             android:layout_centerVertical="true"
                             android:orientation="vertical">
 
-                            <TextView
+                             <TextView
+                                android:id="@+id/tvBronzeTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Bronze Beginner"
@@ -210,6 +214,7 @@
                                 android:textSize="16sp" />
 
                             <TextView
+                                android:id="@+id/tvBronzePoints"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0 - 49 Points"
@@ -230,6 +235,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvSilverCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -260,7 +266,8 @@
                             android:layout_centerVertical="true"
                             android:orientation="vertical">
 
-                            <TextView
+                             <TextView
+                                android:id="@+id/tvSilverTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Silver Pro"
@@ -269,6 +276,7 @@
                                 android:textSize="16sp" />
 
                             <TextView
+                                android:id="@+id/tvSilverPoints"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="50 - 99 Points"
@@ -289,6 +297,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvGoldCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -319,7 +328,8 @@
                             android:layout_centerVertical="true"
                             android:orientation="vertical">
 
-                            <TextView
+                             <TextView
+                                android:id="@+id/tvGoldTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Gold Master"
@@ -328,6 +338,7 @@
                                 android:textSize="16sp" />
 
                             <TextView
+                                android:id="@+id/tvGoldPoints"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="100 - 199 Points"
@@ -348,6 +359,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvDiamondCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="30dp"
@@ -378,7 +390,8 @@
                             android:layout_centerVertical="true"
                             android:orientation="vertical">
 
-                            <TextView
+                             <TextView
+                                android:id="@+id/tvDiamondTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Diamond Legend"
@@ -387,6 +400,7 @@
                                 android:textSize="16sp" />
 
                             <TextView
+                                android:id="@+id/tvDiamondPoints"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="200+ Points"

@@ -10,12 +10,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="?android:attr/colorBackground"
         android:paddingHorizontal="16dp"
         android:elevation="2dp">
 
         <ImageView
-            android:id="@+id/ivBackFollowing"
+            android:id="@+id/ivBackDiscoveries"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
@@ -24,32 +23,31 @@
             app:tint="?android:attr/textColorPrimary" />
 
         <TextView
-            android:id="@+id/tvFollowingTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/ivBackFollowing"
+            android:layout_toEndOf="@id/ivBackDiscoveries"
             android:layout_marginStart="16dp"
-            android:text="Following"
+            android:text="Discoveries"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFollowingList"
+        android:id="@+id/rvUserDiscoveries"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="12dp"
         android:clipToPadding="false" />
 
     <TextView
-        android:id="@+id/tvNoFollowing"
+        android:id="@+id/tvNoDiscoveries"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="You are not following anyone yet."
-        android:textColor="#B2BEC3"
+        android:text="No Discoveries"
+        android:textColor="#888888"
         android:textSize="16sp"
         android:visibility="gone" />
 

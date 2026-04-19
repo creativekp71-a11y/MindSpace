@@ -20,4 +20,6 @@
     <color name="chat_input_bg">#FFFFFF</color>
     <color name="received_bubble_bg">#F2F2F2</color>
     <color name="received_text_color">#000000</color>
+    <color name="edit_profile_text_color">#000000</color>
+    <color name="edit_profile_hint_color">#808080</color>
 </resources>

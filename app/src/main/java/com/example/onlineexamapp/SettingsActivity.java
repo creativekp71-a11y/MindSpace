@@ -23,16 +23,22 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         // ==========================================
-        // 🌙 1. Dark Mode का असली जादू (With Persistence)
+        // 🌙 1. Dark Mode (With Dynamic Icon)
         // ==========================================
         SwitchCompat switchDarkMode = findViewById(R.id.switchDarkMode);
-        if (switchDarkMode != null) {
-            // Load current state
-            switchDarkMode.setChecked(ThemeHelper.isDarkMode(this));
+        ImageView ivThemeIcon = findViewById(R.id.ivThemeIcon);
+        
+        if (switchDarkMode != null && ivThemeIcon != null) {
+            boolean isDark = ThemeHelper.isDarkMode(this);
+            switchDarkMode.setChecked(isDark);
+            ivThemeIcon.setImageResource(isDark ? R.drawable.ic_moon : R.drawable.ic_sun);
             
             switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 // Save and Apply
                 ThemeHelper.saveTheme(this, isChecked);
+                
+                // Update Icon instantly
+                ivThemeIcon.setImageResource(isChecked ? R.drawable.ic_moon : R.drawable.ic_sun);
                 
                 String mode = isChecked ? "Dark Mode Enabled" : "Light Mode Enabled";
                 Toast.makeText(this, mode, Toast.LENGTH_SHORT).show();
@@ -46,10 +52,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         SwitchCompat switchSound = findViewById(R.id.switchSound);
         if (switchSound != null) {
-            switchSound.setChecked(prefs.getBoolean("sound_enabled", true));
+            switchSound.setChecked(prefs.getBoolean("quiz_sound", true));
             switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.edit().putBoolean("sound_enabled", isChecked).apply();
-                String msg = isChecked ? "Sounds ON 🔊" : "Sounds OFF 🔇";
+                prefs.edit().putBoolean("quiz_sound", isChecked).apply();
+                String msg = isChecked ? "Correct Sound ON 🔊" : "Correct Sound OFF 🔇";
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
             });
         }
@@ -67,29 +73,6 @@ public class SettingsActivity extends AppCompatActivity {
             });
         }
 
-        // ==========================================
-        // 🌍 3. Language Selector (मस्त पॉपअप के साथ)
-        // ==========================================
-        RelativeLayout layoutLanguage = findViewById(R.id.layoutLanguage);
-        if (layoutLanguage != null) {
-            layoutLanguage.setOnClickListener(v -> {
-                // भाषाओं की लिस्ट
-                String[] languages = {"English", "ગુજરાતી"};
 
-                // अलर्ट डायलॉग (पॉपअप) बनाएँ
-                new AlertDialog.Builder(SettingsActivity.this)
-                        .setTitle("Select Language")
-                        .setItems(languages, (dialog, which) -> {
-                            if (which == 0) {
-                                Toast.makeText(SettingsActivity.this, "Language set to English", Toast.LENGTH_SHORT).show();
-                                // (भविष्य में यहाँ इंग्लिश सेट करने का कोड आएगा)
-                            } else if (which == 1) {
-                                Toast.makeText(SettingsActivity.this, "ભાષા ગુજરાતી પસંદ કરવામાં આવી છે", Toast.LENGTH_SHORT).show();
-                                // (भविष्य में यहाँ गुजराती सेट करने का कोड आएगा)
-                            }
-                        })
-                        .show();
-            });
-        }
     }
 }
