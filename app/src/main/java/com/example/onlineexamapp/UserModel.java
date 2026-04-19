@@ -16,12 +16,13 @@ public class UserModel {
     private Long followersCount;
     private Long followingCount;
     private Boolean isContentRestricted;
+    private Long registrationTimestamp;
 
     public UserModel() {
         // Required for Firestore
     }
 
-    public UserModel(String id, String full_name, String username, String email, Long points, Long coins, String rank, String profile_pic, String cover_pic, String bio, Boolean isAuthor, Boolean isBlocked, Long followersCount, Long followingCount, Boolean isContentRestricted) {
+    public UserModel(String id, String full_name, String username, String email, Long points, Long coins, String rank, String profile_pic, String cover_pic, String bio, Boolean isAuthor, Boolean isBlocked, Long followersCount, Long followingCount, Boolean isContentRestricted, Long registrationTimestamp) {
         this.id = id;
         this.full_name = full_name;
         this.username = username;
@@ -37,6 +38,7 @@ public class UserModel {
         this.followersCount = followersCount;
         this.followingCount = followingCount;
         this.isContentRestricted = isContentRestricted;
+        this.registrationTimestamp = registrationTimestamp;
     }
 
     public String getId() { return id; }
@@ -83,4 +85,7 @@ public class UserModel {
 
     public Boolean getIsContentRestricted() { return isContentRestricted != null && isContentRestricted; }
     public void setIsContentRestricted(Boolean contentRestricted) { isContentRestricted = contentRestricted; }
+
+    public Long getRegistrationTimestamp() { return registrationTimestamp; }
+    public void setRegistrationTimestamp(Long registrationTimestamp) { this.registrationTimestamp = registrationTimestamp; }
 }

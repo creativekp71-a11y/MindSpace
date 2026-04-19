@@ -70,8 +70,12 @@
             android:exported="false" />
         <activity
             android:name=".AdminBroadcastActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.OnlineExamApp" />
+        <activity
+            android:name=".AdminAnalyticsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.OnlineExamApp" />
 
         <activity
             android:name=".OtpVerificationActivity"

@@ -33,6 +33,8 @@ public class AdminManageAuthorsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_manage_authors);
+        getWindow().setStatusBarColor(android.graphics.Color.parseColor("#6C5CE7"));
+        getWindow().getDecorView().setSystemUiVisibility(0); // Ensure white icons
 
         fStore = FirebaseFirestore.getInstance();
         rvAuthors = findViewById(R.id.rvAuthors);
@@ -41,28 +43,8 @@ public class AdminManageAuthorsActivity extends AppCompatActivity {
         llEmptyState = findViewById(R.id.llEmptyState);
         EditText etSearchAuthor = findViewById(R.id.etSearchAuthor);
         View btnBack = findViewById(R.id.btnBack);
-        View ivLogout = findViewById(R.id.ivLogout);
-
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
-        }
-
-        if (ivLogout != null) {
-            ivLogout.setOnClickListener(v -> {
-                new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                        .setTitle("Logout")
-                        .setMessage("Are you sure you want to log out from the Admin Center?")
-                        .setPositiveButton("Logout", (dialog, which) -> {
-                            com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
-                            getSharedPreferences("auth_prefs", MODE_PRIVATE).edit().putBoolean("is_admin_logged_in", false).apply();
-                            android.content.Intent intent = new android.content.Intent(this, SignInActivity.class);
-                            intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
-            });
         }
 
         authorList = new ArrayList<>();

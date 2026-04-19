@@ -136,6 +136,7 @@ public class SignUpActivity extends AppCompatActivity {
                         user.put("isAuthor", false);
                         user.put("followersCount", 0);
                         user.put("followingCount", 0);
+                        user.put("registrationTimestamp", System.currentTimeMillis());
 
                         fStore.collection("Users").document(uid).set(user).addOnCompleteListener(dbTask -> {
                             if (dbTask.isSuccessful()) {

@@ -16,17 +16,21 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private FirebaseFirestore fStore;
     private TextView tvTotalQuizzesCount, tvTotalUsersCount;
+    private TextView tvNewUsersCount, tvTotalAttemptsCount;
     private SwipeRefreshLayout swipeRefreshDashboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_dashboard);
+        getWindow().setStatusBarColor(android.graphics.Color.parseColor("#6C5CE7"));
 
         fStore = FirebaseFirestore.getInstance();
 
         tvTotalQuizzesCount = findViewById(R.id.tvTotalQuizzesCount);
         tvTotalUsersCount = findViewById(R.id.tvTotalUsersCount);
+        tvNewUsersCount = findViewById(R.id.tvNewUsersCount);
+        tvTotalAttemptsCount = findViewById(R.id.tvTotalAttemptsCount);
         swipeRefreshDashboard = findViewById(R.id.swipeRefreshDashboard);
 
         // Dashboard logic is now managed in setupCardClicks()
@@ -69,6 +73,29 @@ public class AdminDashboardActivity extends AppCompatActivity {
             } else {
                 String error = task.getException() != null ? task.getException().getMessage() : "Unknown";
                 Toast.makeText(this, "Quizzes fetch error: " + error, Toast.LENGTH_SHORT).show();
+            }
+            checkRefreshComplete();
+        });
+
+        // Fetch New Users (Last 24h)
+        long oneDayAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
+        fStore.collection("Users")
+                .whereGreaterThanOrEqualTo("registrationTimestamp", oneDayAgo)
+                .get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                tvNewUsersCount.setText("+" + task.getResult().size());
+            } else {
+                tvNewUsersCount.setText("0");
+            }
+            checkRefreshComplete();
+        });
+
+        // Fetch Total Quiz Attempts
+        fStore.collection("QuizAttempts").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                tvTotalAttemptsCount.setText(String.valueOf(task.getResult().size()));
+            } else {
+                tvTotalAttemptsCount.setText("0");
             }
             checkRefreshComplete();
         });
@@ -124,12 +151,26 @@ public class AdminDashboardActivity extends AppCompatActivity {
         if (cardBroadcast != null) {
             cardBroadcast.setOnClickListener(v -> startActivity(new Intent(this, AdminBroadcastActivity.class)));
         }
+
+        View btnAnalytics = findViewById(R.id.btnViewFullAnalytics);
+        if (btnAnalytics != null) {
+            btnAnalytics.setOnClickListener(v -> {
+                startActivity(new Intent(this, AdminAnalyticsActivity.class));
+            });
+        }
+        
+        View cardEngagement = findViewById(R.id.cardEngagementInsights);
+        if (cardEngagement != null) {
+            cardEngagement.setOnClickListener(v -> {
+                startActivity(new Intent(this, AdminAnalyticsActivity.class));
+            });
+        }
     }
 
     private int completedTasks = 0;
     private void checkRefreshComplete() {
         completedTasks++;
-        if (completedTasks >= 2) {
+        if (completedTasks >= 4) {
             completedTasks = 0;
             swipeRefreshDashboard.setRefreshing(false);
         }

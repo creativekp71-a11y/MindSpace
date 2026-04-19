@@ -277,6 +277,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void showResultDialog() {
+        saveQuizAttempt(); // 🔹 New Analytics Tracking
         android.app.Dialog dialog = new android.app.Dialog(this);
         dialog.setContentView(R.layout.dialog_result);
 
@@ -328,6 +329,40 @@ public class QuizActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private void saveQuizAttempt() {
+        com.google.firebase.auth.FirebaseAuth auth = com.google.firebase.auth.FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) return;
+
+        String uid = auth.getCurrentUser().getUid();
+        String quizId = getIntent().getStringExtra("QUIZ_ID");
+        if (quizId == null) quizId = "static_" + getIntent().getStringExtra("QUIZ_CATEGORY");
+        
+        String quizTitle = "MindSpace Quiz";
+        if (getIntent().hasExtra("QUIZ_TITLE")) {
+            quizTitle = getIntent().getStringExtra("QUIZ_TITLE");
+        } else if (getIntent().hasExtra("QUIZ_CATEGORY")) {
+            quizTitle = getIntent().getStringExtra("QUIZ_CATEGORY");
+        }
+
+        final String finalQuizTitle = quizTitle;
+        final String finalQuizId = quizId;
+
+        com.google.firebase.firestore.FirebaseFirestore fStore = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+        fStore.collection("Users").document(uid).get().addOnSuccessListener(userDoc -> {
+            String userName = userDoc.getString("full_name");
+            QuizAttemptModel attempt = new QuizAttemptModel(
+                    uid,
+                    userName != null ? userName : "Anonymous",
+                    finalQuizId,
+                    finalQuizTitle,
+                    correctAnswers,
+                    questionList.size()
+            );
+
+            fStore.collection("QuizAttempts").add(attempt);
+        });
     }
 
     // ─── Vibration Helper ────────────────────────────────────────────────────

@@ -122,6 +122,7 @@ public final class SocialAuthHelper {
                         user.putIfAbsent("isAuthor", false);
                         user.putIfAbsent("followersCount", 0);
                         user.putIfAbsent("followingCount", 0);
+                        user.putIfAbsent("registrationTimestamp", System.currentTimeMillis());
 
                         store.collection("Users").document(uid).set(user).addOnCompleteListener(setTask -> {
                             if (callback != null) {

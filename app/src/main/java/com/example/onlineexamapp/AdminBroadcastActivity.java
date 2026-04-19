@@ -29,6 +29,8 @@ public class AdminBroadcastActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_broadcast);
+        getWindow().setStatusBarColor(android.graphics.Color.parseColor("#6C5CE7"));
+        getWindow().getDecorView().setSystemUiVisibility(0); // White icons
 
         fStore = FirebaseFirestore.getInstance();
 
