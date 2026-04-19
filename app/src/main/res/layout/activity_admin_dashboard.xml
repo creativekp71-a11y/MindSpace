@@ -35,14 +35,12 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivAdminLogo"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="50dp"
-                android:elevation="8dp"
-                android:padding="8dp"
-                android:background="@drawable/bg_circle_trans"
-                android:backgroundTint="#26FFFFFF"
+                android:layout_marginTop="40dp"
+                android:elevation="0dp"
+                android:padding="0dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/mindspace_logo"
                 app:layout_constraintStart_toStartOf="parent"
@@ -128,6 +126,9 @@
                         android:layout_rowWeight="1"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         app:cardCornerRadius="24dp"
                         app:cardElevation="2dp">
 
@@ -181,6 +182,9 @@
                         android:layout_rowWeight="1"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         app:cardCornerRadius="24dp"
                         app:cardElevation="2dp">
 
@@ -256,6 +260,9 @@
                         android:layout_rowWeight="1"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         app:cardCornerRadius="20dp"
                         app:cardElevation="1dp">
 
@@ -307,6 +314,9 @@
                         android:layout_rowWeight="1"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         app:cardCornerRadius="20dp"
                         app:cardElevation="1dp">
 
@@ -358,6 +368,9 @@
                         android:layout_rowWeight="1"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         app:cardCornerRadius="20dp"
                         app:cardElevation="1dp">
 
@@ -409,6 +422,9 @@
                         android:layout_rowWeight="1"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         app:cardCornerRadius="20dp"
                         app:cardElevation="1dp"
                         app:strokeColor="#D63031"
@@ -504,7 +520,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Platform Pulse"
+                                android:text="Engagement Intelligence"
                                 android:textColor="#2D3436"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
