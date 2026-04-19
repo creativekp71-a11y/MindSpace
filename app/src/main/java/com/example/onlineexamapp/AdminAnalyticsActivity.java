@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +28,8 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
     private TextView tvTotalPlays, tvAvgScore, tvUniquePlayers;
     private LinearLayout llTopQuizzes, llTopAuthors;
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshAnalytics;
+    private ListenerRegistration attemptsListener, discoveriesListener;
+    private TextView tvLiveStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         llTopQuizzes = findViewById(R.id.llTopQuizzes);
         llTopAuthors = findViewById(R.id.llTopAuthors);
         swipeRefreshAnalytics = findViewById(R.id.swipeRefreshAnalytics);
+        tvLiveStatus = findViewById(R.id.tvLiveStatus);
 
         if (swipeRefreshAnalytics != null) {
             swipeRefreshAnalytics.setOnRefreshListener(this::loadAnalytics);
@@ -58,56 +62,50 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
     }
 
     private void loadAnalytics() {
-        if (swipeRefreshAnalytics != null && !swipeRefreshAnalytics.isRefreshing()) {
+        if (attemptsListener != null) attemptsListener.remove();
+        if (discoveriesListener != null) discoveriesListener.remove();
+
+        if (swipeRefreshAnalytics != null) {
             swipeRefreshAnalytics.setRefreshing(true);
         }
 
-        final int[] outstandingRequests = {2};
-        // 1. Fetch Quiz Attempts for Engagement Metrics
-        fStore.collection("QuizAttempts").get().addOnSuccessListener(querySnapshot -> {
-            List<QuizAttemptModel> attempts = new ArrayList<>();
-            if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot.getDocuments()) {
+        // 1. Live Quiz Attempts (For Intelligence)
+        attemptsListener = fStore.collection("QuizAttempts").addSnapshotListener((snapshot, e) -> {
+            if (snapshot != null) {
+                List<QuizAttemptModel> attempts = new ArrayList<>();
+                for (com.google.firebase.firestore.DocumentSnapshot doc : snapshot.getDocuments()) {
                     try {
-                        QuizAttemptModel model = doc.toObject(QuizAttemptModel.class);
-                        if (model != null) {
-                            attempts.add(model);
-                        } else {
-                            // Manual fallback if name mapping or fields are problematic
-                            String uid = doc.getString("userId");
-                            String qTitle = doc.getString("quizTitle");
-                            Long score = doc.getLong("score");
-                            Long total = doc.getLong("totalQuestions");
-                            if (uid != null && qTitle != null && score != null && total != null) {
-                                attempts.add(new QuizAttemptModel(uid, "User", "ID", qTitle, score.intValue(), total.intValue()));
-                            }
+                        String uid = doc.getString("userId");
+                        String qTitle = doc.getString("quizTitle");
+                        Long score = doc.getLong("score");
+                        Long total = doc.getLong("totalQuestions");
+                        
+                        if (uid != null && qTitle != null && score != null && total != null) {
+                            attempts.add(new QuizAttemptModel(uid, "User", doc.getString("quizId"), qTitle, score.intValue(), total.intValue()));
                         }
-                    } catch (Exception e) {
-                        android.util.Log.e("Analytics", "Error mapping doc: " + doc.getId(), e);
+                    } catch (Exception ex) {
+                        android.util.Log.e("Analytics", "Parsing error", ex);
                     }
                 }
+                calculateEngagementStats(attempts);
             }
-            calculateEngagementStats(attempts);
-            decrementRequestCount(outstandingRequests);
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Failed to load attempts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            decrementRequestCount(outstandingRequests);
+            if (swipeRefreshAnalytics != null) swipeRefreshAnalytics.setRefreshing(false);
         });
 
-        // 2. Fetch Discovery Activities for Top Authors
-        fStore.collection("DiscoveryActivities").get().addOnSuccessListener(querySnapshot -> {
-            calculateTopAuthors(querySnapshot.getDocuments());
-            decrementRequestCount(outstandingRequests);
-        }).addOnFailureListener(e -> {
-            decrementRequestCount(outstandingRequests);
+        // 2. Live Discovery Activities (For Authors)
+        discoveriesListener = fStore.collection("DiscoveryActivities").addSnapshotListener((snapshot, e) -> {
+            if (snapshot != null) {
+                calculateTopAuthors(snapshot.getDocuments());
+            }
+            if (swipeRefreshAnalytics != null) swipeRefreshAnalytics.setRefreshing(false);
         });
     }
 
-    private void decrementRequestCount(int[] count) {
-        count[0]--;
-        if (count[0] <= 0 && swipeRefreshAnalytics != null) {
-            swipeRefreshAnalytics.setRefreshing(false);
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (attemptsListener != null) attemptsListener.remove();
+        if (discoveriesListener != null) discoveriesListener.remove();
     }
 
     private void calculateEngagementStats(List<QuizAttemptModel> attempts) {

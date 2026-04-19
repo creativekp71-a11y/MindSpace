@@ -11,13 +11,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
     private FirebaseFirestore fStore;
     private TextView tvTotalQuizzesCount, tvTotalUsersCount;
     private TextView tvNewUsersCount, tvTotalAttemptsCount;
+    private TextView tvWelcomeBack, tvLiveTime;
     private SwipeRefreshLayout swipeRefreshDashboard;
+    private com.google.firebase.firestore.ListenerRegistration usersListener, quizzesListener, attemptsListener, newUsersListener;
+    private android.os.Handler timeHandler = new android.os.Handler();
+    private Runnable timeRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +37,17 @@ public class AdminDashboardActivity extends AppCompatActivity {
         tvTotalUsersCount = findViewById(R.id.tvTotalUsersCount);
         tvNewUsersCount = findViewById(R.id.tvNewUsersCount);
         tvTotalAttemptsCount = findViewById(R.id.tvTotalAttemptsCount);
+        tvWelcomeBack = findViewById(R.id.tvWelcomeBack);
+        tvLiveTime = findViewById(R.id.tvLiveTime);
         swipeRefreshDashboard = findViewById(R.id.swipeRefreshDashboard);
 
-        // Dashboard logic is now managed in setupCardClicks()
-
+        setupDynamicHeader();
         loadStats();
 
-        swipeRefreshDashboard.setOnRefreshListener(this::loadStats);
+        swipeRefreshDashboard.setOnRefreshListener(() -> {
+            // Manual check for any missing live updates
+            loadStats();
+        });
 
         // Toasts for unimplemented features
         View headerBg = findViewById(R.id.headerBg);
@@ -49,57 +58,72 @@ public class AdminDashboardActivity extends AppCompatActivity {
         setupCardClicks();
     }
 
+    private void setupDynamicHeader() {
+        // 1. Dynamic Greeting
+        int hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY);
+        String greeting;
+        if (hour >= 5 && hour < 12) greeting = "Good Morning,";
+        else if (hour >= 12 && hour < 17) greeting = "Good Afternoon,";
+        else if (hour >= 17 && hour < 21) greeting = "Good Evening,";
+        else greeting = "Good Night,";
+        tvWelcomeBack.setText(greeting);
+
+        // 2. Real-time Clock
+        timeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("EEEE, dd MMM • hh:mm a", java.util.Locale.getDefault());
+                tvLiveTime.setText(sdf.format(new java.util.Date()));
+                timeHandler.postDelayed(this, 10000); // Update every 10 seconds for smoothness
+            }
+        };
+        timeHandler.post(timeRunnable);
+    }
+
     private void loadStats() {
-        if (!swipeRefreshDashboard.isRefreshing()) {
-            swipeRefreshDashboard.setRefreshing(true);
-        }
+        if (usersListener != null) usersListener.remove();
+        if (quizzesListener != null) quizzesListener.remove();
+        if (attemptsListener != null) attemptsListener.remove();
+        if (newUsersListener != null) newUsersListener.remove();
 
-        // Fetch User Count
-        fStore.collection("Users").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                int count = task.getResult().size();
-                tvTotalUsersCount.setText(String.valueOf(count));
-            } else {
-                String error = task.getException() != null ? task.getException().getMessage() : "Unknown";
-                Toast.makeText(this, "Users fetch error: " + error, Toast.LENGTH_SHORT).show();
-            }
-            checkRefreshComplete();
+        // 1. Live Users Count
+        usersListener = fStore.collection("Users").addSnapshotListener((snapshot, e) -> {
+            if (snapshot != null) tvTotalUsersCount.setText(String.valueOf(snapshot.size()));
+            swipeRefreshDashboard.setRefreshing(false);
         });
 
-        // Fetch Quizzes Count (DiscoveryActivities)
-        fStore.collection("DiscoveryActivities").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                int count = task.getResult().size();
-                tvTotalQuizzesCount.setText(String.valueOf(count));
-            } else {
-                String error = task.getException() != null ? task.getException().getMessage() : "Unknown";
-                Toast.makeText(this, "Quizzes fetch error: " + error, Toast.LENGTH_SHORT).show();
-            }
-            checkRefreshComplete();
+        // 2. Live Quizzes Count
+        quizzesListener = fStore.collection("DiscoveryActivities").addSnapshotListener((snapshot, e) -> {
+            if (snapshot != null) tvTotalQuizzesCount.setText(String.valueOf(snapshot.size()));
+            swipeRefreshDashboard.setRefreshing(false);
         });
 
-        // Fetch New Users (Last 24h)
+        // 3. Live Attempts Count
+        attemptsListener = fStore.collection("QuizAttempts").addSnapshotListener((snapshot, e) -> {
+            if (snapshot != null) tvTotalAttemptsCount.setText(String.valueOf(snapshot.size()));
+            swipeRefreshDashboard.setRefreshing(false);
+        });
+
+        // 4. Live New Users (Last 24h)
         long oneDayAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
-        fStore.collection("Users")
+        newUsersListener = fStore.collection("Users")
                 .whereGreaterThanOrEqualTo("registrationTimestamp", oneDayAgo)
-                .get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                tvNewUsersCount.setText("+" + task.getResult().size());
-            } else {
-                tvNewUsersCount.setText("0");
-            }
-            checkRefreshComplete();
-        });
+                .addSnapshotListener((snapshot, e) -> {
+                    if (snapshot != null) tvNewUsersCount.setText("+" + snapshot.size());
+                    swipeRefreshDashboard.setRefreshing(false);
+                });
+    }
 
-        // Fetch Total Quiz Attempts
-        fStore.collection("QuizAttempts").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                tvTotalAttemptsCount.setText(String.valueOf(task.getResult().size()));
-            } else {
-                tvTotalAttemptsCount.setText("0");
-            }
-            checkRefreshComplete();
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (timeHandler != null && timeRunnable != null) {
+            timeHandler.removeCallbacks(timeRunnable);
+        }
+        if (usersListener != null) usersListener.remove();
+        if (quizzesListener != null) quizzesListener.remove();
+        if (attemptsListener != null) attemptsListener.remove();
+        if (newUsersListener != null) newUsersListener.remove();
     }
 
     private void setupCardClicks() {
@@ -108,6 +132,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         View cardQuizzes = findViewById(R.id.cardTotalQuizzes);
         View cardMembers = findViewById(R.id.cardTotalMembers);
         View cardAuthors = findViewById(R.id.cardManageAuthors);
+        View cardNewUsers = findViewById(R.id.cardNewUsers);
         View cardHealthCenter = findViewById(R.id.cardHealthCenter);
         View cardBroadcast = findViewById(R.id.cardBroadcast);
 
@@ -147,6 +172,14 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         if (cardMembers != null) {
             cardMembers.setOnClickListener(v -> startActivity(new Intent(this, AdminManageUsersActivity.class)));
+        }
+
+        if (cardNewUsers != null) {
+            cardNewUsers.setOnClickListener(v -> {
+                Intent intent = new Intent(this, AdminManageUsersActivity.class);
+                intent.putExtra("FILTER_TYPE", "last_24h");
+                startActivity(intent);
+            });
         }
 
         if (cardBroadcast != null) {

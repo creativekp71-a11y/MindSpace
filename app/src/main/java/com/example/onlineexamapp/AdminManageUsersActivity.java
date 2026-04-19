@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,12 +19,14 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class AdminManageUsersActivity extends AppCompatActivity {
 
     private RecyclerView rvUsers;
     private AdminUserAdapter adapter;
+    private String filterType = "all";
     private List<UserModel> userList;
     private FirebaseFirestore fStore;
     private ProgressBar progressBar;
@@ -46,6 +49,16 @@ public class AdminManageUsersActivity extends AppCompatActivity {
         View btnBack = findViewById(R.id.btnBack);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
+        }
+
+        filterType = getIntent().getStringExtra("FILTER_TYPE");
+        if (filterType == null) filterType = "all";
+        
+        if (filterType.equals("last_24h")) {
+            TextView tvTitle = findViewById(R.id.tvTitle);
+            if (tvTitle != null) {
+                tvTitle.setText("New Users (24h)");
+            }
         }
 
         userList = new ArrayList<>();
@@ -77,8 +90,14 @@ public class AdminManageUsersActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
         }
         
-        fStore.collection("Users")
-                .get()
+        Query query = fStore.collection("Users");
+        
+        if (filterType.equals("last_24h")) {
+            long oneDayAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
+            query = query.whereGreaterThanOrEqualTo("registrationTimestamp", oneDayAgo);
+        }
+        
+        query.get()
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
                     swipeRefreshUsers.setRefreshing(false);

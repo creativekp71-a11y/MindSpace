@@ -33,40 +33,87 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/white" />
 
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAdminLogo"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="50dp"
+                android:elevation="8dp"
+                android:padding="8dp"
+                android:background="@drawable/bg_circle_trans"
+                android:backgroundTint="#26FFFFFF"
+                android:scaleType="centerInside"
+                android:src="@drawable/mindspace_logo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium" />
+
+            <!-- Live Status Indicator -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_admin"
+                android:backgroundTint="#26FFFFFF"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toStartOf="@id/ivLogout"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_dot_purple"
+                    android:backgroundTint="#4CAF50" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="LIVE STATUS"
+                    android:textColor="@color/white"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/tvWelcomeBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="50dp"
-                android:text="Welcome back,"
+                android:layout_marginStart="16dp"
+                android:text="Good Morning,"
                 android:textColor="#B2BEC3"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toTopOf="@+id/tvAdminTitle"
+                app:layout_constraintStart_toEndOf="@id/ivAdminLogo"
+                app:layout_constraintTop_toTopOf="@id/ivAdminLogo"
+                app:layout_constraintVertical_chainStyle="packed" />
 
             <TextView
                 android:id="@+id/tvAdminTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
                 android:text="Admin Center"
                 android:textColor="@color/white"
                 android:textSize="32sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/ivAdminLogo"
+                app:layout_constraintStart_toStartOf="@id/tvWelcomeBack"
                 app:layout_constraintTop_toBottomOf="@+id/tvWelcomeBack" />
 
             <TextView
+                android:id="@+id/tvLiveTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
                 android:layout_marginTop="4dp"
-                android:text="Managing MindSpace Platform"
+                android:text="Updating time..."
                 android:textColor="#DFE6E9"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="13sp"
+                app:layout_constraintStart_toStartOf="@id/tvAdminTitle"
                 app:layout_constraintTop_toBottomOf="@+id/tvAdminTitle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -511,9 +558,13 @@
                             android:orientation="horizontal">
 
                             <LinearLayout
+                                android:id="@+id/cardNewUsers"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true"
                                 android:orientation="vertical">
 
                                 <TextView
