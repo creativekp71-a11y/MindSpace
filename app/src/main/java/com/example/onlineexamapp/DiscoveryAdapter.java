@@ -85,14 +85,66 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<DiscoveryAdapter.View
         // 🔹 Author Data (Firebase)
         fetchAuthor(model.getAuthorId(), holder.authorName, holder.authorImage);
 
-        // 🔹 More Options (Edit/Delete) - Only for Author
+        // 🔹 More Options (Edit/Delete for Author, Report for Others)
         String currentUserId = FirebaseAuth.getInstance().getUid();
-        if (currentUserId != null && currentUserId.equals(model.getAuthorId())) {
+        if (currentUserId != null) {
             holder.ivMoreOptions.setVisibility(View.VISIBLE);
-            holder.ivMoreOptions.setOnClickListener(v -> showPopupMenu(holder.ivMoreOptions, model, position));
+            holder.ivMoreOptions.setOnClickListener(v -> {
+                if (currentUserId.equals(model.getAuthorId())) {
+                    showPopupMenu(holder.ivMoreOptions, model, position);
+                } else {
+                    showReportPopupMenu(holder.ivMoreOptions, model);
+                }
+            });
         } else {
             holder.ivMoreOptions.setVisibility(View.GONE);
         }
+    }
+
+    private void showReportPopupMenu(View view, DiscoveryActivityModel model) {
+        PopupMenu popup = new PopupMenu(context, view);
+        popup.getMenu().add("Report Content");
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getTitle().equals("Report Content")) {
+                showReportDialog(model);
+            }
+            return true;
+        });
+        popup.show();
+    }
+
+    private void showReportDialog(DiscoveryActivityModel model) {
+        String[] reasons = {"Inappropriate Content", "Spam", "Harassment", "Copyright Violation", "Other"};
+        new AlertDialog.Builder(context)
+                .setTitle("Report this Quiz")
+                .setItems(reasons, (dialog, which) -> {
+                    submitReport(model, reasons[which]);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void submitReport(DiscoveryActivityModel model, String reason) {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+        if (currentUserId == null) return;
+
+        FirebaseFirestore.getInstance().collection("Users").document(currentUserId).get().addOnSuccessListener(userDoc -> {
+            String reporterName = userDoc.getString("full_name");
+            ReportModel report = new ReportModel(
+                    currentUserId,
+                    reporterName != null ? reporterName : "Anonymous",
+                    model.getId(),
+                    model.getTitle(),
+                    "content",
+                    reason,
+                    "Reported from Discovery Feed"
+            );
+
+            FirebaseFirestore.getInstance().collection("Reports")
+                    .add(report)
+                    .addOnSuccessListener(docRef -> Toast.makeText(context, "Report submitted. Thank you for keeping MindSpace safe!", Toast.LENGTH_LONG).show())
+                    .addOnFailureListener(e -> Toast.makeText(context, "Failed to submit report: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        });
     }
 
     private void showPopupMenu(View view, DiscoveryActivityModel model, int position) {

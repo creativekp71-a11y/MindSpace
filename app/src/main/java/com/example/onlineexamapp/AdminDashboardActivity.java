@@ -79,7 +79,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
         View cardUsers = findViewById(R.id.cardManageUsers);
         View cardQuizzes = findViewById(R.id.cardTotalQuizzes);
         View cardMembers = findViewById(R.id.cardTotalMembers);
-        View cardReports = findViewById(R.id.cardHealthReports);
+        View cardAuthors = findViewById(R.id.cardManageAuthors);
+        View cardHealthCenter = findViewById(R.id.cardHealthCenter);
         View cardBroadcast = findViewById(R.id.cardBroadcast);
 
         if (ivLogout != null) {
@@ -108,8 +109,12 @@ public class AdminDashboardActivity extends AppCompatActivity {
             cardQuizzes.setOnClickListener(v -> startActivity(new Intent(this, AdminManageQuizzesActivity.class)));
         }
 
-        if (cardReports != null) {
-            cardReports.setOnClickListener(v -> startActivity(new Intent(this, AdminManageAuthorsActivity.class)));
+        if (cardHealthCenter != null) {
+            cardHealthCenter.setOnClickListener(v -> startActivity(new Intent(this, AdminManageReportsActivity.class)));
+        }
+
+        if (cardAuthors != null) {
+            cardAuthors.setOnClickListener(v -> startActivity(new Intent(this, AdminManageAuthorsActivity.class)));
         }
 
         if (cardMembers != null) {

@@ -106,7 +106,6 @@
                     android:columnCount="2"
                     android:rowCount="1">
 
-                    <!-- Quizzes Card -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardTotalQuizzes"
                         android:layout_width="0dp"
@@ -115,9 +114,7 @@
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
                         app:cardCornerRadius="24dp"
-                        app:cardElevation="2dp"
-                        app:strokeColor="#1A000000"
-                        app:strokeWidth="1dp">
+                        app:cardElevation="2dp">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -155,14 +152,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/tvTotalQuizzesCount"
-                                android:text="Total Quizzes"
+                                android:text="Quizzes"
                                 android:textColor="#636E72"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
                         </RelativeLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Members Card -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardTotalMembers"
                         android:layout_width="0dp"
@@ -171,9 +167,7 @@
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
                         app:cardCornerRadius="24dp"
-                        app:cardElevation="2dp"
-                        app:strokeColor="#1A000000"
-                        app:strokeWidth="1dp">
+                        app:cardElevation="2dp">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -211,7 +205,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/tvTotalUsersCount"
-                                android:text="Total Members"
+                                android:text="Members"
                                 android:textColor="#636E72"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
@@ -219,214 +213,244 @@
                     </com.google.android.material.card.MaterialCardView>
                 </GridLayout>
 
-                <!-- Administrative Controls -->
+                <!-- Administrative Hub Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="32dp"
-                    android:text="Administrative Controls"
+                    android:text="Administrative Hub"
                     android:textColor="#2D3436"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <!-- Manage Users Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardManageUsers"
+                <!-- 2x2 Grid for Controls -->
+                <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#1A000000"
-                    app:strokeWidth="1dp">
+                    android:columnCount="2">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <!-- Manage Users -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardManageUsers"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
-
-                        <View
-                            android:id="@+id/btnIconUser"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_icon_circle_purple_soft" />
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginStart="-38dp"
-                            android:src="@drawable/ic_search"
-                            app:tint="#6C5CE7" />
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="1dp">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="26dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <View
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:background="@drawable/bg_circle_trans"
+                                    android:backgroundTint="#1A6C5CE7" />
+                                <ImageView
+                                    android:layout_width="22dp"
+                                    android:layout_height="22dp"
+                                    android:layout_gravity="center_vertical|start"
+                                    android:layout_marginStart="13dp"
+                                    android:src="@drawable/ic_search"
+                                    app:tint="#6C5CE7" />
+                            </FrameLayout>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Manage Platform Users"
+                                android:layout_marginTop="16dp"
+                                android:text="User List"
                                 android:textColor="#2D3436"
-                                android:textSize="16sp"
+                                android:textSize="15sp"
                                 android:textStyle="bold" />
-
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Suspend, Delete or Block members"
-                                android:textColor="#636E72"
-                                android:textSize="12sp" />
+                                android:text="Control Members"
+                                android:textColor="#B2BEC3"
+                                android:textSize="11sp" />
                         </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:alpha="0.3"
-                            android:rotation="180"
-                            android:src="@drawable/ic_back"
-                            app:tint="@color/black" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Broadcast Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardBroadcast"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#1A000000"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <!-- Broadcast -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardBroadcast"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
-
-                        <View
-                            android:id="@+id/btnIconBroadcast"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_icon_circle_blue_soft" />
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginStart="-38dp"
-                            android:src="@drawable/ic_chat_plane"
-                            app:tint="#0984E3" />
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="1dp">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="26dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="20dp">
+                            
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <View
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:background="@drawable/bg_circle_trans"
+                                    android:backgroundTint="#1A0984E3" />
+                                <ImageView
+                                    android:layout_width="22dp"
+                                    android:layout_height="22dp"
+                                    android:layout_gravity="center_vertical|start"
+                                    android:layout_marginStart="13dp"
+                                    android:src="@drawable/ic_chat_plane"
+                                    app:tint="#0984E3" />
+                            </FrameLayout>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Broadcast Notification"
+                                android:layout_marginTop="16dp"
+                                android:text="Broadcast"
                                 android:textColor="#2D3436"
-                                android:textSize="16sp"
+                                android:textSize="15sp"
                                 android:textStyle="bold" />
-
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Announce to all platform users"
-                                android:textColor="#636E72"
-                                android:textSize="12sp" />
+                                android:text="Global Messages"
+                                android:textColor="#B2BEC3"
+                                android:textSize="11sp" />
                         </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:alpha="0.3"
-                            android:rotation="180"
-                            android:src="@drawable/ic_back"
-                            app:tint="@color/black" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Author Management Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardHealthReports"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#1A000000"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <!-- Author Oversight -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardManageAuthors"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
-
-                        <View
-                            android:id="@+id/btnIconAuthor"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_icon_circle_emerald_soft" />
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginStart="-38dp"
-                            android:src="@drawable/ic_nav_trophy"
-                            app:tint="#00B894" />
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="1dp">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="26dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="20dp">
+                            
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <View
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:background="@drawable/bg_circle_trans"
+                                    android:backgroundTint="#1A00B894" />
+                                <ImageView
+                                    android:layout_width="22dp"
+                                    android:layout_height="22dp"
+                                    android:layout_gravity="center_vertical|start"
+                                    android:layout_marginStart="13dp"
+                                    android:src="@drawable/ic_nav_trophy"
+                                    app:tint="#00B894" />
+                            </FrameLayout>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Author Oversight"
+                                android:layout_marginTop="16dp"
+                                android:text="Authors"
                                 android:textColor="#2D3436"
-                                android:textSize="16sp"
+                                android:textSize="15sp"
                                 android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Verify Creators"
+                                android:textColor="#B2BEC3"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Health Center -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardHealthCenter"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="1dp"
+                        app:strokeColor="#D63031"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <View
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:background="@drawable/bg_circle_trans"
+                                    android:backgroundTint="#1AD63031" />
+                                <ImageView
+                                    android:layout_width="22dp"
+                                    android:layout_height="22dp"
+                                    android:layout_gravity="center_vertical|start"
+                                    android:layout_marginStart="13dp"
+                                    android:src="@drawable/ic_notification"
+                                    app:tint="#D63031" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="top|end"
+                                    android:background="@drawable/bg_badge_admin"
+                                    android:paddingHorizontal="8dp"
+                                    android:paddingVertical="2dp"
+                                    android:text="NEW"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="9sp"
+                                    android:textStyle="bold" />
+                            </FrameLayout>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Verify or manage official contributors"
-                                android:textColor="#636E72"
-                                android:textSize="12sp" />
+                                android:layout_marginTop="16dp"
+                                android:text="Health Center"
+                                android:textColor="#D63031"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Manage Reports"
+                                android:textColor="#B2BEC3"
+                                android:textSize="11sp" />
                         </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:alpha="0.3"
-                            android:rotation="180"
-                            android:src="@drawable/ic_back"
-                            app:tint="@color/black" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </GridLayout>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

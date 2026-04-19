@@ -90,6 +90,58 @@ public class AuthorProfileActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        if (authorUid != null && !authorUid.equals(currentUserId)) {
+            menu.add(0, 101, 0, "Report User")
+                .setIcon(R.drawable.ic_notification)
+                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_NEVER);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == 101) {
+            showUserReportDialog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showUserReportDialog() {
+        String[] reasons = {"Inappropriate Profile", "Spam Account", "Harassment", "Fake Identity", "Other"};
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Report this User")
+                .setItems(reasons, (dialog, which) -> {
+                    submitUserReport(reasons[which]);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void submitUserReport(String reason) {
+        if (currentUserId == null) return;
+
+        fStore.collection("Users").document(currentUserId).get().addOnSuccessListener(userDoc -> {
+            String reporterName = userDoc.getString("full_name");
+            ReportModel report = new ReportModel(
+                    currentUserId,
+                    reporterName != null ? reporterName : "Anonymous",
+                    authorUid,
+                    tvFullName.getText().toString(),
+                    "user",
+                    reason,
+                    "Reported from Profile Screen"
+            );
+
+            fStore.collection("Reports")
+                    .add(report)
+                    .addOnSuccessListener(docRef -> Toast.makeText(this, "User reported. Admin will review this shortly.", Toast.LENGTH_LONG).show())
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        });
+    }
+
     private void initUI() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
