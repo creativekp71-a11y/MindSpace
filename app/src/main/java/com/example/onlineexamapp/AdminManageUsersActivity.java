@@ -112,6 +112,12 @@ public class AdminManageUsersActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             UserModel user = document.toObject(UserModel.class);
                             user.setId(document.getId());
+                            
+                            // 🔹 Skip System Admin in the Manage Users panel
+                            if (user.getEmail() != null && user.getEmail().equalsIgnoreCase("admin@mindspace.com")) {
+                                continue;
+                            }
+                            
                             userList.add(user);
                         }
                         adapter.updateList(userList);

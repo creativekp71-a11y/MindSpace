@@ -106,6 +106,12 @@ public class AdminManageAuthorsActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             UserModel user = document.toObject(UserModel.class);
                             user.setId(document.getId());
+                            
+                            // 🔹 Skip System Admin in the Author Management panel
+                            if (user.getEmail() != null && user.getEmail().equalsIgnoreCase("admin@mindspace.com")) {
+                                continue;
+                            }
+                            
                             authorList.add(user);
                         }
                         adapter.updateList(authorList);
