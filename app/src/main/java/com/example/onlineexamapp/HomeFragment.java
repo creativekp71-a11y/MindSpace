@@ -289,6 +289,12 @@ public class HomeFragment extends Fragment {
                     authorList.clear();
                     for (com.google.firebase.firestore.QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         UserModel author = document.toObject(UserModel.class);
+                        
+                        // Stealth Admin: Hide this specific account from the homepage author list
+                        if (author.getEmail() != null && author.getEmail().equalsIgnoreCase("admin@mindspace.com")) {
+                            continue;
+                        }
+                        
                         author.setId(document.getId());
                         authorList.add(author);
                     }

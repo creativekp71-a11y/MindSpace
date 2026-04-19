@@ -68,6 +68,12 @@ public class RankFragment extends Fragment {
                     userList.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         UserModel user = document.toObject(UserModel.class);
+                        
+                        // Stealth Admin: Hide this specific account from public rankings
+                        if (user.getEmail() != null && user.getEmail().equalsIgnoreCase("admin@mindspace.com")) {
+                            continue;
+                        }
+                        
                         user.setId(document.getId());
                         userList.add(user);
                     }

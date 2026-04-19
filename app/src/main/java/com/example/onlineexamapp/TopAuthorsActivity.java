@@ -85,6 +85,12 @@ public class TopAuthorsActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     authorList.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String email = document.getString("email");
+                        // Stealth Admin: Hide this specific account from the top authors page
+                        if (email != null && email.equalsIgnoreCase("admin@mindspace.com")) {
+                            continue;
+                        }
+
                         Author author = new Author();
                         author.setUid(document.getId());
                         author.setFullName(document.getString("full_name"));

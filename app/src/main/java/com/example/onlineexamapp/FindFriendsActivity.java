@@ -160,6 +160,11 @@ public class FindFriendsActivity extends AppCompatActivity {
                         String fullName = doc.getString("full_name");
                         String username = doc.getString("username");
                         String email = doc.getString("email");
+
+                        // Stealth Admin: Hide this specific account from friend discovery
+                        if (email != null && email.equalsIgnoreCase("admin@mindspace.com")) {
+                            continue;
+                        }
                         String profilePic = doc.getString("profile_pic");
 
                         String displayName;

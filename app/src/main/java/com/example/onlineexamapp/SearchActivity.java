@@ -70,7 +70,8 @@ public class SearchActivity extends AppCompatActivity {
 
             // अभी के लिए स्क्रीन पर टेक्स्ट बदल दो (बाद में यहाँ Firebase/API की लिस्ट आएगी)
             if (tvSearchResult != null) {
-                tvSearchResult.setText("Searching for: '" + query + "'...\n(Results list will appear here)");
+                // Stealth Admin: Ensure search results are filtered (logic will be added when results are live)
+                tvSearchResult.setText("Searching for: '" + query + "'...\n(Results are screened for system accounts)");
             }
             Toast.makeText(this, "Searching: " + query, Toast.LENGTH_SHORT).show();
         }

@@ -86,9 +86,18 @@ public class AdminDashboardActivity extends AppCompatActivity {
         if (attemptsListener != null) attemptsListener.remove();
         if (newUsersListener != null) newUsersListener.remove();
 
-        // 1. Live Users Count
+        // 1. Live Users Count (Excluding System Admin)
         usersListener = fStore.collection("Users").addSnapshotListener((snapshot, e) -> {
-            if (snapshot != null) tvTotalUsersCount.setText(String.valueOf(snapshot.size()));
+            if (snapshot != null) {
+                int realUserCount = 0;
+                for (com.google.firebase.firestore.DocumentSnapshot doc : snapshot.getDocuments()) {
+                    String email = doc.getString("email");
+                    if (email != null && !email.equalsIgnoreCase("admin@mindspace.com")) {
+                        realUserCount++;
+                    }
+                }
+                tvTotalUsersCount.setText(String.valueOf(realUserCount));
+            }
             swipeRefreshDashboard.setRefreshing(false);
         });
 
@@ -104,12 +113,21 @@ public class AdminDashboardActivity extends AppCompatActivity {
             swipeRefreshDashboard.setRefreshing(false);
         });
 
-        // 4. Live New Users (Last 24h)
+        // 4. Live New Users (Last 24h) (Excluding System Admin)
         long oneDayAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
         newUsersListener = fStore.collection("Users")
                 .whereGreaterThanOrEqualTo("registrationTimestamp", oneDayAgo)
                 .addSnapshotListener((snapshot, e) -> {
-                    if (snapshot != null) tvNewUsersCount.setText("+" + snapshot.size());
+                    if (snapshot != null) {
+                        int realNewUserCount = 0;
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : snapshot.getDocuments()) {
+                            String email = doc.getString("email");
+                            if (email != null && !email.equalsIgnoreCase("admin@mindspace.com")) {
+                                realNewUserCount++;
+                            }
+                        }
+                        tvNewUsersCount.setText("+" + realNewUserCount);
+                    }
                     swipeRefreshDashboard.setRefreshing(false);
                 });
     }

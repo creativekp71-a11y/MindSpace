@@ -244,24 +244,57 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void createAdminDocument(String uid, String email) {
-        UserModel admin = new UserModel();
-        admin.setId(uid);
-        admin.setEmail(email);
-        admin.setFull_name("System Admin");
-        admin.setUsername("admin");
-        admin.setIsAuthor(true);
-        admin.setIsBlocked(false);
-        admin.setPoints(1000L);
-        admin.setCoins(1000L);
+        // Stop duplicates: Check if an admin document already exists for this email
+        fStore.collection("Users")
+                .whereEqualTo("email", email)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        // Admin exists! Check if we need to migrate to the new UID
+                        com.google.firebase.firestore.DocumentSnapshot existingDoc = querySnapshot.getDocuments().get(0);
+                        String oldId = existingDoc.getId();
+                        
+                        if (!oldId.equals(uid)) {
+                            // Migrate to new UID to maintain session consistency while avoiding duplicates
+                            UserModel adminData = existingDoc.toObject(UserModel.class);
+                            if (adminData != null) {
+                                adminData.setId(uid); // Update to current session ID
+                                fStore.collection("Users").document(uid).set(adminData);
+                                fStore.collection("Users").document(oldId).delete();
+                            }
+                        }
+                        
+                        // Proceed to dashboard
+                        startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
+                        finish();
+                    } else {
+                        // First time or document was deleted - Create fresh
+                        UserModel admin = new UserModel();
+                        admin.setId(uid);
+                        admin.setEmail(email);
+                        admin.setFull_name("System Admin");
+                        admin.setUsername("admin");
+                        admin.setIsAuthor(true);
+                        admin.setIsBlocked(false);
+                        admin.setPoints(1000L);
+                        admin.setCoins(1000L);
 
-        fStore.collection("Users").document(uid).set(admin).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
-                finish();
-            } else {
-                Toast.makeText(this, "Failed to initialize Admin document: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+                        fStore.collection("Users").document(uid).set(admin).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
+                                finish();
+                            } else {
+                                Toast.makeText(this, "Failed to initialize Admin document: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Fallback to dashboard even if check fails
+                    startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
+                    finish();
+                });
     }
 
     private void bindRememberedEmail() {
