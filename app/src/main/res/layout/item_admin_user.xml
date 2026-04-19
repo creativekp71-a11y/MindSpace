@@ -81,8 +81,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="10dp"
-            android:src="@drawable/ic_back"
-            android:rotation="0"
+            android:src="@drawable/ic_delete"
             app:tint="#D63031" />
 
         <ImageView
@@ -91,8 +90,7 @@
             android:layout_height="40dp"
             android:layout_marginStart="4dp"
             android:padding="10dp"
-            android:src="@drawable/ic_back"
-            android:rotation="0"
+            android:src="@drawable/ic_eye_closed_slash"
             app:tint="#00B894" />
 
     </LinearLayout>

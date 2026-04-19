@@ -45,11 +45,11 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
         // Handle Status Badges
         if (user.getIsBlocked()) {
             holder.tvBlockedBadge.setVisibility(View.VISIBLE);
-            holder.btnSuspend.setImageResource(R.drawable.ic_back); // Use a toggle icon if available
-            holder.btnSuspend.setColorFilter(android.graphics.Color.GRAY);
+            holder.btnSuspend.setImageResource(R.drawable.ic_eye_closed_slash);
+            holder.btnSuspend.setColorFilter(android.graphics.Color.parseColor("#D63031"));
         } else {
             holder.tvBlockedBadge.setVisibility(View.GONE);
-            holder.btnSuspend.setImageResource(R.drawable.ic_back);
+            holder.btnSuspend.setImageResource(R.drawable.ic_eye_closed_slash);
             holder.btnSuspend.setColorFilter(android.graphics.Color.parseColor("#00B894"));
         }
 
@@ -77,7 +77,12 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
                                         Toast.makeText(v.getContext(), "User deleted successfully", Toast.LENGTH_SHORT).show();
                                     }
                                 })
-                                .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                .addOnFailureListener(e -> {
+                                    String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
+                                    String email = (com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() != null) ? 
+                                            com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getEmail() : "Anonymous";
+                                    Toast.makeText(v.getContext(), "Delete Failed!\nUID: " + uid + "\nEmail: " + email + "\nError: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                });
                     })
                     .setNegativeButton("Cancel", null)
                     .show();

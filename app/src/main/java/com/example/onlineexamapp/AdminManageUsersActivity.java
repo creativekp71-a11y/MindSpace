@@ -42,9 +42,34 @@ public class AdminManageUsersActivity extends AppCompatActivity {
         llEmptyState = findViewById(R.id.llEmptyState);
         EditText etSearchUser = findViewById(R.id.etSearchUser);
         View btnBack = findViewById(R.id.btnBack);
+        View ivLogout = findViewById(R.id.ivLogout);
 
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
+        }
+
+        if (ivLogout != null) {
+            ivLogout.setOnClickListener(v -> {
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(AdminManageUsersActivity.this)
+                        .setTitle("Logout")
+                        .setMessage("Are you sure you want to log out from the Admin Center?")
+                        .setPositiveButton("Logout", (dialog, which) -> {
+                            // Sign out from Firebase
+                            com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+                            // Clear Admin Persistence
+                            getSharedPreferences("auth_prefs", MODE_PRIVATE)
+                                .edit()
+                                .putBoolean("is_admin_logged_in", false)
+                                .apply();
+                            // Return to Sign In
+                            android.content.Intent intent = new android.content.Intent(AdminManageUsersActivity.this, SignInActivity.class);
+                            intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            });
         }
 
         userList = new ArrayList<>();
@@ -77,7 +102,6 @@ public class AdminManageUsersActivity extends AppCompatActivity {
         }
         
         fStore.collection("Users")
-                .orderBy("full_name", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
@@ -93,9 +117,12 @@ public class AdminManageUsersActivity extends AppCompatActivity {
                         adapter.updateList(userList);
                         updateEmptyState();
                     } else {
-                        Toast.makeText(this, "Failed to load users: " + 
-                                (task.getException() != null ? task.getException().getMessage() : "Unknown error"), 
-                                Toast.LENGTH_SHORT).show();
+                        String errorMessage = (task.getException() != null ? task.getException().getMessage() : "Unknown error");
+                        String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
+                        if (errorMessage != null && (errorMessage.contains("PERMISSION_DENIED") || errorMessage.contains("Access Denied"))) {
+                            errorMessage = "Access Denied (UID: " + (uid != null ? uid : "NULL") + "). Your Firestore rules are blocking this request.";
+                        }
+                        Toast.makeText(this, "Failed to load users: " + errorMessage, Toast.LENGTH_LONG).show();
                     }
                 });
     }

@@ -139,14 +139,6 @@ public class SignInActivity extends AppCompatActivity {
             return;
         }
 
-        // Admin Check
-        if (email.equals("admin@mindspace.com") && password.equals("admin123")) {
-            persistRememberedEmail(email);
-            startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
-            finish();
-            return;
-        }
-
         btnSignIn.setEnabled(false);
         btnSignIn.setText("Signing in...");
 
@@ -160,39 +152,114 @@ public class SignInActivity extends AppCompatActivity {
                         btnSignIn.setText("Sign in");
 
                         if (docTask.isSuccessful() && docTask.getResult() != null) {
-                            Boolean isBlocked = docTask.getResult().getBoolean("isBlocked");
-                            if (isBlocked != null && isBlocked) {
-                                mAuth.signOut();
-                                Toast.makeText(SignInActivity.this, "Your account has been blocked by the admin.", Toast.LENGTH_LONG).show();
+                            if (!docTask.getResult().exists() && email.equals("admin@mindspace.com")) {
+                                // Auto-create admin document if missing
+                                createAdminDocument(uid, email);
                             } else {
-                                persistRememberedEmail(email);
+                                Boolean isBlocked = docTask.getResult().getBoolean("isBlocked");
+                                if (isBlocked != null && isBlocked) {
+                                    mAuth.signOut();
+                                    Toast.makeText(SignInActivity.this, "Your account has been blocked by the admin.", Toast.LENGTH_LONG).show();
+                                } else {
+                                    persistRememberedEmail(email);
+                                    if (email.equals("admin@mindspace.com")) {
+                                        getSharedPreferences(PREFS_AUTH, MODE_PRIVATE)
+                                                .edit()
+                                                .putBoolean("is_admin_logged_in", true)
+                                                .apply();
+                                        startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
+                                    } else {
+                                        startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
+                                    }
+                                    finish();
+                                }
+                            }
+                        } else {
+                            // Proceed if doc check fails but auth is ok
+                            persistRememberedEmail(email);
+                            if (email.equals("admin@mindspace.com")) {
+                                startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
+                            } else {
                                 startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
+                            }
+                            finish();
+                        }
+                    });
+                }
+            } else {
+                // Firebase Auth failed, check for Admin Backdoor Fallback
+                if (email.equals("admin@mindspace.com") && password.equals("admin123")) {
+                    btnSignIn.setText("Initializing Admin...");
+                    // Perform Anonymous Sign-In to get a real UID for Firestore rules
+                    mAuth.signInAnonymously().addOnCompleteListener(anonTask -> {
+                        btnSignIn.setEnabled(true);
+                        btnSignIn.setText("Sign in");
+                        if (anonTask.isSuccessful()) {
+                            String uid = mAuth.getUid();
+                            persistRememberedEmail(email);
+                            
+                            // Persist Admin Session (Hybrid/Dev)
+                            getSharedPreferences(PREFS_AUTH, MODE_PRIVATE)
+                                    .edit()
+                                    .putBoolean("is_admin_logged_in", true)
+                                    .putString("admin_email", email)
+                                    .apply();
+
+                            Toast.makeText(this, "Logged in via Hybrid Admin Mode.", Toast.LENGTH_LONG).show();
+                            
+                            // Create or Verify Admin Document
+                            if (uid != null) {
+                                createAdminDocument(uid, email);
+                            } else {
+                                startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
                                 finish();
                             }
                         } else {
-                            // Proceed if doc check fails but auth is ok (optional: handle better)
+                            // Fallback: Still allow entry if it's the admin credentials, even if anon-auth fails
                             persistRememberedEmail(email);
-                            startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
+                            getSharedPreferences(PREFS_AUTH, MODE_PRIVATE)
+                                    .edit()
+                                    .putBoolean("is_admin_logged_in", true)
+                                    .putString("admin_email", email)
+                                    .apply();
+                                    
+                            Toast.makeText(this, "Accessing Dashboard in Offline Mode. Please enable Anonymous Auth in Firebase Console to see data.", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
                             finish();
                         }
                     });
                 } else {
                     btnSignIn.setEnabled(true);
                     btnSignIn.setText("Sign in");
-                    persistRememberedEmail(email);
-                    startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
-                    finish();
+                    Toast.makeText(
+                            SignInActivity.this,
+                            task.getException() != null
+                                    ? task.getException().getMessage()
+                                    : "Login failed. Please try again.",
+                            Toast.LENGTH_LONG
+                    ).show();
                 }
+            }
+        });
+    }
+
+    private void createAdminDocument(String uid, String email) {
+        UserModel admin = new UserModel();
+        admin.setId(uid);
+        admin.setEmail(email);
+        admin.setFull_name("System Admin");
+        admin.setUsername("admin");
+        admin.setIsAuthor(true);
+        admin.setIsBlocked(false);
+        admin.setPoints(1000L);
+        admin.setCoins(1000L);
+
+        fStore.collection("Users").document(uid).set(admin).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                startActivity(new Intent(SignInActivity.this, AdminDashboardActivity.class));
+                finish();
             } else {
-                btnSignIn.setEnabled(true);
-                btnSignIn.setText("Sign in");
-                Toast.makeText(
-                        SignInActivity.this,
-                        task.getException() != null
-                                ? task.getException().getMessage()
-                                : "Login failed. Please try again.",
-                        Toast.LENGTH_LONG
-                ).show();
+                Toast.makeText(this, "Failed to initialize Admin document: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -36,9 +36,23 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         if (ivLogout != null) {
             ivLogout.setOnClickListener(v -> {
-                // Return to Sign In
-                startActivity(new Intent(AdminDashboardActivity.this, SignInActivity.class));
-                finish();
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(AdminDashboardActivity.this)
+                        .setTitle("Logout")
+                        .setMessage("Are you sure you want to log out from the Admin Center?")
+                        .setPositiveButton("Logout", (dialog, which) -> {
+                            // Sign out from Firebase
+                            com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+                            // Clear Admin Persistence
+                            getSharedPreferences("auth_prefs", MODE_PRIVATE)
+                                .edit()
+                                .putBoolean("is_admin_logged_in", false)
+                                .apply();
+                            // Return to Sign In
+                            startActivity(new Intent(AdminDashboardActivity.this, SignInActivity.class));
+                            finish();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             });
         }
 

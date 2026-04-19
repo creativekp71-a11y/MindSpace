@@ -85,10 +85,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        // Check if user is already signed in (non-null) and update UI accordingly.
+        
+        // 1. Check if regular/anonymous Firebase user is logged in
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            // Already logged in, go to Main Home
-            startActivity(new Intent(MainActivity.this, MainHomeActivity.class));
+            String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            boolean isHybridAdmin = getSharedPreferences("auth_prefs", MODE_PRIVATE)
+                    .getBoolean("is_admin_logged_in", false);
+
+            if ("admin@mindspace.com".equals(email) || isHybridAdmin) {
+                startActivity(new Intent(MainActivity.this, AdminDashboardActivity.class));
+            } else {
+                startActivity(new Intent(MainActivity.this, MainHomeActivity.class));
+            }
             finish();
         }
     }

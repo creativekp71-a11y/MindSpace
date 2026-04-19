@@ -44,6 +44,7 @@ public class MainHomeActivity extends AppCompatActivity {
     private boolean hasLoadedInitialNotifications;
     private FirebaseFirestore fStore;
     private String currentUid;
+    private ListenerRegistration accountStatusListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,12 +115,56 @@ public class MainHomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         startNotificationsListener();
+        startAccountStatusListener();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         stopNotificationsListener();
+        stopAccountStatusListener();
+    }
+
+    private void startAccountStatusListener() {
+        if (currentUid == null || accountStatusListener != null) return;
+
+        accountStatusListener = fStore.collection("Users").document(currentUid)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) return;
+                    if (value != null && value.exists()) {
+                        Boolean isBlocked = value.getBoolean("isBlocked");
+                        if (isBlocked != null && isBlocked) {
+                            handleAccountBlocked();
+                        }
+                    }
+                });
+    }
+
+    private void stopAccountStatusListener() {
+        if (accountStatusListener != null) {
+            accountStatusListener.remove();
+            accountStatusListener = null;
+        }
+    }
+
+    private void handleAccountBlocked() {
+        // Stop listeners first
+        stopAccountStatusListener();
+        stopNotificationsListener();
+
+        // Show Dialog then sign out
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("Account Suspended")
+                .setMessage("Your account has been blocked by the administrator. For more information, please contact support.")
+                .setCancelable(false)
+                .setPositiveButton("Logout", (dialog, which) -> {
+                    FirebaseAuth.getInstance().signOut();
+                    Intent intent = new Intent(MainHomeActivity.this, SignInActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .show();
     }
 
     private void configureStatusBar() {
