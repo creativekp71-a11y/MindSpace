@@ -1,5 +1,7 @@
 package com.example.onlineexamapp;
 
+import android.content.Intent;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,14 +55,36 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
             holder.btnSuspend.setColorFilter(android.graphics.Color.parseColor("#00B894"));
         }
 
+        // Handle User Status Badge
+        if (user.getIsAuthor() != null && user.getIsAuthor()) {
+            holder.tvUserStatus.setText("AUTHOR");
+            holder.tvUserStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#6C5CE7")));
+        } else {
+            holder.tvUserStatus.setText("MEMBER");
+            holder.tvUserStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#444444")));
+        }
+
+        // Handle Profile Picture (Base64)
         if (user.getProfile_pic() != null && !user.getProfile_pic().isEmpty()) {
-            Glide.with(holder.itemView.getContext())
-                    .load(user.getProfile_pic())
-                    .placeholder(R.drawable.ic_user_placeholder)
-                    .into(holder.ivUserAvatar);
+            try {
+                byte[] bytes = Base64.decode(user.getProfile_pic(), Base64.DEFAULT);
+                Glide.with(holder.itemView.getContext())
+                        .load(bytes)
+                        .placeholder(R.drawable.ic_user_placeholder)
+                        .into(holder.ivUserAvatar);
+            } catch (Exception e) {
+                holder.ivUserAvatar.setImageResource(R.drawable.ic_user_placeholder);
+            }
         } else {
             holder.ivUserAvatar.setImageResource(R.drawable.ic_user_placeholder);
         }
+
+        // Open Full Profile on click
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), AuthorProfileActivity.class);
+            intent.putExtra("authorUid", user.getId());
+            v.getContext().startActivity(intent);
+        });
 
         holder.btnDelete.setOnClickListener(v -> {
             new MaterialAlertDialogBuilder(v.getContext())

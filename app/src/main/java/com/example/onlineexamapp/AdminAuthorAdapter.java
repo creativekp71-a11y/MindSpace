@@ -1,5 +1,7 @@
 package com.example.onlineexamapp;
 
+import android.content.Intent;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,14 +50,27 @@ public class AdminAuthorAdapter extends RecyclerView.Adapter<AdminAuthorAdapter.
         holder.tvAuthorBadge.setText("OFFICIAL AUTHOR");
         holder.tvAuthorBadge.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#6C5CE7")));
 
+        // Handle Profile Picture (Base64)
         if (author.getProfile_pic() != null && !author.getProfile_pic().isEmpty()) {
-            Glide.with(holder.itemView.getContext())
-                    .load(author.getProfile_pic())
-                    .placeholder(R.drawable.ic_user_placeholder)
-                    .into(holder.ivUserAvatar);
+            try {
+                byte[] bytes = Base64.decode(author.getProfile_pic(), Base64.DEFAULT);
+                Glide.with(holder.itemView.getContext())
+                        .load(bytes)
+                        .placeholder(R.drawable.ic_user_placeholder)
+                        .into(holder.ivUserAvatar);
+            } catch (Exception e) {
+                holder.ivUserAvatar.setImageResource(R.drawable.ic_user_placeholder);
+            }
         } else {
             holder.ivUserAvatar.setImageResource(R.drawable.ic_user_placeholder);
         }
+
+        // Open Full Profile on click
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), AuthorProfileActivity.class);
+            intent.putExtra("authorUid", author.getId());
+            v.getContext().startActivity(intent);
+        });
 
         // Actions
         holder.btnDelete.setImageResource(R.drawable.ic_close); // Reuse for demote
