@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +21,12 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
 
     private List<UserModel> userList;
     private List<UserModel> fullList;
+    private FirebaseFirestore fStore;
 
     public AdminUserAdapter(List<UserModel> userList) {
         this.userList = userList;
         this.fullList = new ArrayList<>(userList);
+        this.fStore = FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -38,6 +42,17 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
         holder.tvUserName.setText(user.getFull_name());
         holder.tvUserEmail.setText(user.getEmail());
 
+        // Handle Status Badges
+        if (user.getIsBlocked()) {
+            holder.tvBlockedBadge.setVisibility(View.VISIBLE);
+            holder.btnSuspend.setImageResource(R.drawable.ic_back); // Use a toggle icon if available
+            holder.btnSuspend.setColorFilter(android.graphics.Color.GRAY);
+        } else {
+            holder.tvBlockedBadge.setVisibility(View.GONE);
+            holder.btnSuspend.setImageResource(R.drawable.ic_back);
+            holder.btnSuspend.setColorFilter(android.graphics.Color.parseColor("#00B894"));
+        }
+
         if (user.getProfile_pic() != null && !user.getProfile_pic().isEmpty()) {
             Glide.with(holder.itemView.getContext())
                     .load(user.getProfile_pic())
@@ -48,11 +63,45 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
         }
 
         holder.btnDelete.setOnClickListener(v -> {
-            Toast.makeText(v.getContext(), "Delete " + user.getFull_name(), Toast.LENGTH_SHORT).show();
+            new MaterialAlertDialogBuilder(v.getContext())
+                    .setTitle("Delete User")
+                    .setMessage("Are you sure you want to permanently delete " + user.getFull_name() + "? This action cannot be undone.")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        fStore.collection("Users").document(user.getId()).delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    int currentPos = userList.indexOf(user);
+                                    if (currentPos != -1) {
+                                        userList.remove(currentPos);
+                                        fullList.remove(user);
+                                        notifyItemRemoved(currentPos);
+                                        Toast.makeText(v.getContext(), "User deleted successfully", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
 
         holder.btnSuspend.setOnClickListener(v -> {
-            Toast.makeText(v.getContext(), "Suspend " + user.getFull_name(), Toast.LENGTH_SHORT).show();
+            boolean isBlocking = !user.getIsBlocked();
+            String title = isBlocking ? "Block User" : "Unblock User";
+            String message = isBlocking ? "Do you want to block " + user.getFull_name() + "?" : "Do you want to unblock " + user.getFull_name() + "?";
+
+            new MaterialAlertDialogBuilder(v.getContext())
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(isBlocking ? "Block" : "Unblock", (dialog, which) -> {
+                        fStore.collection("Users").document(user.getId()).update("isBlocked", isBlocking)
+                                .addOnSuccessListener(aVoid -> {
+                                    user.setIsBlocked(isBlocking);
+                                    notifyItemChanged(position);
+                                    Toast.makeText(v.getContext(), isBlocking ? "User blocked" : "User unblocked", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
     }
 
@@ -85,7 +134,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
         ImageView ivUserAvatar, btnDelete, btnSuspend;
-        TextView tvUserName, tvUserEmail, tvUserStatus;
+        TextView tvUserName, tvUserEmail, tvUserStatus, tvBlockedBadge;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,6 +144,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvUserEmail = itemView.findViewById(R.id.tvUserEmail);
             tvUserStatus = itemView.findViewById(R.id.tvUserStatus);
+            tvBlockedBadge = itemView.findViewById(R.id.tvBlockedBadge);
         }
     }
 }

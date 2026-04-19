@@ -5,15 +5,16 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ public class AdminManageUsersActivity extends AppCompatActivity {
     private List<UserModel> userList;
     private FirebaseFirestore fStore;
     private ProgressBar progressBar;
-    private EditText etSearchUser;
+    private SwipeRefreshLayout swipeRefreshUsers;
+    private View llEmptyState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +38,10 @@ public class AdminManageUsersActivity extends AppCompatActivity {
         fStore = FirebaseFirestore.getInstance();
         rvUsers = findViewById(R.id.rvUsers);
         progressBar = findViewById(R.id.progressBar);
-        etSearchUser = findViewById(R.id.etSearchUser);
-        ImageView btnBack = findViewById(R.id.btnBack);
+        swipeRefreshUsers = findViewById(R.id.swipeRefreshUsers);
+        llEmptyState = findViewById(R.id.llEmptyState);
+        EditText etSearchUser = findViewById(R.id.etSearchUser);
+        View btnBack = findViewById(R.id.btnBack);
 
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
@@ -50,6 +54,8 @@ public class AdminManageUsersActivity extends AppCompatActivity {
 
         loadUsers();
 
+        swipeRefreshUsers.setOnRefreshListener(this::loadUsers);
+
         etSearchUser.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -57,6 +63,7 @@ public class AdminManageUsersActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 adapter.filter(s.toString());
+                updateEmptyState();
             }
 
             @Override
@@ -65,21 +72,41 @@ public class AdminManageUsersActivity extends AppCompatActivity {
     }
 
     private void loadUsers() {
-        progressBar.setVisibility(View.VISIBLE);
+        if (!swipeRefreshUsers.isRefreshing()) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        
         fStore.collection("Users")
+                .orderBy("full_name", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
-                    if (task.isSuccessful()) {
+                    swipeRefreshUsers.setRefreshing(false);
+                    
+                    if (task.isSuccessful() && task.getResult() != null) {
                         userList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             UserModel user = document.toObject(UserModel.class);
+                            user.setId(document.getId());
                             userList.add(user);
                         }
                         adapter.updateList(userList);
+                        updateEmptyState();
                     } else {
-                        Toast.makeText(AdminManageUsersActivity.this, "Error loading users", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to load users: " + 
+                                (task.getException() != null ? task.getException().getMessage() : "Unknown error"), 
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    
+    private void updateEmptyState() {
+        if (adapter.getItemCount() == 0) {
+            llEmptyState.setVisibility(View.VISIBLE);
+            rvUsers.setVisibility(View.GONE);
+        } else {
+            llEmptyState.setVisibility(View.GONE);
+            rvUsers.setVisibility(View.VISIBLE);
+        }
     }
 }

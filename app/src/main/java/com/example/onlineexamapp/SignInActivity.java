@@ -151,14 +151,41 @@ public class SignInActivity extends AppCompatActivity {
         btnSignIn.setText("Signing in...");
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            btnSignIn.setEnabled(true);
-            btnSignIn.setText("Sign in");
-
             if (task.isSuccessful()) {
-                persistRememberedEmail(email);
-                startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
-                finish();
+                // Check if blocked in Firestore
+                String uid = mAuth.getUid();
+                if (uid != null) {
+                    fStore.collection("Users").document(uid).get().addOnCompleteListener(docTask -> {
+                        btnSignIn.setEnabled(true);
+                        btnSignIn.setText("Sign in");
+
+                        if (docTask.isSuccessful() && docTask.getResult() != null) {
+                            Boolean isBlocked = docTask.getResult().getBoolean("isBlocked");
+                            if (isBlocked != null && isBlocked) {
+                                mAuth.signOut();
+                                Toast.makeText(SignInActivity.this, "Your account has been blocked by the admin.", Toast.LENGTH_LONG).show();
+                            } else {
+                                persistRememberedEmail(email);
+                                startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
+                                finish();
+                            }
+                        } else {
+                            // Proceed if doc check fails but auth is ok (optional: handle better)
+                            persistRememberedEmail(email);
+                            startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
+                            finish();
+                        }
+                    });
+                } else {
+                    btnSignIn.setEnabled(true);
+                    btnSignIn.setText("Sign in");
+                    persistRememberedEmail(email);
+                    startActivity(new Intent(SignInActivity.this, MainHomeActivity.class));
+                    finish();
+                }
             } else {
+                btnSignIn.setEnabled(true);
+                btnSignIn.setText("Sign in");
                 Toast.makeText(
                         SignInActivity.this,
                         task.getException() != null

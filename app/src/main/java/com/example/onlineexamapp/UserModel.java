@@ -12,6 +12,7 @@ public class UserModel {
     private String cover_pic;
     private String bio;
     private Boolean isAuthor;
+    private Boolean isBlocked;
     private Long followersCount;
     private Long followingCount;
 
@@ -19,7 +20,7 @@ public class UserModel {
         // Required for Firestore
     }
 
-    public UserModel(String id, String full_name, String username, String email, Long points, Long coins, String rank, String profile_pic, String cover_pic, String bio, Boolean isAuthor, Long followersCount, Long followingCount) {
+    public UserModel(String id, String full_name, String username, String email, Long points, Long coins, String rank, String profile_pic, String cover_pic, String bio, Boolean isAuthor, Boolean isBlocked, Long followersCount, Long followingCount) {
         this.id = id;
         this.full_name = full_name;
         this.username = username;
@@ -31,6 +32,7 @@ public class UserModel {
         this.cover_pic = cover_pic;
         this.bio = bio;
         this.isAuthor = isAuthor;
+        this.isBlocked = isBlocked;
         this.followersCount = followersCount;
         this.followingCount = followingCount;
     }
@@ -73,4 +75,7 @@ public class UserModel {
 
     public Long getFollowingCount() { return followingCount; }
     public void setFollowingCount(Long followingCount) { this.followingCount = followingCount; }
+
+    public Boolean getIsBlocked() { return isBlocked != null && isBlocked; }
+    public void setIsBlocked(Boolean blocked) { isBlocked = blocked; }
 }
