@@ -15,12 +15,13 @@ public class UserModel {
     private Boolean isBlocked;
     private Long followersCount;
     private Long followingCount;
+    private Boolean isContentRestricted;
 
     public UserModel() {
         // Required for Firestore
     }
 
-    public UserModel(String id, String full_name, String username, String email, Long points, Long coins, String rank, String profile_pic, String cover_pic, String bio, Boolean isAuthor, Boolean isBlocked, Long followersCount, Long followingCount) {
+    public UserModel(String id, String full_name, String username, String email, Long points, Long coins, String rank, String profile_pic, String cover_pic, String bio, Boolean isAuthor, Boolean isBlocked, Long followersCount, Long followingCount, Boolean isContentRestricted) {
         this.id = id;
         this.full_name = full_name;
         this.username = username;
@@ -35,6 +36,7 @@ public class UserModel {
         this.isBlocked = isBlocked;
         this.followersCount = followersCount;
         this.followingCount = followingCount;
+        this.isContentRestricted = isContentRestricted;
     }
 
     public String getId() { return id; }
@@ -78,4 +80,7 @@ public class UserModel {
 
     public Boolean getIsBlocked() { return isBlocked != null && isBlocked; }
     public void setIsBlocked(Boolean blocked) { isBlocked = blocked; }
+
+    public Boolean getIsContentRestricted() { return isContentRestricted != null && isContentRestricted; }
+    public void setIsContentRestricted(Boolean contentRestricted) { isContentRestricted = contentRestricted; }
 }

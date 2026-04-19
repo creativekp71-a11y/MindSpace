@@ -45,7 +45,8 @@ public class AdminAuthorAdapter extends RecyclerView.Adapter<AdminAuthorAdapter.
         holder.tvUserEmail.setText(author.getEmail());
 
         // Status Badges
-        holder.tvBlockedBadge.setVisibility(author.getIsBlocked() ? View.VISIBLE : View.GONE);
+        holder.tvBlockedBadge.setVisibility(author.getIsContentRestricted() ? View.VISIBLE : View.GONE);
+        holder.tvBlockedBadge.setText("RESTRICTED");
         holder.tvAuthorBadge.setVisibility(View.VISIBLE);
         holder.tvAuthorBadge.setText("OFFICIAL AUTHOR");
         holder.tvAuthorBadge.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#6C5CE7")));
@@ -96,12 +97,12 @@ public class AdminAuthorAdapter extends RecyclerView.Adapter<AdminAuthorAdapter.
         });
 
         holder.btnSuspend.setOnClickListener(v -> {
-            boolean isBlocking = !author.getIsBlocked();
-            fStore.collection("Users").document(author.getId()).update("isBlocked", isBlocking)
+            boolean isRestricting = !author.getIsContentRestricted();
+            fStore.collection("Users").document(author.getId()).update("isContentRestricted", isRestricting)
                     .addOnSuccessListener(aVoid -> {
-                        author.setIsBlocked(isBlocking);
+                        author.setIsContentRestricted(isRestricting);
                         notifyItemChanged(position);
-                        Toast.makeText(v.getContext(), isBlocking ? "Author suspended" : "Author restored", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), isRestricting ? "Author posting restricted" : "Author listing restored", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });

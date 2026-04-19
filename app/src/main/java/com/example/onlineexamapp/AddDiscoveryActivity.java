@@ -152,14 +152,25 @@ public class AddDiscoveryActivity extends AppCompatActivity {
         if (uid == null) return;
 
         fStore.collection("Users").document(uid).get().addOnSuccessListener(doc -> {
+            boolean restricted = doc.getBoolean("isContentRestricted") != null && doc.getBoolean("isContentRestricted");
+            
             if (doc.exists()) {
                 Boolean isAuthor = doc.getBoolean("isAuthor");
                 if (isAuthor != null && isAuthor) {
                     switchAuthor.setChecked(true);
-                    setAuthorMode(true);
+                    
+                    if (restricted) {
+                        setAuthorMode(false);
+                        Toast.makeText(this, "Your posting privileges have been restricted by the administrator.", Toast.LENGTH_LONG).show();
+                    } else {
+                        setAuthorMode(true);
+                    }
                 } else {
                     switchAuthor.setChecked(false);
                     setAuthorMode(false);
+                    if (restricted) {
+                        Toast.makeText(this, "A restricted account cannot apply for Author status.", Toast.LENGTH_LONG).show();
+                    }
                 }
             } else {
                 switchAuthor.setChecked(false);
