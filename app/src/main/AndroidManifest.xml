@@ -50,15 +50,31 @@
             android:exported="false" />
 
         <activity
+            android:name=".AdminManageQuizzesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".AdminManageAuthorsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".AdminManageUsersActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".OtpVerificationActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".SignUpActivity"
             android:exported="false" />
 
         <activity
             android:name=".SignInActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".OtpVerificationActivity"
             android:exported="false" />
 
         <activity
@@ -100,8 +116,6 @@
             android:name="com.canhub.cropper.CropImageActivity"
             android:theme="@style/Theme.Cropper" />
 
-        <activity android:name=".AdminDashboardActivity" />
-        <activity android:name=".AdminManageUsersActivity" />
         <activity android:name=".SocialListActivity" />
         <activity android:name=".UserDiscoveriesActivity" />
 

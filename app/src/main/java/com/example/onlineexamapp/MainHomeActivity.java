@@ -49,6 +49,15 @@ public class MainHomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Failsafe: Redirect admin to dashboard if they accidentally land here
+        boolean isAdmin = getSharedPreferences("auth_prefs", MODE_PRIVATE).getBoolean("is_admin_logged_in", false);
+        if (isAdmin) {
+            startActivity(new Intent(this, AdminDashboardActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main_home);
         configureStatusBar();
         AppNotificationHelper.ensureChannel(this);

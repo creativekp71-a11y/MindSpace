@@ -99,6 +99,7 @@
 
                     <!-- Quizzes Count Card -->
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTotalQuizzes"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_rowWeight="1"
@@ -135,6 +136,7 @@
 
                     <!-- Verified Card -->
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardVerifiedQuizzes"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_rowWeight="1"
@@ -169,8 +171,9 @@
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Pending Card -->
+                    <!-- Pending Review Card -->
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardPendingReview"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_rowWeight="1"
@@ -190,7 +193,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
-                                android:textColor="#FDCB6E"
+                                android:textColor="#FF9F43"
                                 android:textSize="26sp"
                                 android:textStyle="bold" />
 
@@ -205,8 +208,9 @@
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Total Users Card -->
+                    <!-- Total Members Card -->
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTotalMembers"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_rowWeight="1"
@@ -319,6 +323,7 @@
 
                 <!-- Broadcast Row -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBroadcast"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -370,6 +375,7 @@
 
                 <!-- Platform Reports -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardHealthReports"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -402,19 +408,20 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tvReportsTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Platform Health Reports"
-                                android:textColor="#2D3436"
-                                android:textSize="15sp"
+                                android:text="Official Author Management"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="View reported content and tickets"
-                                android:textColor="#636E72"
-                                android:textSize="12sp" />
+                                android:text="Verify, Promote or Demote contributors"
+                                android:textColor="#9E9E9E"
+                                android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>

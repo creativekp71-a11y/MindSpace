@@ -137,8 +137,14 @@ public class AddDiscoveryActivity extends AppCompatActivity {
             saveToFirestore(title, cat);
         });
 
-        // Setup Bottom Navigation
-        setupBottomNavigation();
+        // Setup Bottom Navigation - HIDE IF ADMIN
+        boolean isAdmin = getSharedPreferences("auth_prefs", MODE_PRIVATE).getBoolean("is_admin_logged_in", false);
+        View bottomNav = findViewById(R.id.bottomNavBar);
+        if (isAdmin) {
+            if (bottomNav != null) bottomNav.setVisibility(View.GONE);
+        } else {
+            setupBottomNavigation();
+        }
     }
 
     private void checkAuthorStatus() {

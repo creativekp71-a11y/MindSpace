@@ -309,9 +309,14 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(android.view.View v) {
                 dialog.dismiss();
 
-                android.content.Intent intent =
-                        new android.content.Intent(QuizActivity.this, MainHomeActivity.class);
-                intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, "DISCOVER");
+                boolean isAdmin = getSharedPreferences("auth_prefs", MODE_PRIVATE).getBoolean("is_admin_logged_in", false);
+                Class<?> targetClass = isAdmin ? AdminDashboardActivity.class : MainHomeActivity.class;
+
+                android.content.Intent intent = new android.content.Intent(QuizActivity.this, targetClass);
+                if (!isAdmin) {
+                    intent.putExtra(MainHomeActivity.EXTRA_OPEN_TAB, "DISCOVER");
+                }
+                
                 intent.addFlags(
                         android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                 android.content.Intent.FLAG_ACTIVITY_NEW_TASK
