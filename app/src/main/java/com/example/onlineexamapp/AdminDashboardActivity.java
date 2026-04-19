@@ -15,7 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class AdminDashboardActivity extends AppCompatActivity {
 
     private FirebaseFirestore fStore;
-    private TextView tvTotalQuizzesCount, tvVerifiedQuizzesCount, tvPendingAppsCount, tvTotalUsersCount;
+    private TextView tvTotalQuizzesCount, tvTotalUsersCount;
     private SwipeRefreshLayout swipeRefreshDashboard;
 
     @Override
@@ -26,8 +26,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         fStore = FirebaseFirestore.getInstance();
 
         tvTotalQuizzesCount = findViewById(R.id.tvTotalQuizzesCount);
-        tvVerifiedQuizzesCount = findViewById(R.id.tvVerifiedQuizzesCount);
-        tvPendingAppsCount = findViewById(R.id.tvPendingAppsCount);
         tvTotalUsersCount = findViewById(R.id.tvTotalUsersCount);
         swipeRefreshDashboard = findViewById(R.id.swipeRefreshDashboard);
 
@@ -68,10 +66,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 int count = task.getResult().size();
                 tvTotalQuizzesCount.setText(String.valueOf(count));
-                
-                // MOCK Verified/Pending until a status field is added
-                tvVerifiedQuizzesCount.setText(String.valueOf((int)(count * 0.8)));
-                tvPendingAppsCount.setText(String.valueOf((int)(count * 0.2)));
             } else {
                 String error = task.getException() != null ? task.getException().getMessage() : "Unknown";
                 Toast.makeText(this, "Quizzes fetch error: " + error, Toast.LENGTH_SHORT).show();
@@ -84,11 +78,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
         View ivLogout = findViewById(R.id.ivLogout);
         View cardUsers = findViewById(R.id.cardManageUsers);
         View cardQuizzes = findViewById(R.id.cardTotalQuizzes);
-        View cardVerified = findViewById(R.id.cardVerifiedQuizzes);
-        View cardPending = findViewById(R.id.cardPendingReview);
         View cardMembers = findViewById(R.id.cardTotalMembers);
         View cardReports = findViewById(R.id.cardHealthReports);
-        View cardBroadcast = findViewById(R.id.cardBroadcast);
 
         if (ivLogout != null) {
             ivLogout.setOnClickListener(v -> {
@@ -116,20 +107,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
             cardQuizzes.setOnClickListener(v -> startActivity(new Intent(this, AdminManageQuizzesActivity.class)));
         }
 
-        if (cardVerified != null) {
-            cardVerified.setOnClickListener(v -> Toast.makeText(this, "Verified Content List - Coming Soon!", Toast.LENGTH_SHORT).show());
-        }
-
-        if (cardPending != null) {
-            cardPending.setOnClickListener(v -> Toast.makeText(this, "Content Review Queue - Coming Soon!", Toast.LENGTH_SHORT).show());
-        }
-
         if (cardReports != null) {
             cardReports.setOnClickListener(v -> startActivity(new Intent(this, AdminManageAuthorsActivity.class)));
-        }
-
-        if (cardBroadcast != null) {
-            cardBroadcast.setOnClickListener(v -> Toast.makeText(this, "Broadcast feature coming soon!", Toast.LENGTH_SHORT).show());
         }
 
         if (cardMembers != null) {

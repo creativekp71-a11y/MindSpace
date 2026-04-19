@@ -104,7 +104,7 @@
                     android:layout_marginTop="-60dp"
                     android:layout_marginEnd="16dp"
                     android:columnCount="2"
-                    android:rowCount="2">
+                    android:rowCount="1">
 
                     <!-- Quizzes Card -->
                     <com.google.android.material.card.MaterialCardView
@@ -156,118 +156,6 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/tvTotalQuizzesCount"
                                 android:text="Total Quizzes"
-                                android:textColor="#636E72"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                        </RelativeLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Verified Card -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardVerifiedQuizzes"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_rowWeight="1"
-                        android:layout_columnWeight="1"
-                        android:layout_margin="8dp"
-                        app:cardCornerRadius="24dp"
-                        app:cardElevation="2dp"
-                        app:strokeColor="#1A000000"
-                        app:strokeWidth="1dp">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="16dp">
-
-                            <View
-                                android:id="@+id/bgIconVerified"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_alignParentEnd="true"
-                                android:background="@drawable/bg_icon_circle_emerald_soft" />
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_alignStart="@id/bgIconVerified"
-                                android:layout_alignTop="@id/bgIconVerified"
-                                android:layout_alignEnd="@id/bgIconVerified"
-                                android:layout_alignBottom="@id/bgIconVerified"
-                                android:src="@drawable/ic_check_green"
-                                app:tint="#00B894" />
-
-                            <TextView
-                                android:id="@+id/tvVerifiedQuizzesCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="0"
-                                android:textColor="#2D3436"
-                                android:textSize="28sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/tvVerifiedQuizzesCount"
-                                android:text="Verified Quizzes"
-                                android:textColor="#636E72"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                        </RelativeLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Pending Card -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardPendingReview"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_rowWeight="1"
-                        android:layout_columnWeight="1"
-                        android:layout_margin="8dp"
-                        app:cardCornerRadius="24dp"
-                        app:cardElevation="2dp"
-                        app:strokeColor="#1A000000"
-                        app:strokeWidth="1dp">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="16dp">
-
-                            <View
-                                android:id="@+id/bgIconPending"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_alignParentEnd="true"
-                                android:background="@drawable/bg_icon_circle_amber_soft" />
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_alignStart="@id/bgIconPending"
-                                android:layout_alignTop="@id/bgIconPending"
-                                android:layout_alignEnd="@id/bgIconPending"
-                                android:layout_alignBottom="@id/bgIconPending"
-                                android:src="@drawable/ic_calendar"
-                                app:tint="#FF9F43" />
-
-                            <TextView
-                                android:id="@+id/tvPendingAppsCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="0"
-                                android:textColor="#2D3436"
-                                android:textSize="28sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/tvPendingAppsCount"
-                                android:text="Pending App"
                                 android:textColor="#636E72"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
