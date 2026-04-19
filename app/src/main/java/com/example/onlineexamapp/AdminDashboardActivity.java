@@ -83,6 +83,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 int count = task.getResult().size();
                 tvTotalUsersCount.setText(String.valueOf(count));
+            } else {
+                String error = task.getException() != null ? task.getException().getMessage() : "Unknown";
+                Toast.makeText(this, "Failed to fetch users: " + error, Toast.LENGTH_SHORT).show();
             }
             checkRefreshComplete();
         });
@@ -96,6 +99,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 // MOCK Verified/Pending until a status field is added
                 tvVerifiedQuizzesCount.setText(String.valueOf((int)(count * 0.8)));
                 tvPendingAppsCount.setText(String.valueOf((int)(count * 0.2)));
+            } else {
+                String error = task.getException() != null ? task.getException().getMessage() : "Unknown";
+                Toast.makeText(this, "Failed to fetch quizzes: " + error, Toast.LENGTH_SHORT).show();
             }
             checkRefreshComplete();
         });
