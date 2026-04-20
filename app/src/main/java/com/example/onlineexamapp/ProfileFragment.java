@@ -83,9 +83,18 @@ public class ProfileFragment extends Fragment {
                 startActivity(new Intent(getActivity(), SettingsActivity.class)));
 
         view.findViewById(R.id.tvMenuLogout).setOnClickListener(v -> {
-            mAuth.signOut();
-            startActivity(new Intent(getActivity(), SignInActivity.class));
-            requireActivity().finish();
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext(), R.style.Theme_OnlineExamApp_Dialog_Rounded)
+                    .setTitle("Confirm Logout")
+                    .setMessage("Are you sure you want to logout?")
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        mAuth.signOut();
+                        Intent intent = new Intent(getActivity(), SignInActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    })
+                    .show();
         });
         view.findViewById(R.id.tvMenuAchievements).setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), AchievementsActivity.class)));

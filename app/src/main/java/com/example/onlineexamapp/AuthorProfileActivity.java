@@ -35,7 +35,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
 
     private ImageView ivCover, ivAvatar;
     private TextView tvFullName, tvUsername, tvBio;
-    private TextView tvFollowers, tvFollowing, tvDiscoveries, tvPoints, tvRank;
+    private TextView tvFollowers, tvFollowing, tvDiscoveries, tvPoints, tvRank, tvReportUser;
     private TextView tvMessageHint;
     private AppCompatButton btnFollow, btnMessage;
     private RecyclerView rvDiscoveries;
@@ -164,6 +164,9 @@ public class AuthorProfileActivity extends AppCompatActivity {
         btnFollow = findViewById(R.id.btnAuthorFollow);
         btnMessage = findViewById(R.id.btnAuthorMessage);
         tvMessageHint = findViewById(R.id.tvMessagePermissionHint);
+        tvReportUser = findViewById(R.id.tvReportUser);
+
+        tvReportUser.setOnClickListener(v -> showUserReportDialog());
 
         rvDiscoveries = findViewById(R.id.rvAuthorDiscoveries);
         rvDiscoveries.setLayoutManager(new LinearLayoutManager(this));
@@ -177,6 +180,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
         
         if (isAdmin || authorUid.equals(currentUserId)) {
             btnFollow.setVisibility(View.GONE);
+            tvReportUser.setVisibility(View.GONE);
         }
     }
 

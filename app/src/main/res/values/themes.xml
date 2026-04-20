@@ -46,4 +46,16 @@
         <item name="shimmer_auto_start">true</item>
         <item name="shimmer_repeat_delay">100</item>
     </style>
+
+    <!-- Rounded Dialog Style -->
+    <style name="Theme.OnlineExamApp.Dialog.Rounded" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="shapeAppearanceOverlay">@style/RoundedDialogShape</item>
+        <item name="colorPrimary">#6C5CE7</item>
+        <item name="colorAccent">#6C5CE7</item>
+    </style>
+
+    <style name="RoundedDialogShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
 </resources>
