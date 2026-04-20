@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import androidx.core.content.ContextCompat;
 import java.util.List;
 
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.ViewHolder> {
@@ -59,11 +60,15 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
             holder.ivProfile.setImageResource(R.drawable.ic_user_placeholder);
         }
 
-        // Highlight Top 3
-        if (position == 0) holder.tvRank.setTextColor(android.graphics.Color.parseColor("#FFD700")); // Gold
-        else if (position == 1) holder.tvRank.setTextColor(android.graphics.Color.parseColor("#C0C0C0")); // Silver
-        else if (position == 2) holder.tvRank.setTextColor(android.graphics.Color.parseColor("#CD7F32")); // Bronze
-        else holder.tvRank.setTextColor(android.graphics.Color.parseColor("#2F3640"));
+        // Dynamic Rank Coloring (Top 10 Highlighting)
+        int colorResId;
+        if (position == 0) colorResId = R.color.rank_gold;
+        else if (position == 1) colorResId = R.color.rank_silver;
+        else if (position == 2) colorResId = R.color.rank_bronze;
+        else if (position < 10) colorResId = R.color.rank_top_10;
+        else colorResId = R.color.rank_default;
+        
+        holder.tvRank.setTextColor(ContextCompat.getColor(context, colorResId));
 
         // Click on item to open User Profile
         holder.itemView.setOnClickListener(v -> {

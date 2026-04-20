@@ -23,4 +23,11 @@
     <color name="edit_profile_text_color">#000000</color>
     <color name="edit_profile_hint_color">#808080</color>
     <color name="reportTextColor">#000000</color>
+    
+    <!-- Rank Colors (Light Mode) -->
+    <color name="rank_gold">#FFD700</color>
+    <color name="rank_silver">#A0A0A0</color>
+    <color name="rank_bronze">#CD7F32</color>
+    <color name="rank_top_10">#6C5CE7</color>
+    <color name="rank_default">#2F3640</color>
 </resources>
