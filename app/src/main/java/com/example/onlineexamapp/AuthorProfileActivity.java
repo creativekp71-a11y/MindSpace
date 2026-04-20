@@ -184,7 +184,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
         android.content.SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
         boolean isAdmin = prefs.getBoolean("is_admin_logged_in", false);
         
-        if (isAdmin || authorUid.equals(currentUserId)) {
+        if (authorUid.equals(currentUserId)) {
             btnFollow.setVisibility(View.GONE);
             tvReportUser.setVisibility(View.GONE);
         }

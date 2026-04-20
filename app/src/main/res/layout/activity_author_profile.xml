@@ -116,7 +116,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:navigationIcon="@drawable/ic_back" />
+                app:navigationIcon="@drawable/ic_back"
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -359,7 +360,6 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="48dp"
                 android:layout_marginBottom="24dp"
-                android:alpha="0.4"
                 android:background="?android:attr/selectableItemBackground"
                 android:padding="8dp"
                 android:text="Report User"
