@@ -124,6 +124,11 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         Map<String, Integer> quizTally = new HashMap<>();
 
         for (QuizAttemptModel attempt : attempts) {
+            // Skip System Admin from Unique Players and Total Engagement
+            if ("System Admin".equalsIgnoreCase(attempt.getUserName())) {
+                totalPlays--;
+                continue;
+            }
             totalCorrect += attempt.getScore();
             totalQuestions += attempt.getTotalQuestions();
             uniqueUsers.add(attempt.getUserId());
@@ -194,7 +199,11 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         Map<String, Integer> authorTally = new HashMap<>();
         for (DocumentSnapshot doc : documents) {
             String authorId = doc.getString("authorId");
+            String authorName = doc.getString("authorName"); // Added check for name if available
+            
             if (authorId != null) {
+                // Pre-filter System Admin if possible
+                if ("System Admin".equalsIgnoreCase(authorName)) continue;
                 authorTally.put(authorId, authorTally.getOrDefault(authorId, 0) + 1);
             }
         }
@@ -216,12 +225,15 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         for (int i = 0; i < limit; i++) {
             String aid = list.get(i).getKey();
             fStore.collection("Users").document(aid).get().addOnSuccessListener(userDoc -> {
+                // Resolve names for top 5 authors
                 String name = userDoc.getString("full_name");
+                String email = userDoc.getString("email");
                 Boolean isAdmin = userDoc.getBoolean("isAdmin");
                 
-                // Skip System Admin or anyone with the Admin flag
-                if ("System Admin".equalsIgnoreCase(name) || (isAdmin != null && isAdmin)) {
-                    // Do not add to the resolved names map
+                // Skip System Admin or anyone with the Admin email/flag
+                if ("System Admin".equalsIgnoreCase(name) || "admin@mindspace.com".equalsIgnoreCase(email) || (isAdmin != null && isAdmin)) {
+                    // Remove from tally if it was added before verification
+                    authorTally.remove(aid);
                 } else {
                     resolvedNames.put(aid, name != null ? name : "Anonymous");
                 }

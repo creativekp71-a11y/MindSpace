@@ -155,8 +155,20 @@ public class ProfileFragment extends Fragment {
                             .get()
                             .addOnSuccessListener(snap -> {
                                 if (isAdded()) {
-                                    int rank = snap.size() + 1;
-                                    tvRank.setText(String.valueOf(rank));
+                                    int higherNonAdminCount = 0;
+                                    for (com.google.firebase.firestore.DocumentSnapshot d : snap.getDocuments()) {
+                                        String email = d.getString("email");
+                                        String name = d.getString("full_name");
+                                        Boolean isAdmin = d.getBoolean("isAdmin");
+                                        
+                                        if ("admin@mindspace.com".equalsIgnoreCase(email) 
+                                            || "System Admin".equalsIgnoreCase(name)
+                                            || (isAdmin != null && isAdmin)) {
+                                            continue;
+                                        }
+                                        higherNonAdminCount++;
+                                    }
+                                    tvRank.setText(String.valueOf(higherNonAdminCount + 1));
                                 }
                             });
 

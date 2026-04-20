@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +42,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
     private RecyclerView rvDiscoveries;
     private DiscoveryAdapter adapter;
     private List<DiscoveryActivityModel> discoveryList;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +95,12 @@ public class AuthorProfileActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         if (authorUid != null && !authorUid.equals(currentUserId)) {
-            menu.add(0, 101, 0, "Report User")
-                .setIcon(R.drawable.ic_notification)
-                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_NEVER);
+            android.view.MenuItem reportItem = menu.add(0, 101, 0, "Report User")
+                .setIcon(R.drawable.ic_notification);
+            reportItem.setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_NEVER);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                reportItem.setTooltipText("Report this user for violations");
+            }
         }
         return true;
     }
@@ -143,7 +148,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
     }
 
     private void initUI() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -167,6 +172,7 @@ public class AuthorProfileActivity extends AppCompatActivity {
         tvReportUser = findViewById(R.id.tvReportUser);
 
         tvReportUser.setOnClickListener(v -> showUserReportDialog());
+        TooltipCompat.setTooltipText(tvReportUser, "Report this user for violations");
 
         rvDiscoveries = findViewById(R.id.rvAuthorDiscoveries);
         rvDiscoveries.setLayoutManager(new LinearLayoutManager(this));
@@ -211,8 +217,20 @@ public class AuthorProfileActivity extends AppCompatActivity {
                             .whereGreaterThan("points", Math.max(0, points != null ? points : 0))
                             .get()
                             .addOnSuccessListener(snap -> {
-                                int r = snap.size() + 1;
-                                tvRank.setText(String.valueOf(r));
+                                int higherNonAdminCount = 0;
+                                for (com.google.firebase.firestore.DocumentSnapshot d : snap.getDocuments()) {
+                                    String email = d.getString("email");
+                                    String name = d.getString("full_name");
+                                    Boolean isAdmin = d.getBoolean("isAdmin");
+                                    
+                                    if ("admin@mindspace.com".equalsIgnoreCase(email) 
+                                        || "System Admin".equalsIgnoreCase(name)
+                                        || (isAdmin != null && isAdmin)) {
+                                        continue;
+                                    }
+                                    higherNonAdminCount++;
+                                }
+                                tvRank.setText(String.valueOf(higherNonAdminCount + 1));
                             });
                 } else {
                     tvRank.setText("--");

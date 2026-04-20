@@ -69,8 +69,14 @@ public class RankFragment extends Fragment {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         UserModel user = document.toObject(UserModel.class);
                         
-                        // Stealth Admin: Hide this specific account from public rankings
-                        if (user.getEmail() != null && user.getEmail().equalsIgnoreCase("admin@mindspace.com")) {
+                        // Stealth Admin: Hide all accounts identified as administrative from public rankings
+                        String email = user.getEmail();
+                        String name = user.getFull_name();
+                        Boolean isAdmin = document.getBoolean("isAdmin");
+
+                        if ((email != null && email.equalsIgnoreCase("admin@mindspace.com"))
+                            || "System Admin".equalsIgnoreCase(name)
+                            || (isAdmin != null && isAdmin)) {
                             continue;
                         }
                         
