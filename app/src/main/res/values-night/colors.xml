@@ -15,5 +15,5 @@
     <color name="received_text_color">#FFFFFF</color>
     <color name="edit_profile_text_color">#6C63FF</color>
     <color name="edit_profile_hint_color">#AAAAAA</color>
-    <color name="reportTextColor">#FF6B6B</color>
+    <color name="reportTextColor">#FFFFFF</color>
 </resources>
