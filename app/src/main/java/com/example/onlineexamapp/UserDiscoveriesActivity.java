@@ -12,7 +12,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDiscoveriesActivity extends AppCompatActivity {
+public class UserDiscoveriesActivity extends BaseActivity {
 
     private RecyclerView rvDiscoveries;
     private DiscoveryAdapter adapter;

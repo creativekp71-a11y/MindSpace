@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AdminAnalyticsActivity extends AppCompatActivity {
+public class AdminAnalyticsActivity extends BaseActivity {
 
     private FirebaseFirestore fStore;
     private TextView tvTotalPlays, tvAvgScore, tvUniquePlayers;

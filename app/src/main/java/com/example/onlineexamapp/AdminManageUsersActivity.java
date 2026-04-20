@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AdminManageUsersActivity extends AppCompatActivity {
+public class AdminManageUsersActivity extends BaseActivity {
 
     private RecyclerView rvUsers;
     private AdminUserAdapter adapter;

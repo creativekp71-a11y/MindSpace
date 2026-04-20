@@ -7,7 +7,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-public class DescribeWorkplaceActivity extends AppCompatActivity {
+public class DescribeWorkplaceActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

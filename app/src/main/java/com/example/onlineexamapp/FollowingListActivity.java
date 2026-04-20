@@ -16,7 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FollowingListActivity extends AppCompatActivity {
+public class FollowingListActivity extends BaseActivity {
 
     private RecyclerView rvFollowing;
     private AuthorAdapter adapter;

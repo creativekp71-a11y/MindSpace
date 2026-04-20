@@ -18,7 +18,7 @@ import com.google.firebase.firestore.WriteBatch;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AdminBroadcastActivity extends AppCompatActivity {
+public class AdminBroadcastActivity extends BaseActivity {
 
     private EditText etTitle, etMessage;
     private AppCompatButton btnSend;

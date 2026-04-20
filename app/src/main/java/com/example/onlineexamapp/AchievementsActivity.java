@@ -17,7 +17,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import android.view.View;
 import android.widget.ScrollView;
 
-public class AchievementsActivity extends AppCompatActivity {
+public class AchievementsActivity extends BaseActivity {
 
     private ImageView ivBackAchievements;
 

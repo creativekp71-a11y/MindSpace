@@ -27,7 +27,7 @@ import com.google.firebase.firestore.Query;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MainHomeActivity extends AppCompatActivity {
+public class MainHomeActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_TAB = "extra_open_tab";
     public static final String TAB_NOTIFICATIONS = "NOTIFICATIONS";

@@ -135,7 +135,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/ic_fd11"
+                            android:src="@drawable/ic_camera"
                             app:tint="#6C5CE7" />
 
                         <TextView

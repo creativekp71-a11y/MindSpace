@@ -104,7 +104,7 @@ public class ProfileFragment extends Fragment {
             String shareText = "📱 MindSpace Quiz App\n\n"
                     + "Hey! Try my app made for a college project.\n"
                     + "Download the APK from here:\n"
-                    + "https://drive.google.com/file/d/1pwyLyBBJw3rjpffOcvoWWUUOkM1-IheX/view?usp=sharing"
+                    + "https://drive.google.com/file/d/1ZdDu-hC4uGPqIPC44IaIgWd-F0HxqnGX/view?usp=sharing"
                     + "Install it and enjoy the quiz app 🎯";
 
             Intent shareIntent = new Intent(Intent.ACTION_SEND);

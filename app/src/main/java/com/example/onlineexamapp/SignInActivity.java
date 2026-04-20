@@ -20,7 +20,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 
-public class SignInActivity extends AppCompatActivity {
+public class SignInActivity extends BaseActivity {
 
     private static final String PREFS_AUTH = "auth_prefs";
     private static final String KEY_REMEMBERED_EMAIL = "remembered_email";

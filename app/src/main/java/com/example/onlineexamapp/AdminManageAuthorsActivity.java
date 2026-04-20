@@ -19,7 +19,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminManageAuthorsActivity extends AppCompatActivity {
+public class AdminManageAuthorsActivity extends BaseActivity {
 
     private RecyclerView rvAuthors;
     private AdminAuthorAdapter adapter;

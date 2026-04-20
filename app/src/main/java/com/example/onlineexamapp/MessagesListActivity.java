@@ -17,7 +17,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessagesListActivity extends AppCompatActivity {
+public class MessagesListActivity extends BaseActivity {
 
     private RecyclerView rvMessagesList;
     private LinearLayout layoutEmptyChats, layoutNoResults;

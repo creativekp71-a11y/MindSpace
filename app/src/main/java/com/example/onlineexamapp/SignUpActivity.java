@@ -19,7 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends BaseActivity {
 
     public static final String EXTRA_FULL_NAME = "extra_full_name";
     public static final String EXTRA_DOB = "extra_dob";

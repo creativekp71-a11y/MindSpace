@@ -20,7 +20,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminManageQuizzesActivity extends AppCompatActivity {
+public class AdminManageQuizzesActivity extends BaseActivity {
 
     private RecyclerView rvQuizzes;
     private AdminDiscoveryAdapter adapter;

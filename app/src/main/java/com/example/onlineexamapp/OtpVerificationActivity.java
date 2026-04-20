@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class OtpVerificationActivity extends AppCompatActivity {
+public class OtpVerificationActivity extends BaseActivity {
 
     private EditText otp1, otp2, otp3, otp4;
 

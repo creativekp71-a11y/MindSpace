@@ -17,7 +17,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminManageReportsActivity extends AppCompatActivity {
+public class AdminManageReportsActivity extends BaseActivity {
 
     private RecyclerView rvReports;
     private AdminReportAdapter adapter;

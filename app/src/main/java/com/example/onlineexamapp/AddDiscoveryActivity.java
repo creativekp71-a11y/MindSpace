@@ -34,7 +34,7 @@ import android.view.WindowManager;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-public class AddDiscoveryActivity extends AppCompatActivity {
+public class AddDiscoveryActivity extends BaseActivity {
 
     private EditText etTitle, etCategory;
     private TextView tvQuestionCount;

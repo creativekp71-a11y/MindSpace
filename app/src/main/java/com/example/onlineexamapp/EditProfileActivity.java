@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditProfileActivity extends AppCompatActivity {
+public class EditProfileActivity extends BaseActivity {
 
     private ImageView ivEditProfilePic, ivEditCover;
     private EditText etName, etUsername;

@@ -17,7 +17,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TopAuthorsActivity extends AppCompatActivity {
+public class TopAuthorsActivity extends BaseActivity {
 
     private RecyclerView rvTopAuthors;
     private AuthorAdapter authorAdapter;

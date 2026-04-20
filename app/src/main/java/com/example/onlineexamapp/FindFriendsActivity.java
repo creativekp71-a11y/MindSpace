@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FindFriendsActivity extends AppCompatActivity {
+public class FindFriendsActivity extends BaseActivity {
 
     private ImageView ivBack;
     private EditText etSearchFriends;
@@ -105,7 +105,7 @@ public class FindFriendsActivity extends AppCompatActivity {
     private void sendInvite() {
         String inviteMessage = "Hey! Try my MindSpace Quiz App 🎯\n\n"
                 + "Download APK here:\n"
-                +"https://drive.google.com/file/d/1pwyLyBBJw3rjpffOcvoWWUUOkM1-IheX/view?usp=sharing";
+                +"https://drive.google.com/file/d/1ZdDu-hC4uGPqIPC44IaIgWd-F0HxqnGX/view?usp=sharing";
 
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");

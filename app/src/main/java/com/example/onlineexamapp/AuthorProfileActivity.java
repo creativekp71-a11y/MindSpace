@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AuthorProfileActivity extends AppCompatActivity {
+public class AuthorProfileActivity extends BaseActivity {
 
     private String authorUid, currentUserId;
     private FirebaseFirestore fStore;

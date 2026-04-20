@@ -33,7 +33,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseActivity {
 
     private String chatId, receiverId, receiverName;
     private String currentUserId;
@@ -117,13 +117,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void hideKeyboard() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-        }
+        KeyboardUtils.hideKeyboard(this);
     }
 
     private void loadReceiverDetails() {

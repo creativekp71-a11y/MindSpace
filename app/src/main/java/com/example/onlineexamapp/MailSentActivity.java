@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
-public class MailSentActivity extends AppCompatActivity {
+public class MailSentActivity extends BaseActivity {
 
     private ImageView btnBack;
     private TextView tvDescription;

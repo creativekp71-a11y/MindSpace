@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class QuizActivity extends AppCompatActivity {
+public class QuizActivity extends BaseActivity {
 
     private List<QuizQuestion> questionList;
     private int currentQuestionIndex = 0;
